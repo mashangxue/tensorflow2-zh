@@ -1,67 +1,41 @@
-# Effective TensorFlow 2.0
+# 高效的TensorFlow 2.0
 
-There are multiple changes in TensorFlow 2.0 to make TensorFlow users more
-productive. TensorFlow 2.0 removes
-[redundant APIs](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md),
-makes APIs more consistent
-([Unified RNNs](https://github.com/tensorflow/community/blob/master/rfcs/20180920-unify-rnn-interface.md),
-[Unified Optimizers](https://github.com/tensorflow/community/blob/master/rfcs/20181016-optimizer-unification.md)),
-and better integrates with the Python runtime with
-[Eager execution](https://www.tensorflow.org/guide/eager).
+TensorFlow 2.0中有多处更改，以使TensorFlow用户使用更高效。TensorFlow 2.0删除
+[冗余 APIs](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md),
+使API更加一致
+([统一 RNNs](https://github.com/tensorflow/community/blob/master/rfcs/20180920-unify-rnn-interface.md),
+[统一优化器](https://github.com/tensorflow/community/blob/master/rfcs/20181016-optimizer-unification.md)),
+并通过[Eager execution](https://www.tensorflow.org/guide/eager)模式更好地与Python运行时集成
 
-Many
-[RFCs](https://github.com/tensorflow/community/pulls?utf8=%E2%9C%93&q=is%3Apr)
-have explained the changes that have gone into making TensorFlow 2.0. This
-guide presents a vision for what development in TensorFlow 2.0 should look like.
-It's assumed you have some familiarity with TensorFlow 1.x.
+许多[RFCs](https://github.com/tensorflow/community/pulls?utf8=%E2%9C%93&q=is%3Apr)已经解释了TensorFlow 2.0所带来的变化。本指南介绍了TensorFlow 2.0应该是什么样的开发，假设您对TensorFlow 1.x有一定的了解。
 
-## A brief summary of major changes
+## 主要变化的简要总结
 
-### API Cleanup
+### API清理
 
-Many APIs are either
-[gone or moved](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md)
-in TF 2.0. Some of the major changes include removing `tf.app`, `tf.flags`, and
-`tf.logging` in favor of the now open-source
-[absl-py](https://github.com/abseil/abseil-py), rehoming projects that lived in
-`tf.contrib`, and cleaning up the main `tf.*` namespace by moving lesser used
-functions into subpackages like `tf.math`. Some APIs have been replaced with
-their 2.0 equivalents - `tf.summary`, `tf.keras.metrics`, and
-`tf.keras.optimizers`. The easiest way to automatically apply these renames
-is to use the [v2 upgrade script](upgrade.md).
+许多API在tensorflow 2.0中[消失或移动](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md)。
+一些主要的变化包括删除`tf.app`, `tf.flags`和`tf.logging` ，转而支持现在开源的[absl-py](https://github.com/abseil/abseil-py)，
+重新安置`tf.contrib`中的项目，并清理主要的 `tf.*`命名空间，将不常用的函数移动到像 `tf.math`这样的子包中。
+一些API已被2.0版本等效替换，如`tf.summary`, `tf.keras.metrics`和`tf.keras.optimizers`。
+自动应用这些重命名的最简单方法是使用[v2升级脚本](https://tensorflow.google.cn/alpha/guide/upgrade)。
+
 
 ### Eager execution
 
-TensorFlow 1.X requires users to manually stitch together an
-[abstract syntax tree](https://en.wikipedia.org/wiki/Abstract_syntax_tree) (the
-graph) by making `tf.*` API calls. It then requires users to manually compile
-the abstract syntax tree by passing a set of output tensors and input tensors to
-a `session.run()` call. TensorFlow 2.0 executes eagerly (like Python normally
-does) and in 2.0, graphs and sessions should feel like implementation details.
+TensorFlow 1.X要求用户通过进行`tf.*` API调用，手动将抽象语法树（图形）拼接在一起。然后要求用户通过将一组输出张量和输入张量传递给`session.run()`来手动编译抽象语法树。
+TensorFlow 2.0 默认Eager execution模式，马上就执行（就像Python通常那样），在2.0中，图形和会话应该像实现细节一样。
 
-One notable byproduct of eager execution is that `tf.control_dependencies()` is
-no longer required, as all lines of code execute in order (within a
-`tf.function`, code with side effects execute in the order written).
+Eager execution的一个值得注意的地方是不在需要`tf.control_dependencies()` ，因为所有代码按顺序执行（在`tf.function`中，带有副作用的代码按写入的顺序执行）。
 
-### No more globals
+### 没有更多的全局变量
 
-TensorFlow 1.X relied heavily on implicitly global namespaces. When you called
-`tf.Variable()`, it would be put into the default graph, and it would remain
-there, even if you lost track of the Python variable pointing to it. You could
-then recover that `tf.Variable`, but only if you knew the name that it had been
-created with. This was difficult to do if you were not in control of the
-variable's creation. As a result, all sorts of mechanisms proliferated to
-attempt to help users find their variables again, and for frameworks to find
-user-created variables: Variable scopes, global collections, helper methods like
-`tf.get_global_step()`, `tf.global_variables_initializer()`, optimizers
-implicitly computing gradients over all trainable variables, and so on.
-TensorFlow 2.0 eliminates all of these mechanisms
-([Variables 2.0 RFC](https://github.com/tensorflow/community/pull/11)) in favor
-of the default mechanism: Keep track of your variables! If you lose track of a
-`tf.Variable`, it gets garbage collected.
+TensorFlow 1.X严重依赖于隐式全局命名空间。当你调用`tf.Variable()`时，它会被放入默认图形中，保留在那里，即使你忘记了指向它的Python变量。
+然后，您可以恢复该`tf.Variable`，但前提是您知道它已创建的名称，如果您无法控制变量的创建，这很难做到。结果，各种机制激增，试图帮助用户再次找到他们的变量，并寻找框架来查找用户创建的变量：变量范围、全局集合、辅助方法如`tf.get_global_step()`, `tf.global_variables_initializer()`、优化器隐式计算所有可训练变量的梯度等等。
 
-The requirement to track variables creates some extra work for the user, but
-with Keras objects (see below), the burden is minimized.
+TensorFlow 2.0取消了所有这些机制([Variables 2.0 RFC](https://github.com/tensorflow/community/pull/11))，支持默认机制：跟踪变量！如果你失去了对tf.Variable的追踪，就会垃圾收集回收。
+
+跟踪变量的要求为用户创建了一些额外的工作，但是使用Keras对象（见下文），负担被最小化。
+
 
 ### Functions, not sessions
 
