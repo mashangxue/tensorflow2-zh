@@ -1,47 +1,5 @@
 
-##### Copyright 2018 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-
-```
-#@title MIT License
-#
-# Copyright (c) 2017 François Chollet
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-```
-
-# Train your first neural network: basic classification
+# 训练您的第一个神经网络：基本分类
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -55,15 +13,17 @@
   </td>
 </table>
 
-This guide trains a neural network model to classify images of clothing, like sneakers and shirts. It's okay if you don't understand all the details; this is a fast-paced overview of a complete TensorFlow program with the details explained as we go.
+本指南训练神经网络模型，对服装图像进行分类，如运动鞋和衬衫。如果您不了解所有细节，那也没关系;
+这是一个完整的TensorFlow程序的快节奏概述，详细解释了我们的目标。
 
-This guide uses [tf.keras](https://www.tensorflow.org/guide/keras), a high-level API to build and train models in TensorFlow.
-
+本指南使用[tf.keras](https://www.tensorflow.org/guide/keras)，一个高级API，用于在TensorFlow中构建和训练模型。
+安装
 
 ```
-!pip install tensorflow==2.0.0-alpha0
+pip install tensorflow==2.0.0-alpha0
 ```
 
+导入相关库
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -79,13 +39,13 @@ import matplotlib.pyplot as plt
 print(tf.__version__)
 ```
 
-## Import the Fashion MNIST dataset
+## 导入MNIST数据集
 
-This guide uses the [Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist) dataset which contains 70,000 grayscale images in 10 categories. The images show individual articles of clothing at low resolution (28 by 28 pixels), as seen here:
+本指南使用[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist) 数据集，该数据集包含10个类别中的70,000个灰度图像。 图像显示了低分辨率（28 x 28像素）的单件服装，如下所示：
 
 <table>
   <tr><td>
-    <img src="https://tensorflow.org/images/fashion-mnist-sprite.png"
+    <img src="https://tensorflow.google.cn/images/fashion-mnist-sprite.png"
          alt="Fashion MNIST sprite"  width="600">
   </td></tr>
   <tr><td align="center">
@@ -93,12 +53,11 @@ This guide uses the [Fashion MNIST](https://github.com/zalandoresearch/fashion-m
   </td></tr>
 </table>
 
-Fashion MNIST is intended as a drop-in replacement for the classic [MNIST](http://yann.lecun.com/exdb/mnist/) dataset—often used as the "Hello, World" of machine learning programs for computer vision. The MNIST dataset contains images of handwritten digits (0, 1, 2, etc.) in a format identical to that of the articles of clothing we'll use here.
+Fashion MNIST旨在替代经典的MNIST数据集 - 通常用作计算机视觉机器学习计划的“Hello，World”。MNIST数据集包含手写数字（0,1,2等）的图像，其格式与我们将在此处使用的服装的格式相同。
 
-This guide uses Fashion MNIST for variety, and because it's a slightly more challenging problem than regular MNIST. Both datasets are relatively small and are used to verify that an algorithm works as expected. They're good starting points to test and debug code.
+本指南使用Fashion MNIST的多样性，因为这是一个比普通 [MNIST](http://yann.lecun.com/exdb/mnist/)稍微更具挑战性的问题。这两个数据集都相对较小，用于验证算法是否按预期工作。它们是测试和调试代码的良好起点。
 
-We will use 60,000 images to train the network and 10,000 images to evaluate how accurately the network learned to classify images. You can access the Fashion MNIST directly from TensorFlow. Import and load the Fashion MNIST data directly from TensorFlow:
-
+我们将使用60,000张图像来训练网络，10,000张图像来评估网络模型的准确度。您可以直接从TensorFlow访问Fashion MNIST，直接从TensorFlow导入并加载Fashion MNIST数据：
 
 ```
 fashion_mnist = keras.datasets.fashion_mnist
@@ -106,12 +65,12 @@ fashion_mnist = keras.datasets.fashion_mnist
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
 ```
 
-Loading the dataset returns four NumPy arrays:
+加载数据返回4个NumPy数组：
 
-* The `train_images` and `train_labels` arrays are the *training set*—the data the model uses to learn.
-* The model is tested against the *test set*, the `test_images`, and `test_labels` arrays.
+* `train_images`和`train_labels`数组是*训练集* – 模型用于学习的数据。
+* 模型将根据测试集`test_images`和`test_labels`数组进行测试。
 
-The images are 28x28 NumPy arrays, with pixel values ranging from 0 to 255. The *labels* are an array of integers, ranging from 0 to 9. These correspond to the *class* of clothing the image represents:
+图像为28x28 NumPy数组，像素值范围为0到255，标签是一个整数数组，范围为0到9，这些对应于图像所代表的服装类别：
 
 <table>
   <tr>
@@ -160,55 +119,57 @@ The images are 28x28 NumPy arrays, with pixel values ranging from 0 to 255. The 
   </tr>
 </table>
 
-Each image is mapped to a single label. Since the *class names* are not included with the dataset, store them here to use later when plotting the images:
-
+每个图像都映射到一个标签，由于类名不包含在数据集中，因此将它们存储在此处以便在绘制图像时使用：
 
 ```
 class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 ```
 
-## Explore the data
+##  探索数据
 
-Let's explore the format of the dataset before training the model. The following shows there are 60,000 images in the training set, with each image represented as 28 x 28 pixels:
-
+让我们在训练模型之前探索数据集的格式,以下显示训练集中有60,000个图像，每个图像表示为28 x 28像素：
 
 ```
 train_images.shape
 ```
 
-Likewise, there are 60,000 labels in the training set:
+`(60000, 28, 28)`
 
+同样，训练集中有60,000个标签：
 
 ```
 len(train_labels)
 ```
 
-Each label is an integer between 0 and 9:
+`60000`
 
+每个标签都是0到9之间的整数：
 
 ```
 train_labels
 ```
 
-There are 10,000 images in the test set. Again, each image is represented as 28 x 28 pixels:
+`array([9, 0, 0, ..., 3, 0, 5], dtype=uint8)`
 
+测试集中有10,000个图像。同样，每个图像表示为28 x 28像素：
 
 ```
 test_images.shape
 ```
 
-And the test set contains 10,000 images labels:
+(10000, 28, 28)
 
+测试集包含10,000个图像标签：
 
 ```
 len(test_labels)
 ```
+10000
 
-## Preprocess the data
+## 预处理数据
 
-The data must be preprocessed before training the network. If you inspect the first image in the training set, you will see that the pixel values fall in the range of 0 to 255:
-
+在训练网络之前必须对数据进行预处理。 如果您检查训练集中的第一个图像，您将看到像素值落在0到255的范围内：
 
 ```
 plt.figure()
@@ -217,9 +178,9 @@ plt.colorbar()
 plt.grid(False)
 plt.show()
 ```
+![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_21_0.png)
 
-We scale these values to a range of 0 to 1 before feeding them to the neural network model. To do so, we divide the values by 255. It's important that the *training set* and the *testing set* be preprocessed in the same way:
-
+在将它们输入到神经网络模型之前，我们将这些值缩放到0到1的范围。 为此，我们将值除以255。重要的是*训练集*和*测试集*以相同的方式进行预处理：
 
 ```
 train_images = train_images / 255.0
@@ -227,8 +188,7 @@ train_images = train_images / 255.0
 test_images = test_images / 255.0
 ```
 
-To verify that the data is in the correct format and that we're ready to build and train the network, let's display the first 25 images from the *training set* and display the class name below each image.
-
+为了验证数据的格式是否正确以及我们是否已准备好构建和训练网络，让我们显示训练集中的前25个图像，并在每个图像下方显示类名。
 
 ```
 plt.figure(figsize=(10,10))
@@ -241,16 +201,17 @@ for i in range(25):
     plt.xlabel(class_names[train_labels[i]])
 plt.show()
 ```
+![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_25_0.png)
 
-## Build the model
+## 构建模型
 
-Building the neural network requires configuring the layers of the model, then compiling the model.
+构建神经网络需要配置模型的层，然后编译模型。
 
-### Set up the layers
+### 设置图层
 
-The basic building block of a neural network is the *layer*. Layers extract representations from the data fed into them. Hopefully, these representations are meaningful for the problem at hand.
+神经网络的基本构建块是 *layer*，图层从提供给它们的数据中提取表示，希望这些表示对于手头的问题是有意义的。
 
-Most of deep learning consists of chaining together simple layers. Most layers, such as `tf.keras.layers.Dense`, have parameters that are learned during training.
+大多数深度学习包括将简单层链接在一起。大多数图层（例如`tf.keras.layers.Dense`）都具有在训练期间学习到的参数。
 
 
 ```
@@ -261,18 +222,19 @@ model = keras.Sequential([
 ])
 ```
 
-The first layer in this network, `tf.keras.layers.Flatten`, transforms the format of the images from a two-dimensional array (of 28 by 28 pixels) to a one-dimensional array (of 28 * 28 = 784 pixels). Think of this layer as unstacking rows of pixels in the image and lining them up. This layer has no parameters to learn; it only reformats the data.
 
-After the pixels are flattened, the network consists of a sequence of two `tf.keras.layers.Dense` layers. These are densely connected, or fully connected, neural layers. The first `Dense` layer has 128 nodes (or neurons). The second (and last) layer is a 10-node *softmax* layer that returns an array of 10 probability scores that sum to 1. Each node contains a score that indicates the probability that the current image belongs to one of the 10 classes.
+该网络中的第一层`tf.keras.layers.Flatten`将图像的格式从二维数组（28 x 28像素）转换为一维数组（28 * 28 = 784像素））。可以将此图层视为图像中未堆叠的像素行并将它们排列在一起。该层没有要学习的参数,它只重新格式化数据。
 
-### Compile the model
+在像素被展平之后，网络由两个tf.keras.layers.Dense层的序列组成。这些是密集连接或完全连接的神经层。第一个Dense层有128个节点（或神经元）。第二层是10节点softmax层，其返回10个概率分数的数组，其总和为1.每个节点包含指示当前图像属于10个类之一的概率的分数。
+在像素被展平之后，网络由两个`tf.keras.layers.Dense`层的序列组成。这些是密集连接或完全连接的神经层。第一个`Dense`层有128个节点（或神经元）。第二（最后）层是10节点*softmax*层，其返回10个概率分数的数组，其总和为1.每个节点包含指示当前图像属于10个类别之一的概率的分数。
 
-Before the model is ready for training, it needs a few more settings. These are added during the model's *compile* step:
+### 编译模型
 
-* *Loss function* —This measures how accurate the model is during training. We want to minimize this function to "steer" the model in the right direction.
-* *Optimizer* —This is how the model is updated based on the data it sees and its loss function.
-* *Metrics* —Used to monitor the training and testing steps. The following example uses *accuracy*, the fraction of the images that are correctly classified.
+在模型准备好进行训练之前，它需要更多设置。这些是在模型的 *compile* 步骤中添加的
 
+* 损失函数，可以衡量模型在训练过程中的准确程度。我们希望最小化此函数，以便在正确的方向上“引导”模型。
+* 优化器，这是基于它看到的数据及其损失函数更新模型的方式。
+* 度量标准，用于监控训练和测试步骤。以下示例使用精度，即正确分类的图像分数。
 
 ```
 model.compile(optimizer='adam',
@@ -280,27 +242,26 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 ```
 
-## Train the model
+## 训练模型
 
-Training the neural network model requires the following steps:
+训练神经网络模型需要以下步骤：
 
-1. Feed the training data to the model. In this example, the training data is in the `train_images` and `train_labels` arrays.
-2. The model learns to associate images and labels.
-3. We ask the model to make predictions about a test set—in this example, the `test_images` array. We verify that the predictions match the labels from the `test_labels` array.
+1. 将训练数据输入模型。在此实例中，训练数据位于`train_images`和`train_lables`数组中。
+2. 该模型学习如何关联图像和标签。
+3. 我们要求模型对测试集进行预测，在本例中为`test_images`数组。我们验证预测是否与`test_labels`数组中的标签匹配。
 
-To start training,  call the `model.fit` method—so called because it "fits" the model to the training data:
-
+要开始训练，请调用 `model.fit` 方法，因为它将模型“fits拟合”到训练数据：
 
 ```
 model.fit(train_images, train_labels, epochs=5)
 ```
 
-As the model trains, the loss and accuracy metrics are displayed. This model reaches an accuracy of about 0.88 (or 88%) on the training data.
+随着模型训练，显示损失和准确度指标。该模型在训练数据上达到约0.88（或88％）的准确度。
 
-## Evaluate accuracy
 
-Next, compare how the model performs on the test dataset:
+## 评估精度
 
+接下来，比较模型在测试数据集上的表现情况：
 
 ```
 test_loss, test_acc = model.evaluate(test_images, test_labels)
@@ -308,40 +269,44 @@ test_loss, test_acc = model.evaluate(test_images, test_labels)
 print('\nTest accuracy:', test_acc)
 ```
 
-It turns out that the accuracy on the test dataset is a little less than the accuracy on the training dataset. This gap between training accuracy and test accuracy represents *overfitting*. Overfitting is when a machine learning model performs worse on new, previously unseen inputs than on the training data.
+事实证明，测试数据集的准确性略低于训练数据集的准确性。训练精度和测试精度之间的差距表示过度拟合(*overfitting*)。过度拟合是指机器学习模型在新的数据比在训练数据上表现更差，也就是泛化性不好。
 
-## Make predictions
 
-With the model trained, we can use it to make predictions about some images.
+## 预测
 
+通过训练模型，我们可以使用它来预测某些图形。
 
 ```
 predictions = model.predict(test_images)
 ```
 
-Here, the model has predicted the label for each image in the testing set. Let's take a look at the first prediction:
-
+这里，模型已经预测了测试集中每个图像的标签，我们来看看第一个预测：
 
 ```
 predictions[0]
 ```
+输出：
+```
+array([6.2482708e-05, 2.4860196e-08, 9.7165821e-07, 4.7436039e-08,
+       2.0804382e-06, 1.3316551e-02, 9.8731316e-06, 3.4591161e-02,
+       1.2390658e-04, 9.5189297e-01], dtype=float32)
+```       
 
-A prediction is an array of 10 numbers. They represent the model's "confidence" that the image corresponds to each of the 10 different articles of clothing. We can see which label has the highest confidence value:
-
+预测是10个数字的数组，它们代表模型的“confidence（置信度）”，即图像对应于10种不同服装中的每一种。我们可以看到哪个标签具有最高的置信度值：
 
 ```
 np.argmax(predictions[0])
 ```
+`9`
 
-So, the model is most confident that this image is an ankle boot, or `class_names[9]`. Examining the test label shows that this classification is correct:
-
+因此，模型最确信这是一个ankle boot(踝靴)，或class_names[9]。检查测试标签，该分类是正确的：
 
 ```
 test_labels[0]
 ```
+`9`
 
-We can graph this to look at the full set of 10 channels.
-
+我们可以通过图表来查看全部10个通道：
 
 ```
 def plot_image(i, predictions_array, true_label, img):
@@ -376,8 +341,7 @@ def plot_value_array(i, predictions_array, true_label):
   thisplot[true_label].set_color('blue')
 ```
 
-Let's look at the 0th image, predictions, and prediction array.
-
+让我们看看第0个图像，预测和预测数组。
 
 ```
 i = 0
@@ -389,6 +353,7 @@ plot_value_array(i, predictions,  test_labels)
 plt.show()
 ```
 
+![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_48_0.png)
 
 ```
 i = 12
@@ -400,12 +365,14 @@ plot_value_array(i, predictions,  test_labels)
 plt.show()
 ```
 
-Let's plot several images with their predictions. Correct prediction labels are blue and incorrect prediction labels are red. The number gives the percentage (out of 100) for the predicted label. Note that the model can be wrong even when very confident.
+![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_49_0.png)
+
+让我们用他们的预测绘制几个图像。正确的预测标签是蓝色的，不正确的预测标签是红色的，该数字给出了预测标签的百分比（满分100）。请注意，即使非常自信，模型也可能出错。
 
 
 ```
-# Plot the first X test images, their predicted labels, and the true labels.
-# Color correct predictions in blue and incorrect predictions in red.
+# 绘制前X个测试图像，预测标签和真实标签。 
+# 用蓝色标记正确的预测，用红色标记错误的预测。
 num_rows = 5
 num_cols = 3
 num_images = num_rows*num_cols
@@ -418,28 +385,29 @@ for i in range(num_images):
 plt.show()
 ```
 
-Finally, use the trained model to make a prediction about a single image.
+![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_51_0.png)
 
+最后，使用训练的模型对单个图像进行预测。
 
 ```
-# Grab an image from the test dataset.
+# 从测试数据集中获取图像
 img = test_images[0]
 
 print(img.shape)
 ```
 
-`tf.keras` models are optimized to make predictions on a *batch*, or collection, of examples at once. Accordingly, even though we're using a single image, we need to add it to a list:
-
+`tf.keras`模型经过优化，可以立即对*批量*或集合进行预测。因此，即使我们使用单个图像，我们也需要将其添加到列表中：
 
 ```
-# Add the image to a batch where it's the only member.
+# 将图像添加到批次中，它是唯一的成员。 
 img = (np.expand_dims(img,0))
 
 print(img.shape)
 ```
 
-Now predict the correct label for this image:
+`(1, 28, 28)`
 
+现在预测此图像的正确标签：
 
 ```
 predictions_single = model.predict(img)
@@ -453,11 +421,14 @@ plot_value_array(0, predictions_single, test_labels)
 _ = plt.xticks(range(10), class_names, rotation=45)
 ```
 
-`model.predict` returns a list of lists—one list for each image in the batch of data. Grab the predictions for our (only) image in the batch:
+![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_58_0.png)
 
 
+`model.predict`返回列表清单- 一批数据中每个图像的列表，抓取批次中我们（唯一）图像的预测：
 ```
 np.argmax(predictions_single[0])
 ```
 
-And, as before, the model predicts a label of 9.
+`9`
+
+和前面的一样，模型预测标签为9。
