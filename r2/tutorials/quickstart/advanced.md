@@ -1,24 +1,5 @@
 
-##### Copyright 2019 The TensorFlow Authors.
-
-Licensed under the Apache License, Version 2.0 (the "License");
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Get started with TensorFlow 2.0 for experts
+# 专家入门TensorFlow 2.0
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -32,28 +13,19 @@ Licensed under the Apache License, Version 2.0 (the "License");
   </td>
 </table>
 
-This is a [Google Colaboratory](https://colab.research.google.com/notebooks/welcome.ipynb) notebook file. Python programs are run directly in the browser—a great way to learn and use TensorFlow. To run the Colab notebook:
-
-1. Connect to a Python runtime: At the top-right of the menu bar, select *CONNECT*.
-2. Run all the notebook code cells: Select *Runtime* > *Run all*.
-
-For more examples and guides, see the [TensorFlow tutorials](https://www.tensorflow.org/alpha/tutorials/).
-
-To get started, import the TensorFlow library into your program:
-
+安装命令 `pip install tensorflow-gpu==2.0.0-alpha0`
+要开始，请将TensorFlow库导入您的程序：
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 
 from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
 ```
 
-Load and prepare the [MNIST dataset](http://yann.lecun.com/exdb/mnist/).
-
+加载并准备[MNIST数据集](http://yann.lecun.com/exdb/mnist/).。
 
 ```
 mnist = tf.keras.datasets.mnist
@@ -61,13 +33,12 @@ mnist = tf.keras.datasets.mnist
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
-# Add a channels dimension
+# 添加一个通道维度
 x_train = x_train[..., tf.newaxis]
 x_test = x_test[..., tf.newaxis]
 ```
 
-Use tf.data to batch and shuffle the dataset:
-
+使用tf.data批处理和随机打乱数据集：
 
 ```
 train_ds = tf.data.Dataset.from_tensor_slices(
@@ -75,8 +46,7 @@ train_ds = tf.data.Dataset.from_tensor_slices(
 test_ds = tf.data.Dataset.from_tensor_slices((x_test, y_test)).batch(32)
 ```
 
-Build the `tf.keras` model using the Keras [model subclassing API](https://www.tensorflow.org/guide/keras#model_subclassing):
-
+通过使用Keras[模型子类 API](https://tensorflow.google.cn/guide/keras#model_subclassing)构建`tf.keras`模型：
 
 ```
 class MyModel(Model):
@@ -96,8 +66,7 @@ class MyModel(Model):
 model = MyModel()
 ```
 
-Choose an optimizer and loss function for training:
-
+选择优化器和损失函数进行训练：
 
 ```
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy()
@@ -105,8 +74,7 @@ loss_object = tf.keras.losses.SparseCategoricalCrossentropy()
 optimizer = tf.keras.optimizers.Adam()
 ```
 
-Select metrics to measure the loss and the accuracy of the model. These metrics accumulate the values over epochs and then print the overall result.
-
+选择指标（metrics）以衡量模型的损失和准确性。这些指标累积超过周期的值，然后打印整体结果。
 
 ```
 train_loss = tf.keras.metrics.Mean(name='train_loss')
@@ -116,8 +84,7 @@ test_loss = tf.keras.metrics.Mean(name='test_loss')
 test_accuracy = tf.keras.metrics.SparseCategoricalAccuracy(name='test_accuracy')
 ```
 
-Train the model using `tf.GradientTape`:
-
+使用`tf.GradientTape`训练模型：
 
 ```
 @tf.function
@@ -132,8 +99,7 @@ def train_step(images, labels):
   train_accuracy(labels, predictions)
 ```
 
-Now test the model:
-
+现在测试模型：
 
 ```
 @tf.function
@@ -164,4 +130,4 @@ for epoch in range(EPOCHS):
                          test_accuracy.result()*100))
 ```
 
-The image classifier is now trained to ~98% accuracy on this dataset. To learn more, read the [TensorFlow tutorials](https://www.tensorflow.org/alpha/tutorials/keras).
+现在，图像分类器在该数据集上的准确度达到约98％。要了解更多信息，请阅读 [TensorFlow教程](https://tensorflow.google.cn/alpha/tutorials/keras).。
