@@ -1,47 +1,5 @@
 
-##### Copyright 2018 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-
-```
-#@title MIT License
-#
-# Copyright (c) 2017 François Chollet
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-```
-
-# Explore overfitting and underfitting
+# 探索过拟合和欠拟合
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -55,26 +13,22 @@
   </td>
 </table>
 
-As always, the code in this example will use the `tf.keras` API, which you can learn more about in the TensorFlow [Keras guide](https://www.tensorflow.org/guide/keras).
+在前面的两个例子中（电影影评分类和预测燃油效率），我们看到我们的模型对验证数据的准确性在训练许多周期之后会到达峰值，然后开始下降。
 
-In both of the previous examples—classifying movie reviews and predicting fuel efficiency—we saw that the accuracy of our model on the validation data would peak after training for a number of epochs, and would then start decreasing.
+换句话说，我们的模型会过度拟合训练数据，学习如果处理过拟合很重要，尽管通常可以在训练集上实现高精度，但我们真正想要的是开发能够很好泛化测试数据（或之前未见过的数据）的模型。
 
-In other words, our model would *overfit* to the training data. Learning how to deal with overfitting is important. Although it's often possible to achieve high accuracy on the *training set*, what we really want is to develop models that generalize well to a *testing data* (or data they haven't seen before).
+过拟合的反面是欠拟合，当测试数据仍有改进空间会发生欠拟合，出现这种情况的原因有很多：模型不够强大，过度正则化，或者根本没有经过足够长的时间训练，这意味着网络尚未学习训练数据中的相关模式。
 
-The opposite of overfitting is *underfitting*. Underfitting occurs when there is still room for improvement on the test data. This can happen for a number of reasons: If the model is not powerful enough, is over-regularized, or has simply not been trained long enough. This means the network has not learned the relevant patterns in the training data.
+如果训练时间过长，模型将开始过度拟合，并从训练数据中学习模式，而这些模式可能并不适用于测试数据，我们需要取得平衡，了解如何训练适当数量的周期，我们将在下面讨论，这是一项有用的技能。
 
-If you train for too long though, the model will start to overfit and learn patterns from the training data that don't generalize to the test data. We need to strike a balance. Understanding how to train for an appropriate number of epochs as we'll explore below is a useful skill.
+为了防止过拟合，最好的解决方案是使用更多的训练数据，受过更多数据训练的模型自然会更好的泛化。当没有更多的训练数据时，另外一个最佳解决方案是使用正则化等技术，这些限制了模型可以存储的信息的数据量和类型，如果网络只能记住少量模式，那么优化过程将迫使它专注于最突出的模式，这些模式有更好的泛化性。
 
-To prevent overfitting, the best solution is to use more training data. A model trained on more data will naturally generalize better. When that is no longer possible, the next best solution is to use techniques like regularization. These place constraints on the quantity and type of information your model can store.  If a network can only afford to memorize a small number of patterns, the optimization process will force it to focus on the most prominent patterns, which have a better chance of generalizing well.
-
-In this notebook, we'll explore two common regularization techniques—weight regularization and dropout—and use them to improve our IMDB movie review classification notebook.
-
+在本章节中，我们将探索两种常见的正则化技术：权重正则化和dropout丢弃正则化，并使用它们来改进我们的IMDB电影评论分类。
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tf-nightly-2.0-preview
-import tensorflow as tf
+import tensorflow as tf 
 from tensorflow import keras
 
 import numpy as np
@@ -83,12 +37,11 @@ import matplotlib.pyplot as plt
 print(tf.__version__)
 ```
 
-## Download the IMDB dataset
+## 下载IMDB数据集
 
-Rather than using an embedding as in the previous notebook, here we will multi-hot encode the sentences. This model will quickly overfit to the training set. It will be used to demonstrate when overfitting occurs, and how to fight it.
+我们不会像以前一样使用嵌入，而是对句子进行多重编码。这个模型将很快适应训练集。它将用于证明何时发生过拟合，以及如何处理它。
 
-Multi-hot-encoding our lists means turning them into vectors of 0s and 1s. Concretely, this would mean for instance turning the sequence  `[3, 5]` into a 10,000-dimensional vector that would be all-zeros except for indices 3 and 5, which would be ones.
-
+对我们的列表进行多热编码意味着将它们转换为0和1的向量，具体地说，这将意味着例如将序列[3,5]转换为10000维向量，除了索引3和5的值是1之外，其他全零。
 
 ```
 NUM_WORDS = 10000
@@ -96,10 +49,10 @@ NUM_WORDS = 10000
 (train_data, train_labels), (test_data, test_labels) = keras.datasets.imdb.load_data(num_words=NUM_WORDS)
 
 def multi_hot_sequences(sequences, dimension):
-    # Create an all-zero matrix of shape (len(sequences), dimension)
+    # 创建一个全零的形状矩阵 (len(sequences), dimension)
     results = np.zeros((len(sequences), dimension))
     for i, word_indices in enumerate(sequences):
-        results[i, word_indices] = 1.0  # set specific indices of results[i] to 1s
+        results[i, word_indices] = 1.0  # 将results[i]的特定值设为1
     return results
 
 
@@ -107,28 +60,30 @@ train_data = multi_hot_sequences(train_data, dimension=NUM_WORDS)
 test_data = multi_hot_sequences(test_data, dimension=NUM_WORDS)
 ```
 
-Let's look at one of the resulting multi-hot vectors. The word indices are sorted by frequency, so it is expected that there are more 1-values near index zero, as we can see in this plot:
-
+让我们看一下生成的多热矢量，单词索引按频率排序，因此预计索引零附近有更多的1值，我们可以在下图中看到：
 
 ```
 plt.plot(train_data[0])
 ```
 
-## Demonstrate overfitting
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_7_1.png)
 
-The simplest way to prevent overfitting is to reduce the size of the model, i.e. the number of learnable parameters in the model (which is determined by the number of layers and the number of units per layer). In deep learning, the number of learnable parameters in a model is often referred to as the model's "capacity". Intuitively, a model with more parameters will have more "memorization capacity" and therefore will be able to easily learn a perfect dictionary-like mapping between training samples and their targets, a mapping without any generalization power, but this would be useless when making predictions on previously unseen data.
 
-Always keep this in mind: deep learning models tend to be good at fitting to the training data, but the real challenge is generalization, not fitting.
+## 演示过度拟合
 
-On the other hand, if the network has limited memorization resources, it will not be able to learn the mapping as easily. To minimize its loss, it will have to learn compressed representations that have more predictive power. At the same time, if you make your model too small, it will have difficulty fitting to the training data. There is a balance between "too much capacity" and "not enough capacity".
+防止过度拟合的最简单方法是减小模型的大小，即模型中可学习参数的数量（由层数和每层单元数决定）。在深度学习中，模型中可学习参数的数量通常被称为模型的“容量”。直观地，具有更多参数的模型将具有更多的“记忆能力”，因此将能够容易地学习训练样本与其目标之间的完美的字典式映射，没有任何泛化能力的映射，但是在对未见过的数据做出预测时这将是无用的。
 
-Unfortunately, there is no magical formula to determine the right size or architecture of your model (in terms of the number of layers, or the right size for each layer). You will have to experiment using a series of different architectures.
+始终牢记这一点：深度学习模型往往善于适应训练数据，但真正的挑战是泛化，而不是适应。
 
-To find an appropriate model size, it's best to start with relatively few layers and parameters, then begin increasing the size of the layers or adding new layers until you see diminishing returns on the validation loss. Let's try this on our movie review classification network.
+另一方面，如果网络具有有限的记忆资源，则将不能容易地学习映射。为了最大限度地减少损失，它必须学习具有更强预测能力的压缩表示。同时，如果您使模型太小，则难以适应训练数据。“太多容量”和“容量不足”之间存在平衡。
 
-We'll create a simple model using only ```Dense``` layers as a baseline, then create smaller and larger versions, and compare them.
+不幸的是，没有神奇的公式来确定模型的正确大小或架构（就层数而言，或每层的正确大小），您将不得不尝试使用一系列不同的架构。
 
-### Create a baseline model
+要找到合适的模型大小，最好从相对较少的层和参数开始，然后开始增加层的大小或添加新层，直到您看到验证损失的收益递减为止。让我们在电影评论分类网络上试试。
+
+我们将仅适用`Dense`层作为基线创建一个简单模型，然后创建更小和更大的版本，并进行比较。
+
+### 创建一个基线模型
 
 
 ```
@@ -146,6 +101,22 @@ baseline_model.compile(optimizer='adam',
 baseline_model.summary()
 ```
 
+```
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 16)                160016    
+_________________________________________________________________
+dense_1 (Dense)              (None, 16)                272       
+_________________________________________________________________
+dense_2 (Dense)              (None, 1)                 17        
+=================================================================
+Total params: 160,305
+Trainable params: 160,305
+Non-trainable params: 0
+_________________________________________________________________
+```
 
 ```
 baseline_history = baseline_model.fit(train_data,
@@ -154,6 +125,50 @@ baseline_history = baseline_model.fit(train_data,
                                       batch_size=512,
                                       validation_data=(test_data, test_labels),
                                       verbose=2)
+```
+
+```
+Train on 25000 samples, validate on 25000 samples
+Epoch 1/20
+25000/25000 - 3s - loss: 0.4664 - accuracy: 0.8135 - binary_crossentropy: 0.4664 - val_loss: 0.3257 - val_accuracy: 0.8808 - val_binary_crossentropy: 0.3257
+Epoch 2/20
+25000/25000 - 2s - loss: 0.2396 - accuracy: 0.9152 - binary_crossentropy: 0.2396 - val_loss: 0.2851 - val_accuracy: 0.8892 - val_binary_crossentropy: 0.2851
+Epoch 3/20
+25000/25000 - 2s - loss: 0.1761 - accuracy: 0.9401 - binary_crossentropy: 0.1761 - val_loss: 0.2973 - val_accuracy: 0.8822 - val_binary_crossentropy: 0.2973
+Epoch 4/20
+25000/25000 - 2s - loss: 0.1434 - accuracy: 0.9514 - binary_crossentropy: 0.1434 - val_loss: 0.3318 - val_accuracy: 0.8720 - val_binary_crossentropy: 0.3318
+Epoch 5/20
+25000/25000 - 2s - loss: 0.1167 - accuracy: 0.9626 - binary_crossentropy: 0.1167 - val_loss: 0.3434 - val_accuracy: 0.8730 - val_binary_crossentropy: 0.3434
+Epoch 6/20
+25000/25000 - 2s - loss: 0.0938 - accuracy: 0.9722 - binary_crossentropy: 0.0938 - val_loss: 0.3745 - val_accuracy: 0.8695 - val_binary_crossentropy: 0.3745
+Epoch 7/20
+25000/25000 - 2s - loss: 0.0750 - accuracy: 0.9788 - binary_crossentropy: 0.0750 - val_loss: 0.4111 - val_accuracy: 0.8652 - val_binary_crossentropy: 0.4111
+Epoch 8/20
+25000/25000 - 2s - loss: 0.0605 - accuracy: 0.9849 - binary_crossentropy: 0.0605 - val_loss: 0.4511 - val_accuracy: 0.8628 - val_binary_crossentropy: 0.4511
+Epoch 9/20
+25000/25000 - 2s - loss: 0.0463 - accuracy: 0.9905 - binary_crossentropy: 0.0463 - val_loss: 0.4876 - val_accuracy: 0.8623 - val_binary_crossentropy: 0.4876
+Epoch 10/20
+25000/25000 - 2s - loss: 0.0367 - accuracy: 0.9937 - binary_crossentropy: 0.0367 - val_loss: 0.5249 - val_accuracy: 0.8594 - val_binary_crossentropy: 0.5249
+Epoch 11/20
+25000/25000 - 2s - loss: 0.0277 - accuracy: 0.9963 - binary_crossentropy: 0.0277 - val_loss: 0.5637 - val_accuracy: 0.8587 - val_binary_crossentropy: 0.5637
+Epoch 12/20
+25000/25000 - 2s - loss: 0.0213 - accuracy: 0.9975 - binary_crossentropy: 0.0213 - val_loss: 0.6004 - val_accuracy: 0.8571 - val_binary_crossentropy: 0.6004
+Epoch 13/20
+25000/25000 - 2s - loss: 0.0163 - accuracy: 0.9989 - binary_crossentropy: 0.0163 - val_loss: 0.6330 - val_accuracy: 0.8561 - val_binary_crossentropy: 0.6330
+Epoch 14/20
+25000/25000 - 2s - loss: 0.0126 - accuracy: 0.9991 - binary_crossentropy: 0.0126 - val_loss: 0.6648 - val_accuracy: 0.8541 - val_binary_crossentropy: 0.6648
+Epoch 15/20
+25000/25000 - 2s - loss: 0.0099 - accuracy: 0.9995 - binary_crossentropy: 0.0099 - val_loss: 0.6968 - val_accuracy: 0.8551 - val_binary_crossentropy: 0.6968
+Epoch 16/20
+25000/25000 - 2s - loss: 0.0079 - accuracy: 0.9997 - binary_crossentropy: 0.0079 - val_loss: 0.7247 - val_accuracy: 0.8540 - val_binary_crossentropy: 0.7247
+Epoch 17/20
+25000/25000 - 2s - loss: 0.0063 - accuracy: 0.9998 - binary_crossentropy: 0.0063 - val_loss: 0.7531 - val_accuracy: 0.8550 - val_binary_crossentropy: 0.7531
+Epoch 18/20
+25000/25000 - 2s - loss: 0.0051 - accuracy: 0.9999 - binary_crossentropy: 0.0051 - val_loss: 0.7754 - val_accuracy: 0.8537 - val_binary_crossentropy: 0.7754
+Epoch 19/20
+25000/25000 - 2s - loss: 0.0043 - accuracy: 0.9999 - binary_crossentropy: 0.0043 - val_loss: 0.8014 - val_accuracy: 0.8540 - val_binary_crossentropy: 0.8014
+Epoch 20/20
+25000/25000 - 2s - loss: 0.0037 - accuracy: 0.9999 - binary_crossentropy: 0.0037 - val_loss: 0.8219 - val_accuracy: 0.8532 - val_binary_crossentropy: 0.8219
 ```
 
 ### Create a smaller model
