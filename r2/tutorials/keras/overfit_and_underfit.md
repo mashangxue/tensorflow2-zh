@@ -131,49 +131,14 @@ baseline_history = baseline_model.fit(train_data,
 Train on 25000 samples, validate on 25000 samples
 Epoch 1/20
 25000/25000 - 3s - loss: 0.4664 - accuracy: 0.8135 - binary_crossentropy: 0.4664 - val_loss: 0.3257 - val_accuracy: 0.8808 - val_binary_crossentropy: 0.3257
-Epoch 2/20
-25000/25000 - 2s - loss: 0.2396 - accuracy: 0.9152 - binary_crossentropy: 0.2396 - val_loss: 0.2851 - val_accuracy: 0.8892 - val_binary_crossentropy: 0.2851
-Epoch 3/20
-25000/25000 - 2s - loss: 0.1761 - accuracy: 0.9401 - binary_crossentropy: 0.1761 - val_loss: 0.2973 - val_accuracy: 0.8822 - val_binary_crossentropy: 0.2973
-Epoch 4/20
-25000/25000 - 2s - loss: 0.1434 - accuracy: 0.9514 - binary_crossentropy: 0.1434 - val_loss: 0.3318 - val_accuracy: 0.8720 - val_binary_crossentropy: 0.3318
-Epoch 5/20
-25000/25000 - 2s - loss: 0.1167 - accuracy: 0.9626 - binary_crossentropy: 0.1167 - val_loss: 0.3434 - val_accuracy: 0.8730 - val_binary_crossentropy: 0.3434
-Epoch 6/20
-25000/25000 - 2s - loss: 0.0938 - accuracy: 0.9722 - binary_crossentropy: 0.0938 - val_loss: 0.3745 - val_accuracy: 0.8695 - val_binary_crossentropy: 0.3745
-Epoch 7/20
-25000/25000 - 2s - loss: 0.0750 - accuracy: 0.9788 - binary_crossentropy: 0.0750 - val_loss: 0.4111 - val_accuracy: 0.8652 - val_binary_crossentropy: 0.4111
-Epoch 8/20
-25000/25000 - 2s - loss: 0.0605 - accuracy: 0.9849 - binary_crossentropy: 0.0605 - val_loss: 0.4511 - val_accuracy: 0.8628 - val_binary_crossentropy: 0.4511
-Epoch 9/20
-25000/25000 - 2s - loss: 0.0463 - accuracy: 0.9905 - binary_crossentropy: 0.0463 - val_loss: 0.4876 - val_accuracy: 0.8623 - val_binary_crossentropy: 0.4876
-Epoch 10/20
-25000/25000 - 2s - loss: 0.0367 - accuracy: 0.9937 - binary_crossentropy: 0.0367 - val_loss: 0.5249 - val_accuracy: 0.8594 - val_binary_crossentropy: 0.5249
-Epoch 11/20
-25000/25000 - 2s - loss: 0.0277 - accuracy: 0.9963 - binary_crossentropy: 0.0277 - val_loss: 0.5637 - val_accuracy: 0.8587 - val_binary_crossentropy: 0.5637
-Epoch 12/20
-25000/25000 - 2s - loss: 0.0213 - accuracy: 0.9975 - binary_crossentropy: 0.0213 - val_loss: 0.6004 - val_accuracy: 0.8571 - val_binary_crossentropy: 0.6004
-Epoch 13/20
-25000/25000 - 2s - loss: 0.0163 - accuracy: 0.9989 - binary_crossentropy: 0.0163 - val_loss: 0.6330 - val_accuracy: 0.8561 - val_binary_crossentropy: 0.6330
-Epoch 14/20
-25000/25000 - 2s - loss: 0.0126 - accuracy: 0.9991 - binary_crossentropy: 0.0126 - val_loss: 0.6648 - val_accuracy: 0.8541 - val_binary_crossentropy: 0.6648
-Epoch 15/20
-25000/25000 - 2s - loss: 0.0099 - accuracy: 0.9995 - binary_crossentropy: 0.0099 - val_loss: 0.6968 - val_accuracy: 0.8551 - val_binary_crossentropy: 0.6968
-Epoch 16/20
-25000/25000 - 2s - loss: 0.0079 - accuracy: 0.9997 - binary_crossentropy: 0.0079 - val_loss: 0.7247 - val_accuracy: 0.8540 - val_binary_crossentropy: 0.7247
-Epoch 17/20
-25000/25000 - 2s - loss: 0.0063 - accuracy: 0.9998 - binary_crossentropy: 0.0063 - val_loss: 0.7531 - val_accuracy: 0.8550 - val_binary_crossentropy: 0.7531
-Epoch 18/20
-25000/25000 - 2s - loss: 0.0051 - accuracy: 0.9999 - binary_crossentropy: 0.0051 - val_loss: 0.7754 - val_accuracy: 0.8537 - val_binary_crossentropy: 0.7754
-Epoch 19/20
-25000/25000 - 2s - loss: 0.0043 - accuracy: 0.9999 - binary_crossentropy: 0.0043 - val_loss: 0.8014 - val_accuracy: 0.8540 - val_binary_crossentropy: 0.8014
+......
 Epoch 20/20
 25000/25000 - 2s - loss: 0.0037 - accuracy: 0.9999 - binary_crossentropy: 0.0037 - val_loss: 0.8219 - val_accuracy: 0.8532 - val_binary_crossentropy: 0.8219
 ```
 
-### Create a smaller model
+### 创建一个更小的模型
 
-Let's create a model with less hidden units to compare against the baseline model that we just created:
+让我们创建一个隐藏单元较少的模型，与我们刚刚创建的基线模型进行比较：
 
 
 ```
@@ -189,9 +154,25 @@ smaller_model.compile(optimizer='adam',
 
 smaller_model.summary()
 ```
+输出：
+```
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_3 (Dense)              (None, 4)                 40004     
+_________________________________________________________________
+dense_4 (Dense)              (None, 4)                 20        
+_________________________________________________________________
+dense_5 (Dense)              (None, 1)                 5         
+=================================================================
+Total params: 40,029
+Trainable params: 40,029
+Non-trainable params: 0
+_________________________________________________________________
+```
 
-And train the model using the same data:
-
+用相同的数据训练模型：
 
 ```
 smaller_history = smaller_model.fit(train_data,
@@ -201,11 +182,20 @@ smaller_history = smaller_model.fit(train_data,
                                     validation_data=(test_data, test_labels),
                                     verbose=2)
 ```
+输出
+```
+Train on 25000 samples, validate on 25000 samples
+Epoch 1/20
+25000/25000 - 3s - loss: 0.6189 - accuracy: 0.6439 - binary_crossentropy: 0.6189 - val_loss: 0.5482 - val_accuracy: 0.7987 - val_binary_crossentropy: 0.5482
+......
+Epoch 20/20
+25000/25000 - 2s - loss: 0.1857 - accuracy: 0.9880 - binary_crossentropy: 0.1857 - val_loss: 0.5043 - val_accuracy: 0.8632 - val_binary_crossentropy: 0.5043
+```
 
-### Create a bigger model
+### 创建一个较大的模型
 
-As an exercise, you can create an even larger model, and see how quickly it begins overfitting.  Next, let's add to this benchmark a network that has much more capacity, far more than the problem would warrant:
-
+作为练习，您可以创建一个更大的模型，并查看它开始过拟合的速度。
+接下来，让我们在这个基准测试中添加一个容量更大的网络，远远超出问题的范围：
 
 ```
 bigger_model = keras.models.Sequential([
@@ -220,9 +210,25 @@ bigger_model.compile(optimizer='adam',
 
 bigger_model.summary()
 ```
+输出
+```
+Model: "sequential_2"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_6 (Dense)              (None, 512)               5120512   
+_________________________________________________________________
+dense_7 (Dense)              (None, 512)               262656    
+_________________________________________________________________
+dense_8 (Dense)              (None, 1)                 513       
+=================================================================
+Total params: 5,383,681
+Trainable params: 5,383,681
+Non-trainable params: 0
+_________________________________________________________________
+```
 
-And, again, train the model using the same data:
-
+并且，再次使用相同的数据训练模型：
 
 ```
 bigger_history = bigger_model.fit(train_data, train_labels,
@@ -231,13 +237,21 @@ bigger_history = bigger_model.fit(train_data, train_labels,
                                   validation_data=(test_data, test_labels),
                                   verbose=2)
 ```
+输出
+```
+Train on 25000 samples, validate on 25000 samples
+Epoch 1/20
+25000/25000 - 5s - loss: 0.3392 - accuracy: 0.8581 - binary_crossentropy: 0.3392 - val_loss: 0.2947 - val_accuracy: 0.8802 - val_binary_crossentropy: 0.2947
+......
+Epoch 20/20
+25000/25000 - 5s - loss: 1.1516e-05 - accuracy: 1.0000 - binary_crossentropy: 1.1516e-05 - val_loss: 0.9571 - val_accuracy: 0.8717 - val_binary_crossentropy: 0.9571
+```
 
-### Plot the training and validation loss
+### 绘制训练和验证损失
 
 <!--TODO(markdaoust): This should be a one-liner with tensorboard -->
 
-The solid lines show the training loss, and the dashed lines show the validation loss (remember: a lower validation loss indicates a better model). Here, the smaller network begins overfitting later than the baseline model (after 6 epochs rather than 4) and its performance degrades much more slowly once it starts overfitting.
-
+实线表示训练损失，虚线表示验证损失（记住：较低的验证损失表示更好的模型）。在这里，较小的网络开始过拟合晚于基线模型（在6个周期之后而不是4个周期），并且一旦开始过拟合，其性能下降得慢得多。
 
 ```
 def plot_history(histories, key='binary_crossentropy'):
@@ -261,26 +275,25 @@ plot_history([('baseline', baseline_history),
               ('bigger', bigger_history)])
 ```
 
-Notice that the larger network begins overfitting almost right away, after just one epoch, and overfits much more severely. The more capacity the network has, the quicker it will be able to model the training data (resulting in a low training loss), but the more susceptible it is to overfitting (resulting in a large difference between the training and validation loss).
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_23_0.png?dcb_=0.12370822350480548)
 
-## Strategies to prevent overfitting
+请注意，较大的网络在仅仅一个周期之后几乎立即开始过度拟合，并且更严重。网络容量越大，能够越快地对训练数据进行建模（导致训练损失低），但过拟合的可能性越大（导致训练和验证损失之间的差异很大）。
 
-### Add weight regularization
+## 防止过度拟合的策略
 
+### 添加权重正则化
 
+你可能熟悉奥卡姆的剃刀原则：给出两个解释的东西，最可能正确的解释是“最简单”的解释，即做出最少量假设的解释。这也适用于神经网络学习的模型：给定一些训练数据和网络架构，有多组权重值（多个模型）可以解释数据，而简单模型比复杂模型更不容易过度拟合。
 
-You may be familiar with Occam's Razor principle: given two explanations for something, the explanation most likely to be correct is the "simplest" one, the one that makes the least amount of assumptions. This also applies to the models learned by neural networks: given some training data and a network architecture, there are multiple sets of weights values (multiple models) that could explain the data, and simpler models are less likely to overfit than complex ones.
+在这种情况下，“简单模型”是参数值分布的熵更小的模型(或参数更少的模型，如我们在上一节中看到的)。因此，减轻过度拟合的一种常见方法是通过强制网络的权值只取较小的值来限制网络的复杂性，这使得权值的分布更加“规则”。这被称为“权重正则化”，它是通过在网络的损失函数中增加与权重过大相关的成本来实现的。这种成本有两种:
 
-A "simple model" in this context is a model where the distribution of parameter values has less entropy (or a model with fewer parameters altogether, as we saw in the section above). Thus a common way to mitigate overfitting is to put constraints on the complexity of a network by forcing its weights only to take small values, which makes the distribution of weight values more "regular". This is called "weight regularization", and it is done by adding to the loss function of the network a cost associated with having large weights. This cost comes in two flavors:
+* [L1 正则化](https://developers.google.cn/machine-learning/glossary/#L1_regularization)其中添加的成本与权重系数的绝对值成正比(即与权重的“L1范数”成正比)。
 
-* [L1 regularization](https://developers.google.com/machine-learning/glossary/#L1_regularization), where the cost added is proportional to the absolute value of the weights coefficients (i.e. to what is called the "L1 norm" of the weights).
+* [L2 正则化](https://developers.google.cn/machine-learning/glossary/#L2_regularization), 其中增加的成本与权重系数值的平方成正比(即与权重的平方“L2范数”成正比)。L2正则化在神经网络中也称为权值衰减。不要让不同的名称迷惑你:权重衰减在数学上与L2正则化是完全相同的。
 
-* [L2 regularization](https://developers.google.com/machine-learning/glossary/#L2_regularization), where the cost added is proportional to the square of the value of the weights coefficients (i.e. to what is called the squared "L2 norm" of the weights). L2 regularization is also called weight decay in the context of neural networks. Don't let the different name confuse you: weight decay is mathematically the exact same as L2 regularization.
+L2正则化引入了稀疏性，使一些权重参数为零。L2正则化将惩罚权重参数而不会使它们稀疏，这是L2更常见的一个原因。
 
-L1 regularization introduces sparsity to make some of your weight parameters zero. L2 regularization will penalize the weights parameters without making them sparse—one reason why L2 is more common.
-
-In `tf.keras`, weight regularization is added by passing weight regularizer instances to layers as keyword arguments. Let's add L2 weight regularization now.
-
+在`tf.keras`中，通过将权重正则化实例作为关键字参数传递给层来添加权重正则化。我们现在添加L2权重正则化。
 
 ```
 l2_model = keras.models.Sequential([
@@ -302,27 +315,37 @@ l2_model_history = l2_model.fit(train_data, train_labels,
                                 verbose=2)
 ```
 
-```l2(0.001)``` means that every coefficient in the weight matrix of the layer will add ```0.001 * weight_coefficient_value**2``` to the total loss of the network. Note that because this penalty is only added at training time, the loss for this network will be much higher at training than at test time.
+```
+Train on 25000 samples, validate on 25000 samples
+Epoch 1/20
+25000/25000 - 3s - loss: 0.5191 - accuracy: 0.8206 - binary_crossentropy: 0.4785 - val_loss: 0.3855 - val_accuracy: 0.8727 - val_binary_crossentropy: 0.3421
+......
+Epoch 20/20
+25000/25000 - 2s - loss: 0.1567 - accuracy: 0.9718 - binary_crossentropy: 0.0868 - val_loss: 0.5327 - val_accuracy: 0.8561 - val_binary_crossentropy: 0.4631
+```
 
-Here's the impact of our L2 regularization penalty:
 
+```l2（0.001）```表示该层的权重矩阵中的每个系数都会将```0.001 * weight_coefficient_value**2```添加到网络的总损失中。请注意，由于此惩罚仅在训练时添加，因此在训练时该网络的损失将远高于测试时。
+
+这是我们的L2正则化惩罚的影响：
 
 ```
 plot_history([('baseline', baseline_history),
               ('l2', l2_model_history)])
 ```
 
-As you can see, the L2 regularized model has become much more resistant to overfitting than the baseline model, even though both models have the same number of parameters.
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_30_0.png?dcb_=0.8386779368853696)
 
-### Add dropout
+正如你所看到的，L2正则化模型比基线模型更能抵抗过拟合，即使两个模型具有相同数量的参数。
 
-Dropout is one of the most effective and most commonly used regularization techniques for neural networks, developed by Hinton and his students at the University of Toronto. Dropout, applied to a layer, consists of randomly "dropping out" (i.e. set to zero) a number of output features of the layer during training. Let's say a given layer would normally have returned a vector [0.2, 0.5, 1.3, 0.8, 1.1] for a given input sample during training; after applying dropout, this vector will have a few zero entries distributed at random, e.g. [0, 0.5,
-1.3, 0, 1.1]. The "dropout rate" is the fraction of the features that are being zeroed-out; it is usually set between 0.2 and 0.5. At test time, no units are dropped out, and instead the layer's output values are scaled down by a factor equal to the dropout rate, so as to balance for the fact that more units are active than at training time.
+### 添加Dropout(丢弃正则化)
 
-In tf.keras you can introduce dropout in a network via the Dropout layer, which gets applied to the output of layer right before.
+Dropout是由Hinton和他在多伦多大学的学生开发的最有效和最常用的神经网络正则化技术之一。Dropout应用于层主要就是在训练期间随机“丢弃”（即设置为零）该层的多个输出特征。假设一个给定的层通常会在训练期间为给定的输入样本返回一个向量[0.2,0.5,1.3,0.8,1.1]，在应用了Dropout之后，该向量将具有随机分布的几个零条目，例如，[0,0.5,1.3,0,1.1]。“丢弃率”是被归零的特征的一部分，它通常设置在0.2和0.5之间，
+在测试时，没有单元被剔除，而是将层的输出值按与丢弃率相等的因子缩小，以平衡实际活动的单元多余训练时的单元。
 
-Let's add two Dropout layers in our IMDB network to see how well they do at reducing overfitting:
+在`tf.keras`中，您可以通过`Dropout`层在网络中引入dropout，该层将在之前应用于层的输出。
 
+让我们在IMDB网络中添加两个`Dropout`层，看看它们在减少过度拟合方面做得如何：
 
 ```
 dpt_model = keras.models.Sequential([
@@ -344,19 +367,28 @@ dpt_model_history = dpt_model.fit(train_data, train_labels,
                                   verbose=2)
 ```
 
+```
+Train on 25000 samples, validate on 25000 samples
+Epoch 1/20
+25000/25000 - 3s - loss: 0.6355 - accuracy: 0.6373 - binary_crossentropy: 0.6355 - val_loss: 0.4929 - val_accuracy: 0.8396 - val_binary_crossentropy: 0.4929
+......
+Epoch 20/20
+25000/25000 - 3s - loss: 0.0729 - accuracy: 0.9738 - binary_crossentropy: 0.0729 - val_loss: 0.5624 - val_accuracy: 0.8747 - val_binary_crossentropy: 0.5624
+```
 
 ```
 plot_history([('baseline', baseline_history),
               ('dropout', dpt_model_history)])
 ```
 
-Adding dropout is a clear improvement over the baseline model.
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_34_0.png?dcb_=0.9304692927609572)
 
-To recap: here are the most common ways to prevent overfitting in neural networks:
+从上图可以看出，添加dropout时对基线模型的明显改进。
 
-* Get more training data.
-* Reduce the capacity of the network.
-* Add weight regularization.
-* Add dropout.
+回顾一下，以下是防止神经网络中过度拟合的最常用方法：
+* 获取更多训练数据
+* 减少网络的容量
+* 添加权重正则化
+* 添加dropout
 
-And two important approaches not covered in this guide are data-augmentation and batch normalization.
+本指南未涉及的两个重要方法是数据增强和批量标准化。
