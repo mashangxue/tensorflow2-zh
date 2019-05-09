@@ -416,12 +416,13 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 Restored model, accuracy: 85.70%
 ```
 
-## What's Next
+## 下一步是什么
 
-That was a quick guide to saving and loading in with `tf.keras`.
+这是使用`tf.keras`保存和加载的快速指南。
 
-* The [tf.keras guide](https://www.tensorflow.org/guide/keras) shows more about saving and loading models with `tf.keras`.
+* [tf.keras指南](https://tensorflow.google.cn/guide/keras)显示了有关使用tf.keras保存和加载模型的更多信息。
 
-* See [Saving in eager](https://www.tensorflow.org/guide/eager#object_based_saving) for saving during eager execution.
+* 在eager execution期间保存，请参阅在[Saving in eager](https://tensorflow.google.cn/guide/eager#object_based_saving)。
 
-* The [Save and Restore](https://www.tensorflow.org/guide/saved_model) guide has low-level details about TensorFlow saving.
+* [保存和还原指南](https://tensorflow.google.cn/guide/saved_model)包含有关TensorFlow保存的低阶详细信息。
+
