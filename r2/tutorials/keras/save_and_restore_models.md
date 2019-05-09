@@ -1,47 +1,5 @@
 
-##### Copyright 2018 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-
-```
-#@title MIT License
-#
-# Copyright (c) 2017 François Chollet
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-```
-
-# Save and restore models
+# 保存加载模型
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -55,35 +13,33 @@
   </td>
 </table>
 
-Model progress can be saved during—and after—training. This means a model can resume where it left off and avoid long training times. Saving also means you can share your model and others can recreate your work. When publishing research models and techniques, most machine learning practitioners share:
-
-* code to create the model, and
-* the trained weights, or parameters, for the model
-
-Sharing this data helps others understand how the model works and try it themselves with new data.
-
 Caution: Be careful with untrusted code—TensorFlow models are code. See [Using TensorFlow Securely](https://github.com/tensorflow/tensorflow/blob/master/SECURITY.md) for details.
 
-### Options
+模型进度可以在训练期间和训练后保存。这意味着模型可以在它停止的地方继续，并避免长时间的训练。保存还意味着您可以共享您的模型，其他人可以重新创建您的工作。当发布研究模型和技术时，大多数机器学习实践者共享:
+* 用于创建模型的代码
+* 以及模型的训练权重或参数
 
-There are different ways to save TensorFlow models—depending on the API you're using. This guide uses [tf.keras](https://www.tensorflow.org/guide/keras), a high-level API to build and train models in TensorFlow. For other approaches, see the TensorFlow  [Save and Restore](https://www.tensorflow.org/guide/saved_model) guide or [Saving in eager](https://www.tensorflow.org/guide/eager#object-based_saving).
+共享此数据有助于其他人了解模型的工作原理，并使用新数据自行尝试。
 
+注意：小心不受信任的代码(TensorFlow模型是代码)。有关详细信息，请参阅[安全使用TensorFlow](https://github.com/tensorflow/tensorflow/blob/master/SECURITY.md) 。
 
-## Setup
+### 选项
 
-### Installs and imports
+保存TensorFlow模型有多种方法，具体取决于你使用的API。本章节使用tf.keras(一个高级API，用于TensorFlow中构建和训练模型)，有关其他方法，请参阅TensorFlow[保存和还原指南](https://tensorflow.google.cn/guide/saved_model)或[保存在eager中](https://tensorflow.google.cn/guide/eager#object-based_saving)。
 
-Install and import TensorFlow and dependencies:
+## 设置
 
+### 安装和导入
+
+需要安装和导入TensorFlow和依赖项
 
 ```
-!pip install h5py pyyaml
+pip install h5py pyyaml
 ```
 
-### Get an example dataset
+### 获取样本数据集
 
-We'll use the [MNIST dataset](http://yann.lecun.com/exdb/mnist/) to train our model to demonstrate saving weights. To speed up these demonstration runs, only use the first 1000 examples:
-
+我们将使用[MNIST数据集](http://yann.lecun.com/exdb/mnist/)来训练我们的模型以演示保存权重，要加速这些演示运行，请只使用前1000个样本数据：
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -108,13 +64,12 @@ train_images = train_images[:1000].reshape(-1, 28 * 28) / 255.0
 test_images = test_images[:1000].reshape(-1, 28 * 28) / 255.0
 ```
 
-### Define a model
+### 定义模型
 
-Let's build a simple model we'll use to demonstrate saving and loading weights.
-
+让我们构建一个简单的模型，我们将用它来演示保存和加载权重。
 
 ```
-# Returns a short sequential model
+# 返回一个简短的序列模型 
 def create_model():
   model = tf.keras.models.Sequential([
     keras.layers.Dense(512, activation='relu', input_shape=(784,)),
@@ -129,27 +84,47 @@ def create_model():
   return model
 
 
-# Create a basic model instance
+# 创建基本模型实例
 model = create_model()
 model.summary()
 ```
 
-## Save checkpoints during training
+```
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense (Dense)                (None, 512)               401920    
+_________________________________________________________________
+dropout (Dropout)            (None, 512)               0         
+_________________________________________________________________
+dense_1 (Dense)              (None, 10)                5130      
+=================================================================
+Total params: 407,050
+Trainable params: 407,050
+Non-trainable params: 0
+_________________________________________________________________
+```
+
+## 在训练期间保存检查点
 
 The primary use case is to automatically save checkpoints *during* and at *the end* of training. This way you can use a trained model without having to retrain it, or pick-up training where you left of—in case the training process was interrupted.
 
 `tf.keras.callbacks.ModelCheckpoint` is a callback that performs this task. The callback takes a couple of arguments to configure checkpointing.
 
-### Checkpoint callback usage
+主要用例是在训练期间和训练结束时自动保存检查点，通过这种方式，您可以使用训练有素的模型，而无需重新训练，或者在您离开的地方继续训练，以防止训练过程中断。
 
-Train the model and pass it the `ModelCheckpoint` callback:
+`tf.keras.callbacks.ModelCheckpoint`是执行此任务的回调，回调需要几个参数来配置检查点。
 
+### 检查点回调使用情况
 
-```
+训练模型并将其传递给 `ModelCheckpoint`回调
+
+```python
 checkpoint_path = "training_1/cp.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
-# Create checkpoint callback
+# 创建一个检查点回调
 cp_callback = tf.keras.callbacks.ModelCheckpoint(checkpoint_path,
                                                  save_weights_only=True,
                                                  verbose=1)
@@ -160,22 +135,30 @@ model.fit(train_images, train_labels,  epochs = 10,
           validation_data = (test_images,test_labels),
           callbacks = [cp_callback])  # pass callback to training
 
-# This may generate warnings related to saving the state of the optimizer.
-# These warnings (and similar warnings throughout this notebook)
-# are in place to discourage outdated usage, and can be ignored.
+# 这可能会生成与保存优化程序状态相关的警告。
+# 这些警告（以及整个笔记本中的类似警告）是为了阻止过时使用的，可以忽略。
 ```
 
-This creates a single collection of TensorFlow checkpoint files that are updated at the end of each epoch:
-
-
 ```
-!ls {checkpoint_dir}
+Train on 1000 samples, validate on 1000 samples
+......
+Epoch 10/10
+ 960/1000 [===========================>..] - ETA: 0s - loss: 0.0392 - accuracy: 1.0000
+Epoch 00010: saving model to training_1/cp.ckpt
+1000/1000 [==============================] - 0s 207us/sample - loss: 0.0393 - accuracy: 1.0000 - val_loss: 0.3976 - val_accuracy: 0.8750
+
+<tensorflow.python.keras.callbacks.History at 0x7efc3eba7358>
 ```
 
-Create a new, untrained model. When restoring a model from only weights, you must have a model with the same architecture as the original model. Since it's the same model architecture, we can share weights despite that it's a different *instance* of the model.
+这将创建一个TensorFlow检查点文件集合，这些文件在每个周期结束时更新。
+文件夹checkpoint_dir下的内容如下：（Linux系统使用 `ls`命令查看）
+```
+checkpoint  cp.ckpt.data-00000-of-00001  cp.ckpt.index
+```
 
-Now rebuild a fresh, untrained model, and evaluate it on the test set. An untrained model will perform at chance levels (~10% accuracy):
+创建一个新的未经训练的模型，仅从权重恢复模型时，必须具有与原始模型具有相同体系结构的模型，由于它是相同的模型架构，我们可以共享权重，尽管它是模型的不同示例。
 
+现在重建一个新的，未经训练的模型，并在测试集中评估它。未经训练的模型将在随机水平(约10%的准确率):
 
 ```
 model = create_model()
@@ -184,8 +167,12 @@ loss, acc = model.evaluate(test_images, test_labels)
 print("Untrained model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
-Then load the weights from the checkpoint, and re-evaluate:
+```
+1000/1000 [==============================] - 0s 107us/sample - loss: 2.3224 - accuracy: 0.1230
+Untrained model, accuracy: 12.30%
+```
 
+然后从检查点加载权重，并重新评估：
 
 ```
 model.load_weights(checkpoint_path)
@@ -193,22 +180,25 @@ loss,acc = model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
-### Checkpoint callback options
+```
+1000/1000 [==============================] - 0s 48us/sample - loss: 0.3976 - accuracy: 0.8750
+Restored model, accuracy: 87.50%
+```
 
-The callback provides several options to give the resulting checkpoints unique names, and adjust the checkpointing frequency.
+### 检查点选项
 
-Train a new model, and save uniquely named checkpoints once every 5-epochs:
+回调提供了几个选项，可以为生成的检查点提供唯一的名称，并调整检查点频率。
 
-
+训练一个新模型，每5个周期保存一次唯一命名的检查点：
 
 ```
-# include the epoch in the file name. (uses `str.format`)
+# 在文件名中包含周期数. (使用 `str.format`)
 checkpoint_path = "training_2/cp-{epoch:04d}.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
 
 cp_callback = tf.keras.callbacks.ModelCheckpoint(
     checkpoint_path, verbose=1, save_weights_only=True,
-    # Save weights, every 5-epochs.
+    # 每5个周期保存一次权重
     period=5)
 
 model = create_model()
@@ -219,23 +209,28 @@ model.fit(train_images, train_labels,
           verbose=0)
 ```
 
-Now, look at the resulting checkpoints and choose the latest one:
-
-
-```
-! ls {checkpoint_dir}
 ```
 
+Epoch 00005: saving model to training_2/cp-0005.ckpt
+......
+Epoch 00050: saving model to training_2/cp-0050.ckpt
+<tensorflow.python.keras.callbacks.History at 0x7efc7c3bbd30>
+```
+
+现在，查看生成的检查点并选择最新的检查点：
 
 ```
 latest = tf.train.latest_checkpoint(checkpoint_dir)
 latest
 ```
 
-Note: the default tensorflow format only saves the 5 most recent checkpoints.
+'''
+'training_2/cp-0050.ckpt'
+'''
 
-To test, reset the model and load the latest checkpoint:
+注意：默认的tensorflow格式仅保存最近的5个检查点。
 
+要测试，请重置模型并加载最新的检查点：
 
 ```
 model = create_model()
@@ -244,26 +239,30 @@ loss, acc = model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
-## What are these files?
+```
+1000/1000 [==============================] - 0s 84us/sample - loss: 0.4695 - accuracy: 0.8810
+Restored model, accuracy: 88.10%
+```
 
-The above code stores the weights to a collection of [checkpoint](https://www.tensorflow.org/guide/saved_model#save_and_restore_variables)-formatted files that contain only the trained weights in a binary format. Checkpoints contain:
-* One or more shards that contain your model's weights.
-* An index file that indicates which weights are stored in a which shard.
+## 这些文件是什么？
 
-If you are only training a model on a single machine, you'll have one shard with the suffix: `.data-00000-of-00001`
+上述代码将权重存储到[检查点]((https://tensorflow.google.cn/guide/saved_model#save_and_restore_variables))格式的文件集合中，这些文件仅包含二进制格式的训练权重.
+检查点包含：
+* 一个或多个包含模型权重的分片；
+* 索引文件，指示哪些权重存储在哪个分片。
 
-## Manually save weights
+如果您只在一台机器上训练模型，那么您将有一个带有后缀的分片：`.data-00000-of-00001`
 
-Above you saw how to load the weights into a model.
 
-Manually saving the weights is just as simple, use the `Model.save_weights` method.
+## 手动保存权重
 
+上面你看到了如何将权重加载到模型中。手动保存权重同样简单，使用`Model.save_weights`方法。
 
 ```
-# Save the weights
+# 保存权重
 model.save_weights('./checkpoints/my_checkpoint')
 
-# Restore the weights
+# 加载权重
 model = create_model()
 model.load_weights('./checkpoints/my_checkpoint')
 
@@ -271,15 +270,15 @@ loss,acc = model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
-## Save the entire model
+## 保存整个模型
 
-The model and optimizer can be saved to a file that contains both their state (weights and variables), and the model configuration. This allows you to export a model so it can be used without access to the original python code. Since the optimizer-state is recovered you can even resume training from exactly where you left off.
+模型和优化器可以保存到包含其状态（权重和变量）和模型配置的文件中，这允许您导出模型，以便可以在不访问原始python代码的情况下使用它。由于恢复了优化器状态，您甚至可以从中断的位置恢复训练。
 
-Saving a fully-functional model is very useful—you can load them in TensorFlow.js ([HDF5](https://js.tensorflow.org/tutorials/import-keras.html), [Saved Model](https://js.tensorflow.org/tutorials/import-saved-model.html)) and then train and run them in web browsers, or convert them to run on mobile devices using TensorFlow Lite ([HDF5](https://www.tensorflow.org/lite/convert/python_api#exporting_a_tfkeras_file_), [Saved Model](https://www.tensorflow.org/lite/convert/python_api#exporting_a_savedmodel_))
+保存完整的模型非常有用，您可以在TensorFlow.js([HDF5](https://tensorflow.google.cn/js/tutorials/import-keras.html), [Saved Model](https://tensorflow.google.cn/js/tutorials/conversion/import_saved_model)) 中加载它们，然后在Web浏览器中训练和运行它们，或者使用TensorFlow Lite([HDF5](https://tensorflow.google.cn/lite/convert/python_api#exporting_a_tfkeras_file_), [Saved Model](https://tensorflow.google.cn/lite/convert/python_api#exporting_a_savedmodel_))将它们转换为在移动设备上运行。
 
-### As an HDF5 file
+### 作为HDF5文件
 
-Keras provides a basic save format using the [HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format) standard. For our purposes, the saved model can be treated as a single binary blob.
+Keras使用[HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format)标准提供基本保存格式，出于我们的目的，可以将保存的模型视为单个二进制blob。
 
 
 ```
@@ -287,20 +286,36 @@ model = create_model()
 
 model.fit(train_images, train_labels, epochs=5)
 
-# Save entire model to a HDF5 file
+# 保存整个模型到HDF5文件 
 model.save('my_model.h5')
 ```
 
-Now recreate the model from that file:
-
+现在从该文件重新创建模型：
 
 ```
-# Recreate the exact same model, including weights and optimizer.
+# 重新创建完全相同的模型，包括权重和优化器
 new_model = keras.models.load_model('my_model.h5')
 new_model.summary()
 ```
 
-Check its accuracy:
+```
+Model: "sequential_6"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_12 (Dense)             (None, 512)               401920    
+_________________________________________________________________
+dropout_6 (Dropout)          (None, 512)               0         
+_________________________________________________________________
+dense_13 (Dense)             (None, 10)                5130      
+=================================================================
+Total params: 407,050
+Trainable params: 407,050
+Non-trainable params: 0
+_________________________________________________________________
+```
+
+检查模型的准确率:
 
 
 ```
@@ -308,21 +323,24 @@ loss, acc = new_model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
-This technique saves everything:
+```
+1000/1000 [==============================] - 0s 94us/sample - loss: 0.4137 - accuracy: 0.8540
+Restored model, accuracy: 85.40%
+```
 
-* The weight values
-* The model's configuration(architecture)
-* The optimizer configuration
+此方法可保存模型的所有东西：
+* 权重值
+* 模型的配置（架构）
+* 优化器配置
 
-Keras saves models by inspecting the architecture. Currently, it is not able to save TensorFlow optimizers (from `tf.train`). When using those you will need to re-compile the model after loading, and you will lose the state of the optimizer.
+Keras通过检查架构来保存模型，目前它无法保存TensorFlow优化器（来自`tf.train`）。使用这些时，您需要在加载后重新编译模型，否则您将失去优化程序的状态。
 
 
-### As a `saved_model`
+### 作为 `saved_model`
 
-Caution: This method of saving a `tf.keras` model is experimental and may change in future versions.
+注意：这种保存`tf.keras`模型的方法是实验性的，在将来的版本中可能会有所改变。
 
-Build a fresh model:
-
+创建一个新的模型：
 
 ```
 model = create_model()
@@ -330,8 +348,7 @@ model = create_model()
 model.fit(train_images, train_labels, epochs=5)
 ```
 
-Create a `saved_model`, and place it in a time-stamped directory:
-
+创建`saved_model`，并将其放在带时间戳的目录中：
 
 ```
 import time
@@ -341,40 +358,62 @@ tf.keras.experimental.export_saved_model(model, saved_model_path)
 saved_model_path
 ```
 
-List your saved models:
-
-
 ```
-!ls saved_models/
+...
+'./saved_models/1555630614'
 ```
 
-Reload a fresh keras model from the saved model.
-
+从保存的模型重新加载新的keras模型：
 
 ```
 new_model = tf.keras.experimental.load_from_saved_model(saved_model_path)
 new_model.summary()
 ```
 
-Run the restored model.
+```
+Model: "sequential_7"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+dense_14 (Dense)             (None, 512)               401920    
+_________________________________________________________________
+dropout_7 (Dropout)          (None, 512)               0         
+_________________________________________________________________
+dense_15 (Dense)             (None, 10)                5130      
+=================================================================
+Total params: 407,050
+Trainable params: 407,050
+Non-trainable params: 0
+_________________________________________________________________
+```
 
+运行加载的模型进行预测：
 
 ```
 model.predict(test_images).shape
 ```
 
+```
+(1000, 10)
+```
+
 
 ```
-# The model has to be compiled before evaluating.
-# This step is not required if the saved model is only being deployed.
+# 必须要在评估之前编译模型
+# 如果仅部署已保存的模型，则不需要此步骤 
 
 new_model.compile(optimizer=model.optimizer,  # keep the optimizer that was loaded
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 
-# Evaluate the restored model.
+# 评估加载后的模型 
 loss, acc = new_model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
+```
+
+```
+1000/1000 [==============================] - 0s 102us/sample - loss: 0.4367 - accuracy: 0.8570
+Restored model, accuracy: 85.70%
 ```
 
 ## What's Next
