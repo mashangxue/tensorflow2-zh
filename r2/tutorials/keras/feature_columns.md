@@ -1,22 +1,5 @@
 
-##### Copyright 2019 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Classify structured data
+# 结构化数据分类
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -36,18 +19,21 @@
   </td>
 </table>
 
-This tutorial demonstrates how to classify structured data (e.g. tabular data in a CSV). We will use [Keras](https://www.tensorflow.org/guide/keras) to define the model, and [feature columns](https://www.tensorflow.org/guide/feature_columns) as a bridge to map from columns in a CSV to features used to train the model. This tutorial contains complete code to:
+本教程演示了如何对结构化数据进行分类（例如CSV格式的表格数据）。
+我们将使用Keras定义模型，并使用[特征列](https://tensorflow.google.cn/guide/feature_columns)作为桥梁，将CSV中的列映射到用于训练模型的特性。
+本教程包含完整的代码：
 
-* Load a CSV file using [Pandas](https://pandas.pydata.org/).
-* Build an input pipeline to batch and shuffle the rows using [tf.data](https://www.tensorflow.org/guide/datasets).
-* Map from columns in the CSV to features used to train the model using feature columns.
-* Build, train, and evaluate a model using Keras.
+* 使用[Pandas](https://pandas.pydata.org/)加载CSV文件。 .
+* 构建一个输入管道，使用[tf.data](https://www.tensorflow.org/guide/datasets)批处理和洗牌行
+* 从CSV中的列映射到用于训练模型的特性。
+* 使用Keras构建、训练和评估模型。
 
-## The Dataset
+## 数据集
 
-We will use a small [dataset](https://archive.ics.uci.edu/ml/datasets/heart+Disease) provided by the Cleveland Clinic Foundation for Heart Disease. There are several hundred rows in the CSV. Each row describe a patient, and each column describes an attribute. We will use this information to predict whether a patient has heart disease, which in this dataset is a binary classification task.
+我们将使用克利夫兰诊所心脏病基金会提供的一个小[数据集](https://archive.ics.uci.edu/ml/datasets/heart+Disease) 。CSV中有几百行，每行描述一个患者，每列描述一个属性。我们将使用此信息来预测患者是否患有心脏病，该疾病在该数据集中是二元分类任务。
 
-Following is a [description](https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/heart-disease.names) of this dataset. Notice there are both numeric and categorical columns.
+以下是此[数据集的说明](https://archive.ics.uci.edu/ml/machine-learning-databases/heart-disease/heart-disease.names)。请注意，有数字和分类列。
+
 
 >Column| Description| Feature Type | Data Type
 >------------|--------------------|----------------------|-----------------
@@ -66,13 +52,12 @@ Following is a [description](https://archive.ics.uci.edu/ml/machine-learning-dat
 >Thal | 3 = normal; 6 = fixed defect; 7 = reversable defect | Categorical | string
 >Target | Diagnosis of heart disease (1 = true; 0 = false) | Classification | integer
 
-## Import TensorFlow and other libraries
+## 导入TensorFlow和其他库
 
-
+安装sklearn依赖库
 ```
-!pip install sklearn
+pip install sklearn
 ```
-
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -80,7 +65,6 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import numpy as np
 import pandas as pd
 
-!pip install tensorflow==2.0.0-alpha0
 import tensorflow as tf
 
 from tensorflow import feature_column
@@ -88,9 +72,9 @@ from tensorflow.keras import layers
 from sklearn.model_selection import train_test_split
 ```
 
-## Use Pandas to create a dataframe
+## 使用Pandas创建数据帧
 
-[Pandas](https://pandas.pydata.org/) is a Python library with many helpful utilities for loading and working with structured data. We will use Pandas to download the dataset from a URL, and load it into a dataframe.
+[Pandas](https://pandas.pydata.org/) 是一个Python库，包含许多有用的实用程序，用于加载和处理结构化数据。我们将使用Pandas从URL下载数据集，并将其加载到数据帧中。
 
 
 ```
