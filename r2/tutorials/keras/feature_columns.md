@@ -3,18 +3,18 @@
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/keras/feature_columns">
-    <img src="https://www.tensorflow.org/images/tf_logo_32px.png" />
+    <a target="_blank" href="https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns">
+    <img src="https://tensorflow.google.cn/images/tf_logo_32px.png" />
     View on TensorFlow.org</a>
   </td>
   <td>
     <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/feature_columns.ipynb">
-    <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />
+    <img src="https://tensorflow.google.cn/images/colab_logo_32px.png" />
     Run in Google Colab</a>
   </td>
   <td>
     <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/feature_columns.ipynb">
-    <img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />
+    <img src="https://tensorflow.google.cn/images/GitHub-Mark-32px.png" />
     View source on GitHub</a>
   </td>
 </table>
@@ -24,7 +24,7 @@
 本教程包含完整的代码：
 
 * 使用[Pandas](https://pandas.pydata.org/)加载CSV文件。 .
-* 构建一个输入管道，使用[tf.data](https://www.tensorflow.org/guide/datasets)批处理和洗牌行
+* 构建一个输入管道，使用[tf.data](https://tensorflow.google.cn/guide/datasets)批处理和洗牌行
 * 从CSV中的列映射到用于训练模型的特性。
 * 使用Keras构建、训练和评估模型。
 
@@ -162,7 +162,7 @@ def demo(feature_column):
 
 ### 数字列
 
-特征列的输出成为模型的输入（使用上面定义的演示函数，我们将能够准确地看到数据帧中每列的转换方式），[数字列](https://www.tensorflow.org/api_docs/python/tf/feature_column/numeric_column)是最简单的列类型，它用于表示真正有价值的特征，使用此列时，模型将从数据帧中接收未更改的列值。
+特征列的输出成为模型的输入（使用上面定义的演示函数，我们将能够准确地看到数据帧中每列的转换方式），[数字列](https://tensorflow.google.cn/api_docs/python/tf/feature_column/numeric_column)是最简单的列类型，它用于表示真正有价值的特征，使用此列时，模型将从数据帧中接收未更改的列值。
 
 ```
 age = feature_column.numeric_column("age")
@@ -181,7 +181,7 @@ demo(age)
 
 ### Bucketized列（桶列）
 
-通常，您不希望将数字直接输入模型，而是根据数值范围将其值分成不同的类别，考虑代表一个人年龄的原始数据，我们可以使用[bucketized列](https://www.tensorflow.org/api_docs/python/tf/feature_column/bucketized_column)将年龄分成几个桶，而不是将年龄表示为数字列。
+通常，您不希望将数字直接输入模型，而是根据数值范围将其值分成不同的类别，考虑代表一个人年龄的原始数据，我们可以使用[bucketized列](https://tensorflow.google.cn/api_docs/python/tf/feature_column/bucketized_column)将年龄分成几个桶，而不是将年龄表示为数字列。
 请注意，下面的one-hot(独热编码)值描述了每行匹配的年龄范围。
 
 ```
@@ -199,7 +199,7 @@ demo(age_buckets)
 
 ### 分类列
 
-在该数据集中，thal表示为字符串（例如“固定”，“正常”或“可逆”），我们无法直接将字符串提供给模型，相反，我们必须首先将它们映射到数值。分类词汇表列提供了一种将字符串表示为独热矢量的方法（就像上面用年龄段看到的那样）。词汇表可以使用[categorical_column_with_vocabulary_list](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_list)作为列表传递，或者使用[categorical_column_with_vocabulary_file](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_file)从文件加载。
+在该数据集中，thal表示为字符串（例如“固定”，“正常”或“可逆”），我们无法直接将字符串提供给模型，相反，我们必须首先将它们映射到数值。分类词汇表列提供了一种将字符串表示为独热矢量的方法（就像上面用年龄段看到的那样）。词汇表可以使用[categorical_column_with_vocabulary_list](https://tensorflow.google.cn/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_list)作为列表传递，或者使用[categorical_column_with_vocabulary_file](https://tensorflow.google.cn/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_file)从文件加载。
 
 
 ```
@@ -223,7 +223,7 @@ demo(thal_one_hot)
 ### 嵌入列
 
 假设我们不是只有几个可能的字符串，而是每个类别有数千（或更多）值。由于多种原因，随着类别数量的增加，使用独热编码训练神经网络变得不可行，我们可以使用嵌入列来克服此限制。
-[嵌入列](https://www.tensorflow.org/api_docs/python/tf/feature_column/embedding_column)不是将数据表示为多维度的独热矢量，而是将数据表示为低维密集向量，其中每个单元格可以包含任意数字，而不仅仅是0或1.嵌入的大小（在下面的例子中是8）是必须调整的参数。
+[嵌入列](https://tensorflow.google.cn/api_docs/python/tf/feature_column/embedding_column)不是将数据表示为多维度的独热矢量，而是将数据表示为低维密集向量，其中每个单元格可以包含任意数字，而不仅仅是0或1.嵌入的大小（在下面的例子中是8）是必须调整的参数。
 
 关键点：当分类列具有许多可能的值时，最好使用嵌入列，我们在这里使用一个用于演示目的，因此您有一个完整的示例，您可以在将来修改其他数据集。
 
@@ -249,9 +249,9 @@ demo(thal_embedding)
 
 ### 哈希特征列
 
-Another way to represent a categorical column with a large number of values is to use a [categorical_column_with_hash_bucket](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_hash_bucket). This feature column calculates a hash value of the input, then selects one of the `hash_bucket_size` buckets to encode a string. When using this column, you do not need to provide the vocabulary, and you can choose to make the number of hash_buckets significantly smaller than the number of actual categories to save space.
+Another way to represent a categorical column with a large number of values is to use a [categorical_column_with_hash_bucket](https://tensorflow.google.cn/api_docs/python/tf/feature_column/categorical_column_with_hash_bucket). This feature column calculates a hash value of the input, then selects one of the `hash_bucket_size` buckets to encode a string. When using this column, you do not need to provide the vocabulary, and you can choose to make the number of hash_buckets significantly smaller than the number of actual categories to save space.
 
-表示具有大量值的分类列的另一种方法是使用[categorical_column_with_hash_bucket](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_hash_bucket).
+表示具有大量值的分类列的另一种方法是使用[categorical_column_with_hash_bucket](https://tensorflow.google.cn/api_docs/python/tf/feature_column/categorical_column_with_hash_bucket).
 此特征列计算输入的哈希值，然后选择一个`hash_bucket_size`存储桶来编码字符串，使用此列时，您不需要提供词汇表，并且可以选择使`hash_buckets`的数量远远小于实际类别的数量以节省空间。
 
 关键点：该技术的一个重要缺点是可能存在冲突，其中不同的字符串被映射到同一个桶，实际上，无论如何，这对某些数据集都有效。
@@ -327,7 +327,7 @@ feature_columns.append(crossed_feature)
 
 ### 创建特征层
 
-现在我们已经定义了我们的特征列，我们将使用[DenseFeatures](https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/keras/layers/DenseFeatures)层将它们输入到我们的Keras模型中。
+现在我们已经定义了我们的特征列，我们将使用[DenseFeatures](https://tensorflow.google.cn/versions/r2.0/api_docs/python/tf/keras/layers/DenseFeatures)层将它们输入到我们的Keras模型中。
 
 
 ```
