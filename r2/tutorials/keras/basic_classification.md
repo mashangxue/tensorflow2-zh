@@ -13,10 +13,11 @@
   </td>
 </table>
 
-本指南训练神经网络模型，对服装图像进行分类，如运动鞋和衬衫。如果您不了解所有细节，那也没关系;
-这是一个完整的TensorFlow程序的快节奏概述，详细解释了我们的目标。
+本指南会训练一个对服饰（例如运动鞋和衬衫）图像进行分类的神经网络模型。即使您不了解所有细节也没关系，本教程只是简要介绍了一个完整的 TensorFlow 程序，而且后续我们会详细介绍。
 
-本指南使用[tf.keras](https://www.tensorflow.org/guide/keras)，一个高级API，用于在TensorFlow中构建和训练模型。
+本指南使用的是[tf.keras](https://tensorflow.google.cn/guide/keras)，它是一种用于在 TensorFlow 中构建和训练模型的高阶 API。
+
+
 安装
 
 ```
@@ -41,7 +42,7 @@ print(tf.__version__)
 
 ## 导入MNIST数据集
 
-本指南使用[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist) 数据集，该数据集包含10个类别中的70,000个灰度图像。 图像显示了低分辨率（28 x 28像素）的单件服装，如下所示：
+本指南使用[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)数据集，其中包含 70000 张灰度图像，涵盖 10 个类别。以下图像显示了单件服饰在较低分辨率（28x28 像素）下的效果：
 
 <table>
   <tr><td>
@@ -49,15 +50,15 @@ print(tf.__version__)
          alt="Fashion MNIST sprite"  width="600">
   </td></tr>
   <tr><td align="center">
-    <b>Figure 1.</b> <a href="https://github.com/zalandoresearch/fashion-mnist">Fashion-MNIST samples</a> (by Zalando, MIT License).<br/>&nbsp;
+    <b>Figure 1.</b> <a href="https://github.com/zalandoresearch/fashion-mnist">Fashion-MNIST 样本</a> (by Zalando, MIT License).<br/>&nbsp;
   </td></tr>
 </table>
 
-Fashion MNIST旨在替代经典的MNIST数据集 - 通常用作计算机视觉机器学习计划的“Hello，World”。MNIST数据集包含手写数字（0,1,2等）的图像，其格式与我们将在此处使用的服装的格式相同。
+Fashion MNIST 的作用是成为经典 MNIST 数据集的简易替换，后者通常用作计算机视觉机器学习程序的“Hello, World”入门数据集。[MNIST](http://yann.lecun.com/exdb/mnist/)数据集包含手写数字（0、1、2 等）的图像，这些图像的格式与我们在本教程中使用的服饰图像的格式相同。
 
-本指南使用Fashion MNIST的多样性，因为这是一个比普通 [MNIST](http://yann.lecun.com/exdb/mnist/)稍微更具挑战性的问题。这两个数据集都相对较小，用于验证算法是否按预期工作。它们是测试和调试代码的良好起点。
+本指南使用 Fashion MNIST 实现多样化，并且它比常规 [MNIST](http://yann.lecun.com/exdb/mnist/)更具挑战性。这两个数据集都相对较小，用于验证某个算法能否如期正常运行。它们都是测试和调试代码的良好起点。
 
-我们将使用60,000张图像来训练网络，10,000张图像来评估网络模型的准确度。您可以直接从TensorFlow访问Fashion MNIST，直接从TensorFlow导入并加载Fashion MNIST数据：
+我们将使用 60000 张图像训练网络，并使用 10000 张图像评估经过学习的网络分类图像的准确率。您可以从 TensorFlow 直接访问 Fashion MNIST，只需导入和加载数据即可：
 
 ```
 fashion_mnist = keras.datasets.fashion_mnist
@@ -67,10 +68,11 @@ fashion_mnist = keras.datasets.fashion_mnist
 
 加载数据返回4个NumPy数组：
 
-* `train_images`和`train_labels`数组是*训练集* – 模型用于学习的数据。
-* 模型将根据测试集`test_images`和`test_labels`数组进行测试。
+* `train_images`和`train_labels`数组是训练集，即模型用于学习的数据。
+* 测试集 `test_images` 和 `test_labels` 数组用于测试模型。
 
-图像为28x28 NumPy数组，像素值范围为0到255，标签是一个整数数组，范围为0到9，这些对应于图像所代表的服装类别：
+图像为28x28的NumPy数组，像素值介于0到255之间。标签是整数数组，介于0到9之间。这些标签对应于图像代表的服饰所属的类别：
+
 
 <table>
   <tr>
@@ -79,43 +81,43 @@ fashion_mnist = keras.datasets.fashion_mnist
   </tr>
   <tr>
     <td>0</td>
-    <td>T-shirt/top</td>
+    <td>T-shirt(T 恤衫/上衣)/top</td>
   </tr>
   <tr>
     <td>1</td>
-    <td>Trouser</td>
+    <td>Trouser(裤子)</td>
   </tr>
     <tr>
     <td>2</td>
-    <td>Pullover</td>
+    <td>Pullover (套衫)</td>
   </tr>
     <tr>
     <td>3</td>
-    <td>Dress</td>
+    <td>Dress(裙子)</td>
   </tr>
     <tr>
     <td>4</td>
-    <td>Coat</td>
+    <td>Coat(外套)</td>
   </tr>
     <tr>
     <td>5</td>
-    <td>Sandal</td>
+    <td>Sandal(凉鞋)</td>
   </tr>
     <tr>
     <td>6</td>
-    <td>Shirt</td>
+    <td>Shirt(衬衫)</td>
   </tr>
     <tr>
     <td>7</td>
-    <td>Sneaker</td>
+    <td>Sneaker(运动鞋)</td>
   </tr>
     <tr>
     <td>8</td>
-    <td>Bag</td>
+    <td>Bag(包包)</td>
   </tr>
     <tr>
     <td>9</td>
-    <td>Ankle boot</td>
+    <td>Ankle boot(踝靴)</td>
   </tr>
 </table>
 
@@ -128,7 +130,8 @@ class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
 
 ##  探索数据
 
-让我们在训练模型之前探索数据集的格式,以下显示训练集中有60,000个图像，每个图像表示为28 x 28像素：
+我们先探索数据集的格式，然后再训练模型。以下内容显示训练集中有 60000 张图像，每张图像都表示为 28x28 像素：
+
 
 ```
 train_images.shape
@@ -158,14 +161,14 @@ train_labels
 test_images.shape
 ```
 
-(10000, 28, 28)
+`(10000, 28, 28)`
 
 测试集包含10,000个图像标签：
 
 ```
 len(test_labels)
 ```
-10000
+`10000`
 
 ## 预处理数据
 
@@ -180,7 +183,9 @@ plt.show()
 ```
 ![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_21_0.png)
 
-在将它们输入到神经网络模型之前，我们将这些值缩放到0到1的范围。 为此，我们将值除以255。重要的是*训练集*和*测试集*以相同的方式进行预处理：
+我们将这些值缩小到 0 到 1 之间，然后将其馈送到神经网络模型。为此，将图像组件的数据类型从整数转换为浮点数，然后除以 255。以下是预处理图像的函数：
+
+务必要以相同的方式对训练集和测试集进行预处理：
 
 ```
 train_images = train_images / 255.0
@@ -209,10 +214,9 @@ plt.show()
 
 ### 设置图层
 
-神经网络的基本构建块是 *layer*，图层从提供给它们的数据中提取表示，希望这些表示对于手头的问题是有意义的。
+神经网络的基本构造块是层。层从馈送到其中的数据中提取表示结果。希望这些表示结果有助于解决手头问题。
 
-大多数深度学习包括将简单层链接在一起。大多数图层（例如`tf.keras.layers.Dense`）都具有在训练期间学习到的参数。
-
+大部分深度学习都会把简单的层连在一起。大部分层（例如 `tf.keras.layers.Dense`）都具有在训练期间要学习的参数。
 
 ```
 model = keras.Sequential([
@@ -223,18 +227,18 @@ model = keras.Sequential([
 ```
 
 
-该网络中的第一层`tf.keras.layers.Flatten`将图像的格式从二维数组（28 x 28像素）转换为一维数组（28 * 28 = 784像素））。可以将此图层视为图像中未堆叠的像素行并将它们排列在一起。该层没有要学习的参数,它只重新格式化数据。
+该网络中的第一层`tf.keras.layers.Flatten`将图像的格式从二维数组（28 x 28像素）转换为一维数组（28 * 28 = 784像素））。可以将该层视为图像中像素未堆叠的行，并排列这些行。该层没有要学习的参数；它只改动数据的格式。
 
-在像素被展平之后，网络由两个tf.keras.layers.Dense层的序列组成。这些是密集连接或完全连接的神经层。第一个Dense层有128个节点（或神经元）。第二层是10节点softmax层，其返回10个概率分数的数组，其总和为1.每个节点包含指示当前图像属于10个类之一的概率的分数。
-在像素被展平之后，网络由两个`tf.keras.layers.Dense`层的序列组成。这些是密集连接或完全连接的神经层。第一个`Dense`层有128个节点（或神经元）。第二（最后）层是10节点*softmax*层，其返回10个概率分数的数组，其总和为1.每个节点包含指示当前图像属于10个类别之一的概率的分数。
+在像素被展平之后，网络由两个`tf.keras.layers.Dense`层的序列组成。这些是密集连接或全连接的神经层。第一个`Dense`层有128个节点（或神经元）。第二个（也是最后一个）层是具有 10 个节点的 `softmax` 层，该层会返回一个具有 10 个概率得分的数组，这些得分的总和为 1。每个节点包含一个得分，表示当前图像属于 10 个类别中某一个的概率。
 
 ### 编译模型
 
-在模型准备好进行训练之前，它需要更多设置。这些是在模型的 *compile* 步骤中添加的
+模型还需要再进行几项设置才可以开始训练。这些设置会添加到模型的编译步骤：
 
-* 损失函数，可以衡量模型在训练过程中的准确程度。我们希望最小化此函数，以便在正确的方向上“引导”模型。
-* 优化器，这是基于它看到的数据及其损失函数更新模型的方式。
-* 度量标准，用于监控训练和测试步骤。以下示例使用精度，即正确分类的图像分数。
+
+* 损失函数：衡量模型在训练期间的准确率。我们希望尽可能缩小该函数，以“引导”模型朝着正确的方向优化。
+* 优化器：根据模型看到的数据及其损失函数更新模型的方式。
+* 度量标准：用于监控训练和测试步骤。以下示例使用准确率，即图像被正确分类的比例。
 
 ```
 model.compile(optimizer='adam',
@@ -246,41 +250,56 @@ model.compile(optimizer='adam',
 
 训练神经网络模型需要以下步骤：
 
-1. 将训练数据输入模型。在此实例中，训练数据位于`train_images`和`train_lables`数组中。
-2. 该模型学习如何关联图像和标签。
-3. 我们要求模型对测试集进行预测，在本例中为`test_images`数组。我们验证预测是否与`test_labels`数组中的标签匹配。
+1. 将训练数据馈送到模型中，在本示例中为 `train_images` 和 `train_labels` 数组。
+2. 模型学习将图像与标签相关联。
+3. 我们要求模型对测试集进行预测，在本示例中为 test_images 数组。我们会验证预测结果是否与 `test_labels` 数组中的标签一致。
 
-要开始训练，请调用 `model.fit` 方法，因为它将模型“fits拟合”到训练数据：
+要开始训练，请调用 `model.fit` 方法，使模型与训练数据“拟合”：
+
 
 ```
 model.fit(train_images, train_labels, epochs=5)
 ```
 
-随着模型训练，显示损失和准确度指标。该模型在训练数据上达到约0.88（或88％）的准确度。
+```
+Epoch 1/5
+60000/60000 [==============================] - 5s 87us/step - loss: 0.5033 - acc: 0.8242
+......
+Epoch 5/5
+60000/60000 [==============================] - 5s 88us/step - loss: 0.2941 - acc: 0.8917
+```
+
+在模型训练期间，系统会显示损失和准确率指标。该模型在训练数据上的准确率达到 0.88（即 88%）。
 
 
 ## 评估精度
 
 接下来，比较模型在测试数据集上的表现情况：
 
-```
+```python
 test_loss, test_acc = model.evaluate(test_images, test_labels)
 
 print('\nTest accuracy:', test_acc)
 ```
 
-事实证明，测试数据集的准确性略低于训练数据集的准确性。训练精度和测试精度之间的差距表示过度拟合(*overfitting*)。过度拟合是指机器学习模型在新的数据比在训练数据上表现更差，也就是泛化性不好。
+输出：
+```shell
+10000/10000 [==============================] - 1s 50us/step
+Test accuracy: 0.8734
+```
+
+结果表明，模型在测试数据集上的准确率略低于在训练数据集上的准确率。训练准确率和测试准确率之间的这种差异表示出现过拟合(*overfitting*)。如果机器学习模型在新数据上的表现不如在训练数据上的表现，也就是泛化性不好，就表示出现过拟合。
 
 
 ## 预测
 
-通过训练模型，我们可以使用它来预测某些图形。
+模型经过训练后，我们可以使用它对一些图像进行预测。
 
 ```
 predictions = model.predict(test_images)
 ```
 
-这里，模型已经预测了测试集中每个图像的标签，我们来看看第一个预测：
+在本示例中，模型已经预测了测试集中每张图像的标签。我们来看看第一个预测：
 
 ```
 predictions[0]
@@ -292,21 +311,22 @@ array([6.2482708e-05, 2.4860196e-08, 9.7165821e-07, 4.7436039e-08,
        1.2390658e-04, 9.5189297e-01], dtype=float32)
 ```       
 
-预测是10个数字的数组，它们代表模型的“confidence（置信度）”，即图像对应于10种不同服装中的每一种。我们可以看到哪个标签具有最高的置信度值：
+预测结果是一个具有 10 个数字的数组，这些数字说明模型对于图像对应于 10 种不同服饰中每一个服饰的“confidence（置信度）”。我们可以看到哪个标签的置信度值最大：
 
 ```
 np.argmax(predictions[0])
 ```
+
 `9`
 
-因此，模型最确信这是一个ankle boot(踝靴)，或class_names[9]。检查测试标签，该分类是正确的：
+因此，模型非常确信这张图像是踝靴或属于 class_names[9]。我们可以检查测试标签以查看该预测是否正确：
 
 ```
 test_labels[0]
 ```
 `9`
 
-我们可以通过图表来查看全部10个通道：
+我们可以将该预测绘制成图来查看全部 10 个通道
 
 ```
 def plot_image(i, predictions_array, true_label, img):
@@ -367,8 +387,7 @@ plt.show()
 
 ![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_49_0.png)
 
-让我们用他们的预测绘制几个图像。正确的预测标签是蓝色的，不正确的预测标签是红色的，该数字给出了预测标签的百分比（满分100）。请注意，即使非常自信，模型也可能出错。
-
+我们用它们的预测绘制几张图像。正确的预测标签为蓝色，错误的预测标签为红色。数字表示预测标签的百分比（总计为 100）。请注意，即使置信度非常高，也有可能预测错误。
 
 ```
 # 绘制前X个测试图像，预测标签和真实标签。 
@@ -396,7 +415,7 @@ img = test_images[0]
 print(img.shape)
 ```
 
-`tf.keras`模型经过优化，可以立即对*批量*或集合进行预测。因此，即使我们使用单个图像，我们也需要将其添加到列表中：
+`tf.keras`模型已经过优化，可以一次性对样本批次或样本集进行预测。因此，即使我们使用单个图像，仍需要将其添加到列表中：
 
 ```
 # 将图像添加到批次中，它是唯一的成员。 
@@ -424,7 +443,8 @@ _ = plt.xticks(range(10), class_names, rotation=45)
 ![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_58_0.png)
 
 
-`model.predict`返回列表清单- 一批数据中每个图像的列表，抓取批次中我们（唯一）图像的预测：
+`model.predict`返回一组列表，每个列表对应批次数据中的每张图像。（仅）获取批次数据中相应图像的预测结果：
+
 ```
 np.argmax(predictions_single[0])
 ```
