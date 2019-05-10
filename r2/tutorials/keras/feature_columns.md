@@ -83,10 +83,9 @@ dataframe = pd.read_csv(URL)
 dataframe.head()
 ```
 
-## Split the dataframe into train, validation, and test
+## 将数据拆分为训练、验证和测试
 
-The dataset we downloaded was a single CSV file. We will split this into train, validation, and test sets.
-
+我们下载的数据集是一个CSV文件，并将其分为训练，验证和测试集。
 
 ```
 train, test = train_test_split(dataframe, test_size=0.2)
@@ -96,13 +95,19 @@ print(len(val), 'validation examples')
 print(len(test), 'test examples')
 ```
 
-## Create an input pipeline using tf.data
+```
+193 train examples
+49 validation examples
+61 test examples
+```
 
-Next, we will wrap the dataframes with [tf.data](https://www.tensorflow.org/guide/datasets). This will enable us  to use feature columns as a bridge to map from the columns in the Pandas dataframe to features used to train the model. If we were working with a very large CSV file (so large that it does not fit into memory), we would use tf.data to read it from disk directly. That is not covered in this tutorial.
+## 使用tf.data创建输入管道
+
+接下来，我们将使用tf.data包装数据帧，这将使我们能够使用特征列作为桥梁从Pandas数据框中的列映射到用于训练模型的特征。如果我们使用非常大的CSV文件（如此之大以至于它不适合内存），我们将使用tf.data直接从磁盘读取它，本教程不涉及这一点。
 
 
 ```
-# A utility method to create a tf.data dataset from a Pandas Dataframe
+# 一种从Pandas Dataframe创建tf.data数据集的使用方法 
 def df_to_dataset(dataframe, shuffle=True, batch_size=32):
   dataframe = dataframe.copy()
   labels = dataframe.pop('target')
@@ -115,15 +120,15 @@ def df_to_dataset(dataframe, shuffle=True, batch_size=32):
 
 
 ```
-batch_size = 5 # A small batch sized is used for demonstration purposes
+batch_size = 5 # 小批量用于演示目的
 train_ds = df_to_dataset(train, batch_size=batch_size)
 val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
 test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
 ```
 
-## Understand the input pipeline
+## 理解输入管道
 
-Now that we have created the input pipeline, let's call it to see the format of the data it returns. We have used a small batch size to keep the output readable.
+现在我们已经创建了输入管道，让我们调用它来查看它返回的数据的格式，我们使用了一小批量来保持输出的可读性。
 
 
 ```
@@ -133,48 +138,68 @@ for feature_batch, label_batch in train_ds.take(1):
   print('A batch of targets:', label_batch )
 ```
 
-We can see that the dataset returns a dictionary of column names (from the dataframe) that map to column values from rows in the dataframe.
+```
+Every feature: ['age', 'chol', 'fbs', 'ca', 'slope', 'restecg', 'sex', 'thal', 'thalach', 'oldpeak', 'exang', 'cp', 'trestbps']
+A batch of ages: tf.Tensor([58 52 56 35 59], shape=(5,), dtype=int32)
+A batch of targets: tf.Tensor([1 0 1 0 0], shape=(5,), dtype=int32)
+```
 
-## Demonstrate several types of feature column
-TensorFlow provides many types of feature columns. In this section, we will create several types of feature columns, and demonstrate how they transform a column from the dataframe.
+我们可以看到数据集返回一个列名称（来自数据帧），该列表映射到数据帧中行的列值。
 
+## 演示几种类型的特征列
+
+TensorFlow提供了许多类型的特性列。在本节中，我们将创建几种类型的特性列，并演示它们如何从dataframe转换列。
 
 ```
-# We will use this batch to demonstrate several types of feature columns
+# 我们将使用此批处理来演示几种类型的特征列 
 example_batch = next(iter(train_ds))[0]
-```
 
-
-```
-# A utility method to create a feature column
-# and to transform a batch of data
+# 用于创建特征列和转换批量数据 
 def demo(feature_column):
   feature_layer = layers.DenseFeatures(feature_column)
   print(feature_layer(example_batch).numpy())
 ```
 
-### Numeric columns
-The output of a feature column becomes the input to the model (using the demo function defined above, we will be able to see exactly how each column from the dataframe is transformed). A [numeric column](https://www.tensorflow.org/api_docs/python/tf/feature_column/numeric_column) is the simplest type of column. It is used to represent real valued features. When using this column, your model will receive the column value from the dataframe unchanged.
+### 数字列
 
+特征列的输出成为模型的输入（使用上面定义的演示函数，我们将能够准确地看到数据帧中每列的转换方式），[数字列](https://www.tensorflow.org/api_docs/python/tf/feature_column/numeric_column)是最简单的列类型，它用于表示真正有价值的特征，使用此列时，模型将从数据帧中接收未更改的列值。
 
 ```
 age = feature_column.numeric_column("age")
 demo(age)
 ```
 
-In the heart disease dataset, most columns from the dataframe are numeric.
+```
+[[58.]
+ [52.]
+ [56.]
+ [35.]
+ [59.]]
+ ```
 
-### Bucketized columns
-Often, you don't want to feed a number directly into the model, but instead split its value into different categories based on numerical ranges. Consider raw data that represents a person's age. Instead of representing age as a numeric column, we could split the age into several buckets using a [bucketized column](https://www.tensorflow.org/api_docs/python/tf/feature_column/bucketized_column). Notice the one-hot values below describe which age range each row matches.
+在心脏病数据集中，数据帧中的大多数列都是数字。
 
+### Bucketized列（桶列）
+
+通常，您不希望将数字直接输入模型，而是根据数值范围将其值分成不同的类别，考虑代表一个人年龄的原始数据，我们可以使用[bucketized列](https://www.tensorflow.org/api_docs/python/tf/feature_column/bucketized_column)将年龄分成几个桶，而不是将年龄表示为数字列。
+请注意，下面的one-hot(独热编码)值描述了每行匹配的年龄范围。
 
 ```
 age_buckets = feature_column.bucketized_column(age, boundaries=[18, 25, 30, 35, 40, 45, 50, 55, 60, 65])
 demo(age_buckets)
 ```
 
-### Categorical columns
-In this dataset, thal is represented as a string (e.g. 'fixed', 'normal', or 'reversible'). We cannot feed strings directly to a model. Instead, we must first map them to numeric values. The categorical vocabulary columns provide a way to represent strings as a one-hot vector (much like you have seen above with age buckets). The vocabulary can be passed as a list using [categorical_column_with_vocabulary_list](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_list), or loaded from a file using [categorical_column_with_vocabulary_file](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_file).
+```
+[[0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 1. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0.]
+ [0. 0. 0. 0. 1. 0. 0. 0. 0. 0. 0.]
+ [0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0.]]
+ ```
+
+### 分类列
+
+在该数据集中，thal表示为字符串（例如“固定”，“正常”或“可逆”），我们无法直接将字符串提供给模型，相反，我们必须首先将它们映射到数值。分类词汇表列提供了一种将字符串表示为独热矢量的方法（就像上面用年龄段看到的那样）。词汇表可以使用[categorical_column_with_vocabulary_list](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_list)作为列表传递，或者使用[categorical_column_with_vocabulary_file](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_file)从文件加载。
 
 
 ```
@@ -185,26 +210,51 @@ thal_one_hot = feature_column.indicator_column(thal)
 demo(thal_one_hot)
 ```
 
-In a more complex dataset, many columns would be categorical (e.g. strings). Feature columns are most valuable when working with categorical data. Although there is only one categorical column in this dataset, we will use it to demonstrate several important types of feature columns that you could use when working with other datasets.
+```
+[[0. 0. 1.]
+ [0. 1. 0.]
+ [0. 0. 1.]
+ [0. 0. 1.]
+ [0. 0. 1.]]
+ ```
+ 
+在更复杂的数据集中，许多列将是分类的（例如字符串），在处理分类数据时，特征列最有价值。虽然此数据集中只有一个分类列，但我们将使用它来演示在处理其他数据集时可以使用的几种重要类型的特征列。
 
-### Embedding columns
-Suppose instead of having just a few possible strings, we have thousands (or more) values per category. For a number of reasons, as the number of categories grow large, it becomes infeasible to train a neural network using one-hot encodings. We can use an embedding column to overcome this limitation. Instead of representing the data as a one-hot vector of many dimensions, an [embedding column](https://www.tensorflow.org/api_docs/python/tf/feature_column/embedding_column) represents that data as a lower-dimensional, dense vector in which each cell can contain any number, not just 0 or 1. The size of the embedding (8, in the example below) is a parameter that must be tuned.
+### 嵌入列
 
-Key point: using an embedding column is best when a categorical column has many possible values. We are using one here for demonstration purposes, so you have a complete example you can modify for a different dataset in the future.
+假设我们不是只有几个可能的字符串，而是每个类别有数千（或更多）值。由于多种原因，随着类别数量的增加，使用独热编码训练神经网络变得不可行，我们可以使用嵌入列来克服此限制。
+[嵌入列](https://www.tensorflow.org/api_docs/python/tf/feature_column/embedding_column)不是将数据表示为多维度的独热矢量，而是将数据表示为低维密集向量，其中每个单元格可以包含任意数字，而不仅仅是0或1.嵌入的大小（在下面的例子中是8）是必须调整的参数。
+
+关键点：当分类列具有许多可能的值时，最好使用嵌入列，我们在这里使用一个用于演示目的，因此您有一个完整的示例，您可以在将来修改其他数据集。
 
 
 ```
-# Notice the input to the embedding column is the categorical column
-# we previously created
+# 请注意，嵌入列的输入是我们先前创建的分类列 
 thal_embedding = feature_column.embedding_column(thal, dimension=8)
 demo(thal_embedding)
 ```
 
-### Hashed feature columns
+```
+[[-0.01019966  0.23583987  0.04172783  0.34261808 -0.02596842  0.05985594
+   0.32729048 -0.07209085]
+ [ 0.08829682  0.3921798   0.32400072  0.00508362 -0.15642034 -0.17451124
+   0.12631968  0.15029909]
+ [-0.01019966  0.23583987  0.04172783  0.34261808 -0.02596842  0.05985594
+   0.32729048 -0.07209085]
+ [-0.01019966  0.23583987  0.04172783  0.34261808 -0.02596842  0.05985594
+   0.32729048 -0.07209085]
+ [-0.01019966  0.23583987  0.04172783  0.34261808 -0.02596842  0.05985594
+   0.32729048 -0.07209085]]
+```
+
+### 哈希特征列
 
 Another way to represent a categorical column with a large number of values is to use a [categorical_column_with_hash_bucket](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_hash_bucket). This feature column calculates a hash value of the input, then selects one of the `hash_bucket_size` buckets to encode a string. When using this column, you do not need to provide the vocabulary, and you can choose to make the number of hash_buckets significantly smaller than the number of actual categories to save space.
 
-Key point: An important downside of this technique is that there may be collisions in which different strings are mapped to the same bucket. In practice, this can work well for some datasets regardless.
+表示具有大量值的分类列的另一种方法是使用[categorical_column_with_hash_bucket](https://www.tensorflow.org/api_docs/python/tf/feature_column/categorical_column_with_hash_bucket).
+此特征列计算输入的哈希值，然后选择一个`hash_bucket_size`存储桶来编码字符串，使用此列时，您不需要提供词汇表，并且可以选择使`hash_buckets`的数量远远小于实际类别的数量以节省空间。
+
+关键点：该技术的一个重要缺点是可能存在冲突，其中不同的字符串被映射到同一个桶，实际上，无论如何，这对某些数据集都有效。
 
 
 ```
@@ -213,8 +263,19 @@ thal_hashed = feature_column.categorical_column_with_hash_bucket(
 demo(feature_column.indicator_column(thal_hashed))
 ```
 
-### Crossed feature columns
-Combining features into a single feature, better known as [feature crosses](https://developers.google.com/machine-learning/glossary/#feature_cross), enables a model to learn separate weights for each combination of features. Here, we will create a new feature that is the cross of age and thal. Note that `crossed_column` does not build the full table of all possible combinations (which could be very large). Instead, it is backed by a `hashed_column`, so you can choose how large the table is.
+```
+[[0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]]
+```
+
+### 交叉特征列
+
+将特征组合成单个特征（也称为[特征交叉](https://developers.google.com/machine-learning/glossary/#feature_cross)），使模型能够为每个特征组合学习单独的权重。
+在这里，我们将创建一个age和thal交叉的新功能，
+请注意，`crossed_column`不会构建所有可能组合的完整表（可能非常大），相反，它由`hashed_column`支持，因此您可以选择表的大小。
 
 
 ```
@@ -222,48 +283,58 @@ crossed_feature = feature_column.crossed_column([age_buckets, thal], hash_bucket
 demo(feature_column.indicator_column(crossed_feature))
 ```
 
-## Choose which columns to use
-We have seen how to use several types of feature columns. Now we will use them to train a model. The goal of this tutorial is to show you the complete code (e.g. mechanics) needed to work with feature columns. We have selected a few columns to train our model below arbitrarily.
+```
+[[0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]
+ [0. 0. 0. ... 0. 0. 0.]]
+```
 
-Key point: If your aim is to build an accurate model, try a larger dataset of your own, and think carefully about which features are the most meaningful to include, and how they should be represented.
 
+## 选择要使用的列
+
+我们已经了解了如何使用几种类型的特征列，现在我们将使用它们来训练模型。本教程的目标是向您展示使用特征列所需的完整代码（例如，机制），我们选择了几列来任意训练我们的模型。
+
+关键点：如果您的目标是建立一个准确的模型，请尝试使用您自己的更大数据集，并仔细考虑哪些特征最有意义，以及如何表示它们。
 
 ```
 feature_columns = []
 
-# numeric cols
+# numeric 数字列
 for header in ['age', 'trestbps', 'chol', 'thalach', 'oldpeak', 'slope', 'ca']:
   feature_columns.append(feature_column.numeric_column(header))
 
-# bucketized cols
+# bucketized 分桶列
 age_buckets = feature_column.bucketized_column(age, boundaries=[18, 25, 30, 35, 40, 45, 50, 55, 60, 65])
 feature_columns.append(age_buckets)
 
-# indicator cols
+# indicator 指示符列 
 thal = feature_column.categorical_column_with_vocabulary_list(
       'thal', ['fixed', 'normal', 'reversible'])
 thal_one_hot = feature_column.indicator_column(thal)
 feature_columns.append(thal_one_hot)
 
-# embedding cols
+# embedding 嵌入列 
 thal_embedding = feature_column.embedding_column(thal, dimension=8)
 feature_columns.append(thal_embedding)
 
-# crossed cols
+# crossed 交叉列 
 crossed_feature = feature_column.crossed_column([age_buckets, thal], hash_bucket_size=1000)
 crossed_feature = feature_column.indicator_column(crossed_feature)
 feature_columns.append(crossed_feature)
 ```
 
-### Create a feature layer
-Now that we have defined our feature columns, we will use a [DenseFeatures](https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/keras/layers/DenseFeatures) layer to input them to our Keras model.
+### 创建特征层
+
+现在我们已经定义了我们的特征列，我们将使用[DenseFeatures](https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/keras/layers/DenseFeatures)层将它们输入到我们的Keras模型中。
 
 
 ```
 feature_layer = tf.keras.layers.DenseFeatures(feature_columns)
 ```
 
-Earlier, we used a small batch size to demonstrate how feature columns worked. We create a new input pipeline with a larger batch size.
+之前，我们使用小批量大小来演示特征列的工作原理，我们创建了一个具有更大批量的新输入管道。
 
 
 ```
@@ -273,7 +344,7 @@ val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
 test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
 ```
 
-## Create, compile, and train the model
+## 创建、编译和训练模型
 
 
 ```
@@ -293,13 +364,33 @@ model.fit(train_ds,
           epochs=5)
 ```
 
+训练过程的输出
+```
+Epoch 1/5
+7/7 [==============================] - 1s 79ms/step - loss: 3.8492 - accuracy: 0.4219 - val_loss: 2.7367 - val_accuracy: 0.7143
+......
+Epoch 5/5
+7/7 [==============================] - 0s 34ms/step - loss: 0.6200 - accuracy: 0.7377 - val_loss: 0.6288 - val_accuracy: 0.6327
 
+<tensorflow.python.keras.callbacks.History at 0x7f48c044c5f8>
+```
+
+测试
 ```
 loss, accuracy = model.evaluate(test_ds)
 print("Accuracy", accuracy)
 ```
 
-Key point: You will typically see best results with deep learning with much larger and more complex datasets. When working with a small dataset like this one, we recommend using a decision tree or random forest as a strong baseline. The goal of this tutorial is not to train an accurate model, but to demonstrate the mechanics of working with structured data, so you have code to use as a starting point when working with your own datasets in the future.
+```
+2/2 [==============================] - 0s 19ms/step - loss: 0.5538 - accuracy: 0.6721
+Accuracy 0.6721311
+```
 
-## Next steps
-The best way to learn more about classifying structured data is to try it yourself. We suggest finding another dataset to work with, and training a model to classify it using code similar to the above. To improve accuracy, think carefully about which features to include in your model, and how they should be represented.
+关键点：通常使用更大更复杂的数据集进行深度学习，您将看到最佳结果。使用像这样的小数据集时，我们建议使用决策树或随机森林作为强基线。
+
+本教程的目标不是为了训练一个准确的模型，而是为了演示使用结构化数据的机制，因此您在将来使用自己的数据集时需要使用代码作为起点。
+
+## 下一步
+
+了解有关分类结构化数据的更多信息的最佳方法是亲自尝试，我们建议找到另一个可以使用的数据集，并训练模型使用类似于上面的代码对其进行分类，要提高准确性，请仔细考虑模型中包含哪些特征以及如何表示这些特征。
+
