@@ -35,7 +35,7 @@ import tensorflow as tf
 from tensorflow.keras import datasets, layers, models
 ```
 
-### Download and prepare the MNIST dataset
+### 下载预处理MNIST数据集
 
 
 ```
@@ -44,7 +44,7 @@ from tensorflow.keras import datasets, layers, models
 train_images = train_images.reshape((60000, 28, 28, 1))
 test_images = test_images.reshape((10000, 28, 28, 1))
 
-# Normalize pixel values to be between 0 and 1
+# 特征缩放[0, 1]区间 
 train_images, test_images = train_images / 255.0, test_images / 255.0
 ```
 
