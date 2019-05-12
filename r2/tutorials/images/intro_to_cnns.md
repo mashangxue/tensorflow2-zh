@@ -50,8 +50,6 @@ train_images, test_images = train_images / 255.0, test_images / 255.0
 
 ### 创建卷积基
 
-The 6 lines of code below define the convolutional base using a common pattern: a stack of [Conv2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D) and [MaxPooling2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/MaxPool2D) layers.
-
 As input, a CNN takes tensors of shape (image_height, image_width, color_channels), ignoring the batch size. If you are new to color channels, MNIST has one (because the images are grayscale), whereas a color image has three (R,G,B). In this example, we will configure our CNN to process inputs of shape (28, 28, 1), which is the format of MNIST images. We do this by passing the argument `input_shape` to our first layer.
 
 下面6行代码使用常见模式定义卷积基数： [Conv2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D) 和[MaxPooling2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/MaxPool2D)层的堆栈。
