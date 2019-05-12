@@ -20,9 +20,9 @@
   </td>
 </table>
 
-This tutorial demonstrates training a simple [Convolutional Neural Network](https://developers.google.com/machine-learning/glossary/#convolutional_neural_network) (CNN) to classify MNIST digits. This simple network will achieve over 99% accuracy on the MNIST test set. Because this tutorial uses the [Keras Sequential API](https://www.tensorflow.org/guide/keras), creating and training our model will take just a few lines of code.
+本教程演示了如何训练简单的[卷积神经网络](https://developers.google.com/machine-learning/glossary/#convolutional_neural_network)（CNN）来对MNIST数字进行分类。这个简单的网络将在MNIST测试集上实现99％以上的准确率。因为本教程使用[Keras Sequential API](https://www.tensorflow.org/guide/keras)，所以创建和训练我们的模型只需几行代码。
 
-Note: CNNs train faster with a GPU. If you are running this notebook with Colab, you can enable the free GPU via * Edit -> Notebook settings -> Hardware accelerator -> GPU*.
+注意：CNN使用GPU训练更快。
 
 ### Import TensorFlow
 
