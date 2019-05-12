@@ -48,7 +48,7 @@ test_images = test_images.reshape((10000, 28, 28, 1))
 train_images, test_images = train_images / 255.0, test_images / 255.0
 ```
 
-### Create the convolutional base
+### 创建卷积基
 
 The 6 lines of code below define the convolutional base using a common pattern: a stack of [Conv2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D) and [MaxPooling2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/MaxPool2D) layers.
 
