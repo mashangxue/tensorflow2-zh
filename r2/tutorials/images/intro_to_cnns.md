@@ -24,13 +24,12 @@
 
 注意：CNN使用GPU训练更快。
 
-### Import TensorFlow
+### 导入TensorFlow
 
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 
 from tensorflow.keras import datasets, layers, models
