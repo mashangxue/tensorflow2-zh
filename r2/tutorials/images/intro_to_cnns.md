@@ -54,6 +54,10 @@ The 6 lines of code below define the convolutional base using a common pattern: 
 
 As input, a CNN takes tensors of shape (image_height, image_width, color_channels), ignoring the batch size. If you are new to color channels, MNIST has one (because the images are grayscale), whereas a color image has three (R,G,B). In this example, we will configure our CNN to process inputs of shape (28, 28, 1), which is the format of MNIST images. We do this by passing the argument `input_shape` to our first layer.
 
+下面6行代码使用常见模式定义卷积基数： [Conv2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D) 和[MaxPooling2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/MaxPool2D)层的堆栈。
+
+作为输入，CNN采用形状的张量（image_height, image_width, color_channels），忽略批量大小，如果您不熟悉颜色通道，MNIST有一个（因为图像是灰度的），而彩色图像有三个（R,G,B）。在此示例中，我们将配置CNN以处理形状（28,28,1）的输入，这是MNIST图像的格式，我们通过将参数input_shape传递给第一层来完成此操作。
+
 
 
 
