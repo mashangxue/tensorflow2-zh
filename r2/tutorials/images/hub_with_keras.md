@@ -1,21 +1,4 @@
 
-##### Copyright 2018 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
 # TensorFlow Hub with Keras
 
 <table class="tfo-notebook-buttons" align="left">
@@ -30,45 +13,39 @@
   </td>
 </table>
 
-[TensorFlow Hub](http://tensorflow.org/hub) is a way to share pretrained model components. See the [TensorFlow Module Hub](https://tfhub.dev/) for a searchable listing of pre-trained models. This tutorial demonstrates:
+[TensorFlow Hub](http://tensorflow.org/hub)是一种共享预训练模型组件的方法。有关预先训练模型的可搜索列表，请参阅[TensorFlow模块中心TensorFlow Module Hub](https://tfhub.dev/)。
 
-1. How to use TensorFlow Hub with `tf.keras`.
-1. How to do image classification using TensorFlow Hub.
-1. How to do simple transfer learning.
+本教程演示：
+1. 如何在tf.keras中使用TensorFlow Hub。
+1. 如何使用TensorFlow Hub进行图像分类。
+1. 如何做简单的迁移学习。
 
-## Setup
+## 安装和导入包
 
+安装命令：`pip install -U tensorflow_hub`
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import matplotlib.pylab as plt
 
-!pip install tf-nightly-gpu-2.0-preview
 import tensorflow as tf
-```
-
-
-```
-!pip install -U tensorflow_hub
+ 
 import tensorflow_hub as hub
 
 from tensorflow.keras import layers
 ```
 
-## An ImageNet classifier
+## ImageNet分类器
 
-### Download the classifier
+### 下载分类器
 
-Use `hub.module` to load a mobilenet, and `tf.keras.layers.Lambda` to wrap it up as a keras layer. Any [TensorFlow 2 compatible image classifier URL](https://tfhub.dev/s?q=tf2&module-type=image-classification) from tfhub.dev will work here.
-
+使用`hub.module`加载mobilenet，并使用`tf.keras.layers.Lambda`将其包装为keras层。
+来自tfhub.dev的任何兼容tf2的[图像分类器URL](https://tfhub.dev/s?q=tf2&module-type=image-classification)都可以在这里工作。
 
 ```
 classifier_url ="https://tfhub.dev/google/tf2-preview/mobilenet_v2/classification/2" #@param {type:"string"}
-```
 
-
-```
 IMAGE_SHAPE = (224, 224)
 
 classifier = tf.keras.Sequential([
@@ -76,10 +53,9 @@ classifier = tf.keras.Sequential([
 ])
 ```
 
-### Run it on a single image
+### 在单个图像上运行它
 
-Download a single image to try the model on.
-
+下载单个图像以试用该模型。
 
 ```
 import numpy as np
@@ -87,60 +63,51 @@ import PIL.Image as Image
 
 grace_hopper = tf.keras.utils.get_file('image.jpg','https://storage.googleapis.com/download.tensorflow.org/example_images/grace_hopper.jpg')
 grace_hopper = Image.open(grace_hopper).resize(IMAGE_SHAPE)
-grace_hopper
-```
-
-
-```
 grace_hopper = np.array(grace_hopper)/255.0
 grace_hopper.shape
 ```
+`(224, 224, 3)`
 
-Add a batch dimension, and pass the image to the model.
-
+添加批量维度，并将图像传递给模型。
 
 ```
 result = classifier.predict(grace_hopper[np.newaxis, ...])
 result.shape
 ```
 
-The result is a 1001 element vector of logits, rating the probability of each class for the image.
-
-So the top class ID can be found with argmax:
-
+结果是1001元素向量的`logits`，对图像属于每个类的概率进行评级。因此，可以使用`argmax`找到排在最前的类别ID：
 
 ```
 predicted_class = np.argmax(result[0], axis=-1)
 predicted_class
 ```
+```
+653
+```
 
-### Decode the predictions
+### 解码预测
 
-We have the predicted class ID,
-Fetch the `ImageNet` labels, and decode the predictions
 
+我们有预测的类别ID，获取`ImageNet`标签，并解码预测
 
 ```
 labels_path = tf.keras.utils.get_file('ImageNetLabels.txt','https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
 imagenet_labels = np.array(open(labels_path).read().splitlines())
-```
 
-
-```
 plt.imshow(grace_hopper)
 plt.axis('off')
 predicted_class_name = imagenet_labels[predicted_class]
 _ = plt.title("Prediction: " + predicted_class_name.title())
 ```
+![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_20_0.png)
 
-## Simple transfer learning
+## 简单的迁移学习
 
-Using TF Hub it is simple to retrain the top layer of the model to recognize the classes in our dataset.
+使用TF Hub可以很容易地重新训练模型的顶层以识别数据集中的类。
 
 ### Dataset
 
- For this example you will use the TensorFlow flowers dataset:
-
+对于此示例，您将使用TensorFlow鲜花数据集：
 
 ```
 data_root = tf.keras.utils.get_file(
@@ -148,20 +115,19 @@ data_root = tf.keras.utils.get_file(
    untar=True)
 ```
 
-The simplest way to load this data into our model is using `tf.keras.preprocessing.image.ImageDataGenerator`,
+将此数据加载到我们的模型中的最简单方法是使用 `tf.keras.preprocessing.image.ImageDataGenerator`,
 
-All of TensorFlow Hub's image modules expect float inputs in the `[0, 1]` range. Use the `ImageDataGenerator`'s `rescale` parameter to achieve this.
-
-The image size will be handled later.
-
+所有TensorFlow Hub的图像模块都期望浮点输入在“[0,1]”范围内。使用`ImageDataGenerator`的`rescale`参数来实现这一目的。图像大小将在稍后处理。
 
 ```
 image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255)
 image_data = image_generator.flow_from_directory(str(data_root), target_size=IMAGE_SHAPE)
 ```
 
-The resulting object is an iterator that returns `image_batch, label_batch` pairs.
-
+```
+Found 3670 images belonging to 5 classes.
+```
+结果对象是一个返回`image_batch，label_batch`对的迭代器。
 
 ```
 for image_batch, label_batch in image_data:
@@ -170,24 +136,34 @@ for image_batch, label_batch in image_data:
   break
 ```
 
-### Run the classifier on a batch of images
+```
+    Image batch shape:  (32, 224, 224, 3)
+    Labe batch shape:  (32, 5)
+```
 
-Now run the classifier on the image batch.
+### 在一批图像上运行分类器
+
+现在在图像批处理上运行分类器。
 
 
 ```
 result_batch = classifier.predict(image_batch)
-result_batch.shape
-```
+result_batch.shape  # (32, 1001)
 
-
-```
 predicted_class_names = imagenet_labels[np.argmax(result_batch, axis=-1)]
 predicted_class_names
 ```
 
-Now check how these predictions line up with the images:
+```
+array(['daisy', 'sea urchin', 'ant', 'hamper', 'daisy', 'ringlet',
+       'daisy', 'daisy', 'daisy', 'cardoon', 'lycaenid', 'sleeping bag',
+       'Bedlington terrier', 'daisy', 'daisy', 'picket fence',
+       'coral fungus', 'daisy', 'zucchini', 'daisy', 'daisy', 'bee',
+       'daisy', 'daisy', 'bee', 'daisy', 'picket fence', 'bell pepper',
+       'daisy', 'pot', 'wolf spider', 'greenhouse'], dtype='<U30')
+```
 
+现在检查这些预测如何与图像对齐：
 
 ```
 plt.figure(figsize=(10,9))
@@ -200,11 +176,13 @@ for n in range(30):
 _ = plt.suptitle("ImageNet predictions")
 ```
 
-See the `LICENSE.txt` file for image attributions.
+![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_34_0.png)
 
-The results are far from perfect, but reasonable considering that these are not the classes the model was trained for (except "daisy").
+有关图像属性，请参阅`LICENSE.txt`文件。
 
-### Download the headless model
+结果没有那么完美，但考虑到这些不是模型训练的类（“daisy雏菊”除外），这是合理的。
+
+### 下载无头模型
 
 TensorFlow Hub also distributes models without the top classification layer. These can be used to easily do transfer learning.
 
