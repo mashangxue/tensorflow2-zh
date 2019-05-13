@@ -50,53 +50,77 @@ train_images, test_images = train_images / 255.0, test_images / 255.0
 
 ### 创建卷积基
 
-As input, a CNN takes tensors of shape (image_height, image_width, color_channels), ignoring the batch size. If you are new to color channels, MNIST has one (because the images are grayscale), whereas a color image has three (R,G,B). In this example, we will configure our CNN to process inputs of shape (28, 28, 1), which is the format of MNIST images. We do this by passing the argument `input_shape` to our first layer.
-
 下面6行代码使用常见模式定义卷积基数： [Conv2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Conv2D) 和[MaxPooling2D](https://www.tensorflow.org/api_docs/python/tf/keras/layers/MaxPool2D)层的堆栈。
 
-作为输入，CNN采用形状的张量（image_height, image_width, color_channels），忽略批量大小，如果您不熟悉颜色通道，MNIST有一个（因为图像是灰度的），而彩色图像有三个（R,G,B）。在此示例中，我们将配置CNN以处理形状（28,28,1）的输入，这是MNIST图像的格式，我们通过将参数input_shape传递给第一层来完成此操作。
+作为输入，CNN采用形状的张量（image_height, image_width, color_channels），忽略批量大小。MNIST有一个颜色通道（因为图像是灰度的），而彩色图像有三个颜色通道（R,G,B）。在此示例中，我们将配置CNN以处理形状（28,28,1）的输入，这是MNIST图像的格式，我们通过将参数input_shape传递给第一层来完成此操作。
 
-
-
-
-```
+```python
 model = models.Sequential()
 model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(28, 28, 1)))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
 model.add(layers.MaxPooling2D((2, 2)))
 model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+model.summary() # 显示模型的架构
 ```
 
-Let display the architecture of our model so far.
-
-
 ```
-model.summary()
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 26, 26, 32)        320       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) (None, 13, 13, 32)        0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 11, 11, 64)        18496     
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 5, 5, 64)          0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 3, 3, 64)          36928     
+=================================================================
+...
 ```
 
-Above, you can see that the output of every Conv2D and MaxPooling2D layer is a 3D tensor of shape (height, width, channels). The width and height dimensions tend to shrink as we go deeper in the network. The number of output channels for each Conv2D layer is controlled by the first argument (e.g., 32 or 64). Typically,  as the width and height shrink, we can afford (computationally) to add more output channels in each Conv2D layer.
+在上面，你可以看到每个Conv2D和MaxPooling2D层的输出都是3D张量的形状（高度，宽度，通道），随着我们在网络中更深入，宽度和高度大小趋于缩小，每个Conv2D层的输出通道的数由第一个参数（例如，32或64）控制。通常，随着宽度和高度的缩小，我们可以（计算地）在每个Conv2D层中添加更多输出通道
 
-### Add Dense layers on top
-To complete our model, we will feed the last output tensor from the convolutional base (of shape (3, 3, 64)) into one or more Dense layers to perform classification. Dense layers take vectors as input (which are 1D), while the current output is a 3D tensor. First, we will flatten (or unroll) the 3D output to 1D,  then add one or more Dense layers on top. MNIST has 10 output classes, so we use a final Dense layer with 10 outputs and a softmax activation.
+### 在顶部添加密集层
 
+为了完成我们的模型，我们将最后的输出张量从卷积基（形状(3,3,64)）馈送到一个或多个密集层中以执行分类。密集层将矢量作为输入（1D），而当前输出是3D张量。首先，我们将3D输出展平（或展开）为1D，然后在顶部添加一个或多个Dense层。MINST有10个输出类，因此我们使用具有10输出和softmax激活的最终Dense层。
 
 ```
 model.add(layers.Flatten())
 model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
+model.summary() # 显示模型的架构
+```
+```
+Model: "sequential"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 26, 26, 32)        320       
+_________________________________________________________________
+max_pooling2d (MaxPooling2D) (None, 13, 13, 32)        0         
+_________________________________________________________________
+conv2d_1 (Conv2D)            (None, 11, 11, 64)        18496     
+_________________________________________________________________
+max_pooling2d_1 (MaxPooling2 (None, 5, 5, 64)          0         
+_________________________________________________________________
+conv2d_2 (Conv2D)            (None, 3, 3, 64)          36928     
+_________________________________________________________________
+flatten (Flatten)            (None, 576)               0         
+_________________________________________________________________
+dense (Dense)                (None, 64)                36928     
+_________________________________________________________________
+dense_1 (Dense)              (None, 10)                650       
+=================================================================
+...
 ```
 
- Here's the complete architecture of our model.
+从上面可以看出，在通过两个密集层之前，我们的(3,3,64)输出被展平为矢量（576）。
 
-
-```
-model.summary()
-```
-
-As you can see, our (3, 3, 64) outputs were flattened into vectors of shape (576) before going through two Dense layers.
-
-### Compile and train the model
+### 编译和训练模型
 
 
 ```
@@ -107,16 +131,26 @@ model.compile(optimizer='adam',
 model.fit(train_images, train_labels, epochs=5)
 ```
 
-### Evaluate the model
+```
+...
+Epoch 5/5
+60000/60000 [==============================] - 15s 258us/sample - loss: 0.0190 - accuracy: 0.9941
+```
+
+### 评估模型
 
 
 ```
 test_loss, test_acc = model.evaluate(test_images, test_labels)
 ```
-
+```
+10000/10000 [==============================] - 1s 92us/sample - loss: 0.0272 - accuracy: 0.9921
+```
 
 ```
 print(test_acc)
 ```
-
-As you can see, our simple CNN has achieved a test accuracy of over 99%. Not bad for a few lines of code! For another style of writing a CNN (using the Keras Subclassing API and a GradientTape) head [here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/advanced.ipynb).
+```
+0.9921
+```
+如你所见，我们简单的CNN已经达到了超过99%的测试精度，这几行代码还不错。另一种编写CNN的方式[here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/advanced.ipynb)（使用Keras Subclassing API和GradientTape）。
