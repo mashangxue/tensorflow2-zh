@@ -25,22 +25,12 @@
 
 2. **微调**：解冻冻结模型的顶层，并共同训练新添加的分类器和基础模型的最后一层，这允许我们“微调”基础模型中的高阶特征表示，以使它们与特定任务更相关。
 
-You will follow the general machine learning workflow.
-
-1. Examine and understand the data
-2. Build an input pipeline, in this case using Keras `ImageDataGenerator`
-3. Compose our model
-  * Load in our pretrained base model (and pretrained weights)
-  * Stack our classification layers on top
-4. Train our model
-5. Evaluate model
-
 你将要遵循一般的机器学习工作流程：
 1. 检查并理解数据
 2. 构建输入管道，在本例中使用Keras 的 `ImageDataGenerator`
 3. 构建模型
-  * 加载我们的预训练基础模型（和预训练的权重）
-  * 将我们的分类图层堆叠在顶部
+    * 加载我们的预训练基础模型（和预训练的权重）
+    * 将我们的分类图层堆叠在顶部
 4. 训练模型
 5. 评估模型
 
@@ -168,8 +158,6 @@ TensorShape([32, 160, 160, 3])
 
 首先，您需要选择用于特征提取的MobileNet V2层，显然，最后一个分类层（在“顶部”，因为大多数机器学习模型的图表从下到上）并不是非常有用。相反，您将遵循通常的做法，在展平操作之前依赖于最后一层，该层称为“瓶颈层”，与最终/顶层相比，瓶颈层保持了很多通用性。
 
-First, instantiate a MobileNet V2 model pre-loaded with weights trained on ImageNet. By specifying the **include_top=False** argument, you load a network that doesn't include the classification layers at the top, which is ideal for feature extraction.
-
 然后，实例化预装了ImageNet上训练的MobileNet V2模型权重，通过制定include_top=False参数，可以加载不包含顶部分类层的网络，这是特征提取的理想选择。
 
 ```
@@ -188,7 +176,9 @@ feature_batch = base_model(image_batch)
 print(feature_batch.shape)
 ```
 
-    ```(32, 5, 5, 1280)```
+```
+(32, 5, 5, 1280)
+```
 
 
 ## 特征提取
@@ -236,7 +226,7 @@ feature_batch_average = global_average_layer(feature_batch)
 print(feature_batch_average.shape)
 ```
 
-    `(32, 1280)`
+`(32, 1280)`
 
 
 应用`tf.keras.layers.Dense`层将这些特征转换为每个图像的单个预测。您不需要激活函数，因为此预测将被视为`logit`或原始预测值。正数预测第1类，负数预测第0类。
@@ -247,7 +237,9 @@ prediction_batch = prediction_layer(feature_batch_average)
 print(prediction_batch.shape)
 ```
 
-   ``` (32, 1)```
+``` 
+(32, 1)
+```
 
 
 现在使用`tf.keras.Sequential`堆叠特征提取器和这两个层：
@@ -319,9 +311,9 @@ validation_steps = 20
 loss0,accuracy0 = model.evaluate(validation_batches, steps = validation_steps)
 ```
 
-    ```
+```
     20/20 [==============================] - 4s 219ms/step - loss: 3.1885 - accuracy: 0.6109
-    ```
+```
 
 
 
@@ -456,9 +448,9 @@ model.summary()
 len(model.trainable_variables)
 ```
 
-   ``` 
+``` 
    58
-   ```
+```
 
 
 
