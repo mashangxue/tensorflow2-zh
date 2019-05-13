@@ -1,47 +1,5 @@
 
-##### Copyright 2019 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-
-```
-#@title MIT License
-#
-# Copyright (c) 2017 François Chollet                                                                                                                    # IGNORE_COPYRIGHT: cleared by OSS licensing
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-```
-
-# Transfer Learning Using Pretrained ConvNets
+# 使用预训练的ConvNets进行迁移学习
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -55,20 +13,17 @@
   </td>
 </table>
 
-In this tutorial you will learn how to classify cats vs dogs images by using transfer learning from a pre-trained network.
+在本章节中，您将学习如何使用预训练网络中的迁移学习对猫与狗图像进行分类。
 
+预训练模型是一个保存的网路，以前在大型数据集上训练的，通常是在大规模图像分类任务上，您可以按原样使用预训练模型，也可以使用转移学习将此模型自定义为给定的任务。
 
-A **pre-trained model** is a saved network that was previously trained on a large dataset, typically on a large-scale image-classification task. You either use the pretrained model as it is, or use **transfer learning** to customize this model to a given task.
+转移学习背后的直觉是，如果一个模型在一个大而且足够通用的数据集上训练，这个模型将有效地作为视觉世界的通用模型。然后，您可以利用这些学习的特征映射，而无需从头开始训练大型数据集上的大型模型。
 
-The intuition behind transfer learning is that if a model trained on a large and general enough dataset, this model will effectively serve as a generic model of the visual world. You can then take advantage of these learned feature maps without having to start from scratch training a large model on a large dataset.
+在本节中，您将尝试两种方法来自定义预训练模型：
+1. **特征提取**：使用先前网络学习的表示从新样本中提取有意义的特征，您只需在与训练模型的基础上添加一个新的分类器（将从头开始训练），以便您可以重新调整先前为我们的数据集学习的特征映射。
+您不需要(重新)训练整个模型，基本卷积网络已经包含了一些对图片分类非常有用的特性。然而，预训练模型的最后一个分类部分是特定于原始分类任务的，然后是特定于模型所训练的一组类。
 
-In this notebook, you will try two ways to customize a pretrained model:
-
-1. **Feature Extraction**: Use the representations learned by a previous network to extract meaningful features from new samples. You simply add a new classifier, which will be trained from scratch, on top of the pretrained model so that you can repurpose the feature maps learned previously for our dataset.
-
-  You do not need to (re)train the entire model.  The base convolutional network already contains features that are generically useful for classifying pictures. However, the final, classification part of the pretrained model is specific to original classification task, and subsequently specific to the set of classes on which the model was trained.
-
-2. **Fine-Tuning**: Unfreezing a few of the top layers of a frozen model base and jointly training both the newly-added classifier layers and the last layers of the base model. This allows us to "fine tune" the higher-order feature representations in the base model in order to make them more relevant for the specific task.
+2. **微调**：解冻冻结模型的顶层，并共同训练新添加的分类器和基础模型的最后一层，这允许我们“微调”基础模型中的高阶特征表示，以使它们与特定任务更相关。
 
 You will follow the general machine learning workflow.
 
@@ -80,6 +35,14 @@ You will follow the general machine learning workflow.
 4. Train our model
 5. Evaluate model
 
+你将要遵循一般的机器学习工作流程：
+1. 检查并理解数据
+2. 构建输入管道，在本例中使用Keras 的 `ImageDataGenerator`
+3. 构建模型
+  * 加载我们的预训练基础模型（和预训练的权重）
+  * 将我们的分类图层堆叠在顶部
+4. 训练模型
+5. 评估模型
 
 
 ```
@@ -90,34 +53,26 @@ import os
 import numpy as np
 
 import matplotlib.pyplot as plt
-```
 
-
-```
-!pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 
 keras = tf.keras
 ```
 
-## Data preprocessing
+## 数据预处理
 
-### Data download
+### 下载数据
 
-Use [TensorFlow Datasets](http://tensorflow.org/datasets) to load the cats and dogs dataset.
-
-This `tfds` package is the easiest way to load pre-defined data. If you have your own data, and are interested in importing using it with TensroFlow see [loading image data](../load_data/images.ipynb)
-
+使用 [TensorFlow Datasets](http://tensorflow.google.cn/datasets)加载猫狗数据集。`tfds` 包是加载预定义数据的最简单方法，如果您有自己的数据，并且有兴趣使用TensorFlow进行导入，请参阅[加载图像数据](https://tensorflow.google.cn/alpha/tutorials/load_data/images)。
 
 
 ```
 import tensorflow_datasets as tfds
 ```
 
-The `tfds.load` method downloads and caches the data, and returns a `tf.data.Dataset` obejct. These obejcts provide powerful, efficient methods for manipulating data and piping it into your model.
+`tfds.load`方法下载并缓存数据，并返回`tf.data.Dataset`对象，这些对象提供了强大、高效的方法来处理数据并将其传递到模型中。
 
-Since `"cats_vs_dog"` doesn't define standard splits, use the subsplit feature to divide it into (train, validation, test) with 80%, 10%, 10% of the data respectively.
-
+由于`"cats_vs_dog"` 没有定义标准分割，因此使用subsplit功能将其分为训练80%、验证10%、测试10%的数据。
 
 ```
 SPLIT_WEIGHTS = (8, 1, 1)
@@ -128,8 +83,7 @@ splits = tfds.Split.TRAIN.subsplit(weighted=SPLIT_WEIGHTS)
     with_info=True, as_supervised=True)
 ```
 
-The resulting `tf.data.Dataset` objects contain `(image, label)` pairs. Where the images have variable shape and 3 channels, and the label is a scalar.
-
+生成的`tf.data.Dataset`对象包含（图像，标签）对。图像具有可变形状和3个通道，标签是标量。
 
 ```
 print(raw_train)
@@ -137,13 +91,13 @@ print(raw_validation)
 print(raw_test)
 ```
 
-    <DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
-    <DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
-    <DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
+```
+<DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
+<DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
+<DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
+```
 
-
-Show the first two images and labels from the training set:
-
+显示训练集中的前两个图像和标签：
 
 ```
 get_label_name = metadata.features['label'].int2str
@@ -155,24 +109,19 @@ for image, label in raw_train.take(2):
 ```
 
 
-![png](transfer_learning_files/transfer_learning_17_0.png)
+![png](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning_files/output_14_0.png)
+
+![png](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning_files/output_14_1.png)
 
 
+### 格式化数据
 
-![png](transfer_learning_files/transfer_learning_17_1.png)
-
-
-### Format the Data
-
-Use the `tf.image` module to format the images for the task.
-
-Resize the images to a fixes input size, and rescale the input channels to a range of `[-1,1]`
+使用`tf.image`模块格式化图像，将图像调整为固定的输入大小，并将输入通道重新调整为`[-1,1]`范围。
 
 <!-- TODO(markdaoust): fix the keras_applications preprocessing functions to work in tf2 -->
 
-
 ```
-IMG_SIZE = 160 # All images will be resized to 160x160
+IMG_SIZE = 160 # 所有图像将被调整为160x160
 
 def format_example(image, label):
   image = tf.cast(image, tf.float32)
@@ -181,8 +130,7 @@ def format_example(image, label):
   return image, label
 ```
 
-Apply this function to each item in the dataset using the map method:
-
+使用map方法将此函数应用于数据集中的每一个项：
 
 ```
 train = raw_train.map(format_example)
@@ -190,23 +138,18 @@ validation = raw_validation.map(format_example)
 test = raw_test.map(format_example)
 ```
 
-Now shuffle and batch the data.
-
+打乱和批处理数据：
 
 ```
 BATCH_SIZE = 32
 SHUFFLE_BUFFER_SIZE = 1000
-```
 
-
-```
 train_batches = train.shuffle(SHUFFLE_BUFFER_SIZE).batch(BATCH_SIZE)
 validation_batches = validation.batch(BATCH_SIZE)
 test_batches = test.batch(BATCH_SIZE)
 ```
 
-Inspect a batch of data:
-
+检查一批数据：
 
 ```
 for image_batch, label_batch in train_batches.take(1):
@@ -215,17 +158,15 @@ for image_batch, label_batch in train_batches.take(1):
 image_batch.shape
 ```
 
+```
+TensorShape([32, 160, 160, 3])
+```
 
+## 从预先训练的网络中创建基础模型
 
+您将从Google开发的**MobileNet V2**模型创建基础模型，这是在ImageNet数据集上预先训练的，一个包含1.4M图像和1000类Web图像的大型数据集。ImageNet有一个相当随意的研究训练数据集，其中包括“jackfruit(菠萝蜜)”和“syringe(注射器)”等类别，但这个知识基础将帮助我们将猫和狗从特定数据集中区分开来。
 
-    TensorShape([32, 160, 160, 3])
-
-
-
-## Create the base model from the pre-trained convnets
-You will create the base model from the **MobileNet V2** model developed at Google. This is pre-trained on the ImageNet dataset, a large dataset of 1.4M images and 1000 classes of web images. ImageNet has a fairly arbitrary research training dataset with categories like `jackfruit` and `syringe`, but this base of knowledge will help us tell apart cats and dogs from our specific dataset.
-
-First, you need to pick which layer of MobileNet V2 you will use for feature extraction. Obviously, the very last classification layer (on "top", as most diagrams of machine learning models go from bottom to top) is not very useful.  Instead, you will follow the common practice to instead depend on the very last layer before the flatten operation. This layer is called the "bottleneck layer". The bottleneck features retain much generality as compared to the final/top layer.
+首先，您需要选择用于特征提取的MobileNet V2层，显然，最后一个分类层（在“顶部”，因为大多数机器学习模型的图表从下到上）并不是非常有用。相反，您将遵循通常的做法在展平操作之前依赖于最后一层，该层称为“瓶颈层”，与最终/顶层相比，瓶颈层保持了很多通用性。
 
 First, instantiate a MobileNet V2 model pre-loaded with weights trained on ImageNet. By specifying the **include_top=False** argument, you load a network that doesn't include the classification layers at the top, which is ideal for feature extraction.
 
