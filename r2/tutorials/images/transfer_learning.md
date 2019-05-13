@@ -82,9 +82,9 @@ print(raw_test)
 ```
 
 ```
-<DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
-<DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
-<DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
+    <DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
+    <DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
+    <DatasetV1Adapter shapes: ((None, None, 3), ()), types: (tf.uint8, tf.int64)>
 ```
 
 显示训练集中的前两个图像和标签：
@@ -149,7 +149,7 @@ image_batch.shape
 ```
 
 ```
-TensorShape([32, 160, 160, 3])
+    TensorShape([32, 160, 160, 3])
 ```
 
 ## 从预先训练的网络中创建基础模型
@@ -177,7 +177,7 @@ print(feature_batch.shape)
 ```
 
 ```
-(32, 5, 5, 1280)
+    (32, 5, 5, 1280)
 ```
 
 
@@ -238,7 +238,7 @@ print(prediction_batch.shape)
 ```
 
 ``` 
-(32, 1)
+    (32, 1)
 ```
 
 
@@ -514,5 +514,6 @@ plt.show()
 * **使用预训练的模型进行特征提取：**
 使用小型数据集时，通常会利用在同一域中的较大数据集上训练的模型所学习的特征。这是通过实例化预先训练的模型，并在顶部添加完全连接的分类器来完成的。预训练的模型被“冻结”并且仅在训练期间更新分类器的权重。在这种情况下，卷积基提取了与每幅图像相关的所有特征，您只需训练一个分类器，根据所提取的特征集确定图像类。
 
-* **微调与训练的模型：**为了进一步提高性能，可以通过微调将预训练模型的顶层重新调整为新数据集。在这种情况下，您调整了权重，以便模型学习特定于数据集的高级特征，当训练数据集很大并且非常类似于预训练模型训练的原始数据集时，通常建议使用此技术。
+* **微调与训练的模型：** 
+为了进一步提高性能，可以通过微调将预训练模型的顶层重新调整为新数据集。在这种情况下，您调整了权重，以便模型学习特定于数据集的高级特征，当训练数据集很大并且非常类似于预训练模型训练的原始数据集时，通常建议使用此技术。
 
