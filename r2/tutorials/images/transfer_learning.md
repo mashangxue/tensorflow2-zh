@@ -1,5 +1,5 @@
 
-# 使用预训练的ConvNets进行迁移学习
+# 使用预训练的CNN模型进行迁移学习
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
