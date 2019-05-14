@@ -24,7 +24,7 @@
 
 安装命令：`pip install -U tensorflow_hub`
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import matplotlib.pylab as plt
@@ -43,7 +43,7 @@ from tensorflow.keras import layers
 使用`hub.module`加载mobilenet，并使用`tf.keras.layers.Lambda`将其包装为keras层。
 来自tfhub.dev的任何兼容tf2的[图像分类器URL](https://tfhub.dev/s?q=tf2&module-type=image-classification)都可以在这里工作。
 
-```
+```python
 classifier_url ="https://tfhub.dev/google/tf2-preview/mobilenet_v2/classification/2" #@param {type:"string"}
 
 IMAGE_SHAPE = (224, 224)
@@ -57,7 +57,7 @@ classifier = tf.keras.Sequential([
 
 下载单个图像以试用该模型。
 
-```
+```python
 import numpy as np
 import PIL.Image as Image
 
@@ -70,14 +70,14 @@ grace_hopper.shape
 
 添加批量维度，并将图像传递给模型。
 
-```
+```python
 result = classifier.predict(grace_hopper[np.newaxis, ...])
 result.shape
 ```
 
 结果是1001元素向量的`logits`，对图像属于每个类的概率进行评级。因此，可以使用`argmax`找到排在最前的类别ID：
 
-```
+```python
 predicted_class = np.argmax(result[0], axis=-1)
 predicted_class
 ```
@@ -90,7 +90,7 @@ predicted_class
 
 我们有预测的类别ID，获取`ImageNet`标签，并解码预测
 
-```
+```python
 labels_path = tf.keras.utils.get_file('ImageNetLabels.txt','https://storage.googleapis.com/download.tensorflow.org/data/ImageNetLabels.txt')
 imagenet_labels = np.array(open(labels_path).read().splitlines())
 
@@ -109,7 +109,7 @@ _ = plt.title("Prediction: " + predicted_class_name.title())
 
 对于此示例，您将使用TensorFlow鲜花数据集：
 
-```
+```python
 data_root = tf.keras.utils.get_file(
   'flower_photos','https://storage.googleapis.com/download.tensorflow.org/example_images/flower_photos.tgz',
    untar=True)
@@ -119,17 +119,17 @@ data_root = tf.keras.utils.get_file(
 
 所有TensorFlow Hub的图像模块都期望浮点输入在“[0,1]”范围内。使用`ImageDataGenerator`的`rescale`参数来实现这一目的。图像大小将在稍后处理。
 
-```
+```python
 image_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1/255)
 image_data = image_generator.flow_from_directory(str(data_root), target_size=IMAGE_SHAPE)
 ```
 
 ```
-Found 3670 images belonging to 5 classes.
+    Found 3670 images belonging to 5 classes.
 ```
 结果对象是一个返回`image_batch，label_batch`对的迭代器。
 
-```
+```python
 for image_batch, label_batch in image_data:
   print("Image batch shape: ", image_batch.shape)
   print("Labe batch shape: ", label_batch.shape)
@@ -146,7 +146,7 @@ for image_batch, label_batch in image_data:
 现在在图像批处理上运行分类器。
 
 
-```
+```python
 result_batch = classifier.predict(image_batch)
 result_batch.shape  # (32, 1001)
 
@@ -155,17 +155,17 @@ predicted_class_names
 ```
 
 ```
-array(['daisy', 'sea urchin', 'ant', 'hamper', 'daisy', 'ringlet',
-       'daisy', 'daisy', 'daisy', 'cardoon', 'lycaenid', 'sleeping bag',
-       'Bedlington terrier', 'daisy', 'daisy', 'picket fence',
-       'coral fungus', 'daisy', 'zucchini', 'daisy', 'daisy', 'bee',
-       'daisy', 'daisy', 'bee', 'daisy', 'picket fence', 'bell pepper',
-       'daisy', 'pot', 'wolf spider', 'greenhouse'], dtype='<U30')
+      array(['daisy', 'sea urchin', 'ant', 'hamper', 'daisy', 'ringlet',
+             'daisy', 'daisy', 'daisy', 'cardoon', 'lycaenid', 'sleeping bag',
+             'Bedlington terrier', 'daisy', 'daisy', 'picket fence',
+             'coral fungus', 'daisy', 'zucchini', 'daisy', 'daisy', 'bee',
+             'daisy', 'daisy', 'bee', 'daisy', 'picket fence', 'bell pepper',
+             'daisy', 'pot', 'wolf spider', 'greenhouse'], dtype='<U30')
 ```
 
 现在检查这些预测如何与图像对齐：
 
-```
+```python
 plt.figure(figsize=(10,9))
 plt.subplots_adjust(hspace=0.5)
 for n in range(30):
@@ -188,20 +188,20 @@ TensorFlow Hub还可以在没有顶级分类层的情况下分发模型。这些
 
 来自tfhub.dev的任何[Tensorflow 2兼容图像特征向量URL](https://tfhub.dev/s?module-type=image-feature-vector&q=tf2)都可以在此处使用。
 
-```
+```python
 feature_extractor_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2" #@param {type:"string"}
 ```
 
 创建特征提取器。
 
-```
+```python
 feature_extractor_layer = hub.KerasLayer(feature_extractor_url,
                                          input_shape=(224,224,3))
 ```
 
 它为每个图像返回一个1280长度的向量：
 
-```
+```python
 feature_batch = feature_extractor_layer(image_batch)
 print(feature_batch.shape)
 ```
@@ -209,7 +209,7 @@ print(feature_batch.shape)
 
 冻结特征提取器层中的变量，以便训练仅修改新的分类器层。
 
-```
+```python
 feature_extractor_layer.trainable = False
 ```
 
@@ -217,7 +217,7 @@ feature_extractor_layer.trainable = False
 
 现在将中心层包装在`tf.keras.Sequential`模型中，并添加新的分类层。
 
-```
+```python
 model = tf.keras.Sequential([
   feature_extractor_layer,
   layers.Dense(image_data.num_classes, activation='softmax')
@@ -240,7 +240,7 @@ model.summary()
     _________________________________________________________________
 ```
 
-```
+```python
 predictions = model(image_batch)
 predictions.shape
 ```
@@ -252,7 +252,7 @@ predictions.shape
 
 使用compile配置训练过程：
 
-```
+```python
 model.compile(
   optimizer=tf.keras.optimizers.Adam(),
   loss='categorical_crossentropy',
@@ -263,7 +263,7 @@ model.compile(
 
 这个例子只是训练两个周期。要显示训练进度，请使用自定义回调单独记录每个批次的损失和准确性，而不是记录周期的平均值。
 
-```
+```python
 class CollectBatchStats(tf.keras.callbacks.Callback):
   def __init__(self):
     self.batch_losses = []
@@ -292,7 +292,7 @@ history = model.fit(image_data, epochs=2,
 
 现在，即使只是几次训练迭代，我们已经可以看到模型正在完成任务。
 
-```
+```python
 plt.figure()
 plt.ylabel("Loss")
 plt.xlabel("Training Steps")
@@ -302,7 +302,7 @@ plt.plot(batch_stats_callback.batch_losses)
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_53_1.png)
 
-```
+```python
 plt.figure()
 plt.ylabel("Accuracy")
 plt.xlabel("Training Steps")
@@ -315,19 +315,19 @@ plt.plot(batch_stats_callback.batch_acc)
 
 要重做之前的图，首先获取有序的类名列表：
 
-```
+```python
 class_names = sorted(image_data.class_indices.items(), key=lambda pair:pair[1])
 class_names = np.array([key.title() for key, value in class_names])
 class_names
 ```
 ```
-array(['Daisy', 'Dandelion', 'Roses', 'Sunflowers', 'Tulips'],
-      dtype='<U10')
+    array(['Daisy', 'Dandelion', 'Roses', 'Sunflowers', 'Tulips'],
+          dtype='<U10')
 ```
 
 通过模型运行图像批处理，并将索引转换为类名。
 
-```
+```python
 predicted_batch = model.predict(image_batch)
 predicted_id = np.argmax(predicted_batch, axis=-1)
 predicted_label_batch = class_names[predicted_id]
@@ -335,7 +335,7 @@ predicted_label_batch = class_names[predicted_id]
 
 绘制结果
 
-```
+```python
 label_id = np.argmax(label_batch, axis=-1)
 
 plt.figure(figsize=(10,9))
@@ -355,7 +355,7 @@ _ = plt.suptitle("Model predictions (green: correct, red: incorrect)")
 
 现在您已经训练了模型，将其导出为已保存的模型：
 
-```
+```python
 import time
 t = time.time()
 
@@ -370,7 +370,7 @@ export_path
 
 现在确认我们可以重新加载它，它仍然给出相同的结果：
 
-```
+```python
 reloaded = tf.keras.experimental.load_from_saved_model(export_path, custom_objects={'KerasLayer':hub.KerasLayer})
 
 result_batch = model.predict(image_batch)
