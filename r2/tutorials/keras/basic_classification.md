@@ -1,15 +1,22 @@
-
-# 训练您的第一个神经网络：基本分类
+---
+title: 训练您的第一个神经网络：基本分类
+categories: 
+    - tensorflow2.0官方文档
+tags: 
+    - tensorflow2.0
+date: 2019-05-10
+abbrlink: tensorflow/tensorflow2-tutorials-keras-basic_classification
+---
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/keras/basic_classification"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
+    <a target="_blank" href="https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification"><img src="https://tensorflow.google.cn/images/tf_logo_32px.png" />官方版本</a>
   </td>
   <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_classification.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
+    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_classification.ipynb"><img src="https://tensorflow.google.cn/images/colab_logo_32px.png" />Run in Google Colab</a>
   </td>
   <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_classification.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
+    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_classification.ipynb"><img src="https://tensorflow.google.cn/images/GitHub-Mark-32px.png" />改进建议PR</a>
   </td>
 </table>
 
@@ -40,7 +47,7 @@ import matplotlib.pyplot as plt
 print(tf.__version__)
 ```
 
-## 导入MNIST数据集
+# 1. 导入MNIST数据集
 
 本指南使用[Fashion MNIST](https://github.com/zalandoresearch/fashion-mnist)数据集，其中包含 70000 张灰度图像，涵盖 10 个类别。以下图像显示了单件服饰在较低分辨率（28x28 像素）下的效果：
 
@@ -128,7 +135,7 @@ class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
                'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
 ```
 
-##  探索数据
+# 2. 探索数据
 
 我们先探索数据集的格式，然后再训练模型。以下内容显示训练集中有 60000 张图像，每张图像都表示为 28x28 像素：
 
@@ -170,7 +177,7 @@ len(test_labels)
 ```
 `10000`
 
-## 预处理数据
+# 3. 预处理数据
 
 在训练网络之前必须对数据进行预处理。 如果您检查训练集中的第一个图像，您将看到像素值落在0到255的范围内：
 
@@ -209,11 +216,11 @@ plt.show()
 
 ![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_25_0.png)
 
-## 构建模型
+# 4. 构建模型
 
 构建神经网络需要配置模型的层，然后编译模型。
 
-### 设置图层
+## 4.1. 设置图层
 
 神经网络的基本构造块是层。层从馈送到其中的数据中提取表示结果。希望这些表示结果有助于解决手头问题。
 
@@ -232,7 +239,7 @@ model = keras.Sequential([
 
 在像素被展平之后，网络由两个`tf.keras.layers.Dense`层的序列组成。这些是密集连接或全连接的神经层。第一个`Dense`层有128个节点（或神经元）。第二个（也是最后一个）层是具有 10 个节点的 `softmax` 层，该层会返回一个具有 10 个概率得分的数组，这些得分的总和为 1。每个节点包含一个得分，表示当前图像属于 10 个类别中某一个的概率。
 
-### 编译模型
+## 4.2. 编译模型
 
 模型还需要再进行几项设置才可以开始训练。这些设置会添加到模型的编译步骤：
 
@@ -247,7 +254,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 ```
 
-## 训练模型
+# 5. 训练模型
 
 训练神经网络模型需要以下步骤：
 
@@ -273,7 +280,7 @@ Epoch 5/5
 在模型训练期间，系统会显示损失和准确率指标。该模型在训练数据上的准确率达到 0.88（即 88%）。
 
 
-## 评估精度
+# 6. 评估精度
 
 接下来，比较模型在测试数据集上的表现情况：
 
@@ -292,7 +299,7 @@ Test accuracy: 0.8734
 结果表明，模型在测试数据集上的准确率略低于在训练数据集上的准确率。训练准确率和测试准确率之间的这种差异表示出现过拟合(*overfitting*)。如果机器学习模型在新数据上的表现不如在训练数据上的表现，也就是泛化性不好，就表示出现过拟合。
 
 
-## 预测
+# 7. 预测
 
 模型经过训练后，我们可以使用它对一些图像进行预测。
 

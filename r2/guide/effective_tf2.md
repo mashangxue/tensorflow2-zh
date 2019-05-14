@@ -1,9 +1,9 @@
 ---
 title: 高效的TensorFlow 2.0
-tags: 
-    - tensorflow2.0
 categories: 
     - tensorflow2.0官方文档
+tags: 
+    - tensorflow2.0
 date: 2019-05-10
 abbrlink: tensorflow/tensorflow2-guide-effective_tf2
 ---
