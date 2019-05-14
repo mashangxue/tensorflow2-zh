@@ -182,19 +182,21 @@ _ = plt.suptitle("ImageNet predictions")
 
 结果没有那么完美，但考虑到这些不是模型训练的类（“daisy雏菊”除外），这是合理的。
 
+### Download the headless model
 ### 下载无头模型
 
 TensorFlow Hub also distributes models without the top classification layer. These can be used to easily do transfer learning.
+TensorFlow Hub还可以在没有顶级分类层的情况下分发模型。这些可以用来轻松做迁移学习。
 
 Any [Tensorflow 2 compatible image feature vector URL](https://tfhub.dev/s?module-type=image-feature-vector&q=tf2) from tfhub.dev will work here.
-
+来自tfhub.dev的任何[Tensorflow 2兼容图像特征向量URL](https://tfhub.dev/s?module-type=image-feature-vector&q=tf2)都可以在此处使用。
 
 ```
 feature_extractor_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/2" #@param {type:"string"}
 ```
 
 Create the feature extractor.
-
+创建特征提取器。
 
 ```
 feature_extractor_layer = hub.KerasLayer(feature_extractor_url,
@@ -202,24 +204,26 @@ feature_extractor_layer = hub.KerasLayer(feature_extractor_url,
 ```
 
 It returns a 1280-length vector for each image:
-
+它为每个图像返回一个1280长度的向量：
 
 ```
 feature_batch = feature_extractor_layer(image_batch)
 print(feature_batch.shape)
 ```
+`(32, 1280)`
 
 Freeze the variables in the feature extractor layer, so that the training only modifies the new classifier layer.
-
+冻结特征提取器层中的变量，以便训练仅修改新的分类器层。
 
 ```
 feature_extractor_layer.trainable = False
 ```
 
 ### Attach a classification head
+### 附上分类头
 
 Now wrap the hub layer in a `tf.keras.Sequential` model, and add a new classification layer.
-
+现在将中心层包装在`tf.keras.Sequential`模型中，并添加新的分类层。
 
 ```
 model = tf.keras.Sequential([
@@ -229,21 +233,34 @@ model = tf.keras.Sequential([
 
 model.summary()
 ```
-
+```
+Model: "sequential_1"
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+keras_layer_1 (KerasLayer)   (None, 1280)              2257984   
+_________________________________________________________________
+dense (Dense)                (None, 5)                 6405      
+=================================================================
+Total params: 2,264,389
+Trainable params: 6,405
+Non-trainable params: 2,257,984
+_________________________________________________________________
+```
 
 ```
 predictions = model(image_batch)
-```
-
-
-```
 predictions.shape
+```
+```
+TensorShape([32, 5])
 ```
 
 ### Train the model
+### 训练模型
 
 Use compile to configure the training process:
-
+使用compile配置训练过程：
 
 ```
 model.compile(
@@ -253,9 +270,10 @@ model.compile(
 ```
 
 Now use the `.fit` method to train the model.
+现在使用`.fit`方法训练模型。
 
 To keep this example short train just 2 epochs. To visualize the training progress, use a custom callback to log the loss and accuracy of each batch individually, instead of the epoch average.
-
+这个例子只是训练两个周期。要显示训练进度，请使用自定义回调单独记录每个批次的损失和准确性，而不是记录周期的平均值。
 
 ```
 class CollectBatchStats(tf.keras.callbacks.Callback):
@@ -267,10 +285,7 @@ class CollectBatchStats(tf.keras.callbacks.Callback):
     self.batch_losses.append(logs['loss'])
     self.batch_acc.append(logs['acc'])
     self.model.reset_metrics()
-```
 
-
-```
 steps_per_epoch = np.ceil(image_data.samples/image_data.batch_size)
 
 batch_stats_callback = CollectBatchStats()
@@ -280,8 +295,15 @@ history = model.fit(image_data, epochs=2,
                     callbacks = [batch_stats_callback])
 ```
 
-Now after, even just a few training iterations, we can already see that the model is making progress on the task.
+```
+Epoch 1/2
+115/115 [==============================] - 22s 193ms/step - loss: 0.8613 - acc: 0.8438
+Epoch 2/2
+115/115 [==============================] - 23s 199ms/step - loss: 0.5083 - acc: 0.7812
+```
 
+Now after, even just a few training iterations, we can already see that the model is making progress on the task.
+现在，即使只是几次训练迭代，我们已经可以看到模型正在完成任务。
 
 ```
 plt.figure()
@@ -291,6 +313,7 @@ plt.ylim([0,2])
 plt.plot(batch_stats_callback.batch_losses)
 ```
 
+![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_53_1.png)
 
 ```
 plt.figure()
@@ -299,6 +322,7 @@ plt.xlabel("Training Steps")
 plt.ylim([0,1])
 plt.plot(batch_stats_callback.batch_acc)
 ```
+![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_54_1.png?dcb_=0.5728569869098554)
 
 ### Check the predictions
 
