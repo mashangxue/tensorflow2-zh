@@ -325,18 +325,23 @@ plt.plot(batch_stats_callback.batch_acc)
 ![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_54_1.png?dcb_=0.5728569869098554)
 
 ### Check the predictions
+### 检查预测
 
 To redo the plot from before, first get the ordered list of class names:
-
+要重做之前的图，首先获取有序的类名列表：
 
 ```
 class_names = sorted(image_data.class_indices.items(), key=lambda pair:pair[1])
 class_names = np.array([key.title() for key, value in class_names])
 class_names
 ```
+```
+array(['Daisy', 'Dandelion', 'Roses', 'Sunflowers', 'Tulips'],
+      dtype='<U10')
+```
 
 Run the image batch through the model and comvert the indices to class names.
-
+通过模型运行图像批处理，并将索引转换为类名。
 
 ```
 predicted_batch = model.predict(image_batch)
@@ -345,14 +350,11 @@ predicted_label_batch = class_names[predicted_id]
 ```
 
 Plot the result
-
+绘制结果
 
 ```
 label_id = np.argmax(label_batch, axis=-1)
-```
 
-
-```
 plt.figure(figsize=(10,9))
 plt.subplots_adjust(hspace=0.5)
 for n in range(30):
@@ -364,10 +366,14 @@ for n in range(30):
 _ = plt.suptitle("Model predictions (green: correct, red: incorrect)")
 ```
 
+![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_61_0.png)
+
+
 ## Export your model
+## 导出你的模型
 
 Now that you've trained the model, export it as a saved model:
-
+现在您已经训练了模型，将其导出为已保存的模型：
 
 ```
 import time
@@ -378,25 +384,23 @@ tf.keras.experimental.export_saved_model(model, export_path)
 
 export_path
 ```
+```
+'/tmp/saved_models/1557794138'
+```
 
 Now confirm that we can reload it, and it still gives the same results:
-
+现在确认我们可以重新加载它，它仍然给出相同的结果：
 
 ```
 reloaded = tf.keras.experimental.load_from_saved_model(export_path, custom_objects={'KerasLayer':hub.KerasLayer})
-```
 
-
-```
 result_batch = model.predict(image_batch)
 reloaded_result_batch = reloaded.predict(image_batch)
-```
 
-
-```
 abs(reloaded_result_batch - result_batch).max()
 ```
+`0.0`
 
 This saved model can loaded for inference later, or converted to [TFLite](https://www.tensorflow.org/lite/convert/) or [TFjs](https://github.com/tensorflow/tfjs-converter).
-
+这个保存的模型可以在以后加载推理，或转换为[TFLite](https://www.tensorflow.org/lite/convert/) 和 [TFjs](https://github.com/tensorflow/tfjs-converter)。
 
