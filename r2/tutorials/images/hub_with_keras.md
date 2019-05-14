@@ -186,9 +186,11 @@ _ = plt.suptitle("ImageNet predictions")
 ### 下载无头模型
 
 TensorFlow Hub also distributes models without the top classification layer. These can be used to easily do transfer learning.
+
 TensorFlow Hub还可以在没有顶级分类层的情况下分发模型。这些可以用来轻松做迁移学习。
 
 Any [Tensorflow 2 compatible image feature vector URL](https://tfhub.dev/s?module-type=image-feature-vector&q=tf2) from tfhub.dev will work here.
+
 来自tfhub.dev的任何[Tensorflow 2兼容图像特征向量URL](https://tfhub.dev/s?module-type=image-feature-vector&q=tf2)都可以在此处使用。
 
 ```
@@ -196,6 +198,7 @@ feature_extractor_url = "https://tfhub.dev/google/tf2-preview/mobilenet_v2/featu
 ```
 
 Create the feature extractor.
+
 创建特征提取器。
 
 ```
@@ -204,6 +207,7 @@ feature_extractor_layer = hub.KerasLayer(feature_extractor_url,
 ```
 
 It returns a 1280-length vector for each image:
+
 它为每个图像返回一个1280长度的向量：
 
 ```
@@ -213,6 +217,7 @@ print(feature_batch.shape)
 `(32, 1280)`
 
 Freeze the variables in the feature extractor layer, so that the training only modifies the new classifier layer.
+
 冻结特征提取器层中的变量，以便训练仅修改新的分类器层。
 
 ```
@@ -223,6 +228,7 @@ feature_extractor_layer.trainable = False
 ### 附上分类头
 
 Now wrap the hub layer in a `tf.keras.Sequential` model, and add a new classification layer.
+
 现在将中心层包装在`tf.keras.Sequential`模型中，并添加新的分类层。
 
 ```
@@ -234,18 +240,18 @@ model = tf.keras.Sequential([
 model.summary()
 ```
 ```
-Model: "sequential_1"
-_________________________________________________________________
-Layer (type)                 Output Shape              Param #   
-=================================================================
-keras_layer_1 (KerasLayer)   (None, 1280)              2257984   
-_________________________________________________________________
-dense (Dense)                (None, 5)                 6405      
-=================================================================
-Total params: 2,264,389
-Trainable params: 6,405
-Non-trainable params: 2,257,984
-_________________________________________________________________
+    Model: "sequential_1"
+    _________________________________________________________________
+    Layer (type)                 Output Shape              Param #   
+    =================================================================
+    keras_layer_1 (KerasLayer)   (None, 1280)              2257984   
+    _________________________________________________________________
+    dense (Dense)                (None, 5)                 6405      
+    =================================================================
+    Total params: 2,264,389
+    Trainable params: 6,405
+    Non-trainable params: 2,257,984
+    _________________________________________________________________
 ```
 
 ```
@@ -253,13 +259,14 @@ predictions = model(image_batch)
 predictions.shape
 ```
 ```
-TensorShape([32, 5])
+    TensorShape([32, 5])
 ```
 
 ### Train the model
 ### 训练模型
 
 Use compile to configure the training process:
+
 使用compile配置训练过程：
 
 ```
@@ -270,9 +277,11 @@ model.compile(
 ```
 
 Now use the `.fit` method to train the model.
+
 现在使用`.fit`方法训练模型。
 
 To keep this example short train just 2 epochs. To visualize the training progress, use a custom callback to log the loss and accuracy of each batch individually, instead of the epoch average.
+
 这个例子只是训练两个周期。要显示训练进度，请使用自定义回调单独记录每个批次的损失和准确性，而不是记录周期的平均值。
 
 ```
@@ -296,13 +305,14 @@ history = model.fit(image_data, epochs=2,
 ```
 
 ```
-Epoch 1/2
-115/115 [==============================] - 22s 193ms/step - loss: 0.8613 - acc: 0.8438
-Epoch 2/2
-115/115 [==============================] - 23s 199ms/step - loss: 0.5083 - acc: 0.7812
+    Epoch 1/2
+    115/115 [==============================] - 22s 193ms/step - loss: 0.8613 - acc: 0.8438
+    Epoch 2/2
+    115/115 [==============================] - 23s 199ms/step - loss: 0.5083 - acc: 0.7812
 ```
 
 Now after, even just a few training iterations, we can already see that the model is making progress on the task.
+
 现在，即使只是几次训练迭代，我们已经可以看到模型正在完成任务。
 
 ```
@@ -328,6 +338,7 @@ plt.plot(batch_stats_callback.batch_acc)
 ### 检查预测
 
 To redo the plot from before, first get the ordered list of class names:
+
 要重做之前的图，首先获取有序的类名列表：
 
 ```
@@ -341,6 +352,7 @@ array(['Daisy', 'Dandelion', 'Roses', 'Sunflowers', 'Tulips'],
 ```
 
 Run the image batch through the model and comvert the indices to class names.
+
 通过模型运行图像批处理，并将索引转换为类名。
 
 ```
@@ -350,6 +362,7 @@ predicted_label_batch = class_names[predicted_id]
 ```
 
 Plot the result
+
 绘制结果
 
 ```
@@ -373,6 +386,7 @@ _ = plt.suptitle("Model predictions (green: correct, red: incorrect)")
 ## 导出你的模型
 
 Now that you've trained the model, export it as a saved model:
+
 现在您已经训练了模型，将其导出为已保存的模型：
 
 ```
@@ -389,6 +403,7 @@ export_path
 ```
 
 Now confirm that we can reload it, and it still gives the same results:
+
 现在确认我们可以重新加载它，它仍然给出相同的结果：
 
 ```
@@ -402,5 +417,6 @@ abs(reloaded_result_batch - result_batch).max()
 `0.0`
 
 This saved model can loaded for inference later, or converted to [TFLite](https://www.tensorflow.org/lite/convert/) or [TFjs](https://github.com/tensorflow/tfjs-converter).
+
 这个保存的模型可以在以后加载推理，或转换为[TFLite](https://www.tensorflow.org/lite/convert/) 和 [TFjs](https://github.com/tensorflow/tfjs-converter)。
 
