@@ -1,32 +1,34 @@
 ---
 title: 高效的TensorFlow 2.0
-categories: 
-    - tensorflow2.0官方文档
 tags: 
     - tensorflow2.0
+categories: 
+    - tensorflow2.0官方文档
 date: 2019-05-10
 abbrlink: tensorflow/tensorflow2-guide-effective_tf2
 ---
+
+# 高效的TensorFlow 2.0
 
 TensorFlow 2.0中有多处更改，以使TensorFlow用户使用更高效。TensorFlow 2.0删除[冗余 APIs](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md),使API更加一致([统一 RNNs](https://github.com/tensorflow/community/blob/master/rfcs/20180920-unify-rnn-interface.md),[统一优化器](https://github.com/tensorflow/community/blob/master/rfcs/20181016-optimizer-unification.md)),并通过[Eager execution](https://www.tensorflow.org/guide/eager)模式更好地与Python运行时集成
 
 许多[RFCs](https://github.com/tensorflow/community/pulls?utf8=%E2%9C%93&q=is%3Apr)已经解释了TensorFlow 2.0所带来的变化。本指南介绍了TensorFlow 2.0应该是什么样的开发，假设您对TensorFlow 1.x有一定的了解。
 
-# 1. 主要变化的简要总结
+## 1. 主要变化的简要总结
 
-## 1.1. API清理
+### 1.1. API清理
 
 许多API在tensorflow 2.0中[消失或移动](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md)。一些主要的变化包括删除`tf.app`、`tf.flags`和`tf.logging` ，转而支持现在开源的[absl-py](https://github.com/abseil/abseil-py)，重新安置`tf.contrib`中的项目，并清理主要的 `tf.*`命名空间，将不常用的函数移动到像 `tf.math`这样的子包中。一些API已被2.0版本等效替换，如`tf.summary`, `tf.keras.metrics`和`tf.keras.optimizers`。
 自动应用这些重命名的最简单方法是使用[v2升级脚本](https://tensorflow.google.cn/alpha/guide/upgrade)。
 
-## 1.2. Eager execution
+### 1.2. Eager execution
 
 TensorFlow 1.X要求用户通过进行`tf.*` API调用，手动将抽象语法树（图形）拼接在一起。然后要求用户通过将一组输出张量和输入张量传递给`session.run()`来手动编译抽象语法树。
 TensorFlow 2.0 默认Eager execution模式，马上就执行代码（就像Python通常那样），在2.0中，图形和会话应该像实现细节一样。
 
 Eager execution的一个值得注意的地方是不在需要`tf.control_dependencies()` ，因为所有代码按顺序执行（在`tf.function`中，带有副作用的代码按写入的顺序执行）。
 
-## 1.3. 没有更多的全局变量
+### 1.3. 没有更多的全局变量
 
 TensorFlow 1.X严重依赖于隐式全局命名空间。当你调用`tf.Variable()`时，它会被放入默认图形中，保留在那里，即使你忘记了指向它的Python变量。
 然后，您可以恢复该`tf.Variable`，但前提是您知道它已创建的名称，如果您无法控制变量的创建，这很难做到。结果，各种机制激增，试图帮助用户再次找到他们的变量，并寻找框架来查找用户创建的变量：变量范围、全局集合、辅助方法如`tf.get_global_step()`, `tf.global_variables_initializer()`、优化器隐式计算所有可训练变量的梯度等等。
@@ -35,7 +37,7 @@ TensorFlow 2.0取消了所有这些机制([Variables 2.0 RFC](https://github.com
 
 跟踪变量的要求为用户创建了一些额外的工作，但是使用Keras对象（见下文），负担被最小化。
 
-## 1.4. Functions, not sessions
+### 1.4. Functions, not sessions
 
 `session.run()`调用几乎就像一个函数调用：指定输入和要调用的函数，然后返回一组输出。
 在TensorFlow 2.0中，您可以使用`tf.function()` 来装饰Python函数以将其标记为JIT编译，以便TensorFlow将其作为单个图形运行([Functions 2.0 RFC](https://github.com/tensorflow/community/pull/20))。这种机制允许TensorFlow 2.0获得图形模式的所有好处：
@@ -58,15 +60,15 @@ outputs = f(input)
 
 AutoGraph支持控制流的任意嵌套，这使得高效和简洁地实现许多复杂的ML程序成为可能，比如序列模型、强化学习、自定义训练循环等等。
 
-# 2. 使用TensorFlow 2.0的建议
+## 2. 使用TensorFlow 2.0的建议
 
-## 2.1. 将代码重构为更小的函数
+### 2.1. 将代码重构为更小的函数
 
 TensorFlow 1.X中常见的使用模式是“kitchen sink”策略，在该策略中，所有可能的计算的并集被预先安排好，然后通过`session.run()`对所选的张量进行评估。
 
 TensorFlow 2.0中，用户应该根据需要将代码重构为更小的函数。一般来说，没有必须要使用`tf.function`来修饰这些小函数，只用`tf.function`来修饰高级计算-例如，一个训练步骤，或者模型的前向传递。
 
-## 2.2. 使用Keras层和模型来管理变量
+### 2.2. 使用Keras层和模型来管理变量
 
 Keras模型和层提供了方便的`variables`和`trainable_variables`属性，它们递归地收集所有的因变量。这使得本地管理变量到使用它们的地方变得非常容易。
 
@@ -132,7 +134,7 @@ for x, y in small_dataset:
 tf.saved_model.save(trunk, output_path)
 ```
 
-## 2.3. 结合tf.data.Datesets和@tf.function
+### 2.3. 结合tf.data.Datesets和@tf.function
 
 当迭代适合内存训练的数据时，可以随意使用常规的Python迭代。除此之外，`tf.data.Datesets`是从磁盘中传输训练数据的最佳方式。
 数据集[可迭代（但不是迭代器](https://docs.python.org/3/glossary.html#term-iterable)），就像其他Python迭代器在Eager模式下工作一样。
@@ -156,7 +158,7 @@ model.compile(optimizer=optimizer, loss=loss_fn)
 model.fit(dataset)
 ```
 
-## 2.4. 利用AutoGraph和Python控制流程
+### 2.4. 利用AutoGraph和Python控制流程
 
 AutoGraph提供了一种将依赖于数据的控制流转换为图形模式等价的方法，如`tf.cond`和`tf.while_loop`。
 
@@ -183,7 +185,7 @@ class DynamicRNN(tf.keras.Model):
 
 有关AutoGraph功能的更详细概述，请参阅[指南](https://tensorflow.google.cn/alpha/guide/autograph).。
 
-## 2.5. 使用tf.metrics聚合数据和tf.summary来记录它
+### 2.5. 使用tf.metrics聚合数据和tf.summary来记录它
 
 要记录摘要，请使用`tf.summary.(scalar|histogram|...)` 并使用上下文管理器将其重定向到writer。（如果省略上下文管理器，则不会发生任何事情。）与TF 1.x不同，摘要直接发送给writer；没有单独的`merger`操作，也没有单独的`add_summary()`调用，这意味着必须在调用点提供步骤值。
 
