@@ -1,22 +1,6 @@
 
-##### Copyright 2019 The TensorFlow Authors.
 
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Word embeddings
+# 使用词嵌入
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -36,43 +20,44 @@
   </td>
 </table>
 
-This tutorial introduces word embeddings. It contains complete code to train word embeddings from scratch on a small dataset, and to visualize these embeddings using the [Embedding Projector](http://projector.tensorflow.org) (shown in the image below).
+本章节介绍了词嵌入，它包含完整的代码，可以在小型数据集上从零开始训练词嵌入，并使用嵌入投影仪[Embedding Projector](http://projector.tensorflow.org) 可视化这些嵌入，如下图所示：
 
-<img src="https://github.com/tensorflow/docs/blob/88d3b244eca8088c6c406ff9bdc8505d7fb6cbe7/site/en/r2/tutorials/text/images/embedding.jpg?raw=1" alt="Screenshot of the embedding projector" width="400"/>
+<img src="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding.jpg?raw=1" alt="Screenshot of the embedding projector" width="400"/>
 
-## Representing text as numbers
+## 将文本表示为数字
 
-Machine learning models take vectors (arrays of numbers) as input. When working with text, the first thing we must do come up with a strategy to convert strings to numbers (or to "vectorize" the text) before feeding it to the model. In this section, we will look at three strategies for doing so.
+机器学习模型以向量（数字数组）作为输入，在处理文本时，我们必须首先想出一个策略，将字符串转换为数字（或将文本“向量化”），然后再将其提供给模型。在本节中，我们将研究三种策略。
 
-### One-hot encodings
+### 独热编码（One-hot encodings）
 
-As a first idea, we might "one-hot" encode each word in our vocabulary. Consider the sentence "The cat sat on the mat". The vocabulary (or unique words) in this sentence is (cat, mat, on, sat, the). To represent each word, we will create a zero vector with length equal to the vocabulary, then place a one in the index that corresponds to the word. This approach is shown in the following diagram.
+首先，我们可以用“one-hot”对词汇的每个单词进行编码，想想“the cat sat on the mat”这句话，这个句子中的词汇（或独特的单词）是（cat,mat,on,The），为了表示每个单词，我们将创建一个长度等于词汇表的零向量，然后再对应单词的索引中放置一个1。这种方法如下图所示：
 
-<img src="https://github.com/tensorflow/docs/blob/88d3b244eca8088c6c406ff9bdc8505d7fb6cbe7/site/en/r2/tutorials/text/images/one-hot.png?raw=1" alt="Diagram of one-hot encodings" width="400" />
+<img src="https://raw.githubusercontent.com/tensorflow/docs/master/site/en/r2/tutorials/text/images/one-hot.png" alt="Diagram of one-hot encodings" width="400" />
 
-To create a vector that contains the encoding of the sentence, we could then concatenate the one-hot vectors for each word.
+为了创建包含句子编码的向量，我们可以连接每个单词的one-hot向量。
 
-Key point: This approach is inefficient. A one-hot encoded vector is sparse (meaning, most indicices are zero). Imagine we have 10,000 words in the vocabulary. To one-hot encode each word, we would create a vector where 99.99% of the elements are zero.
+关键点：这种方法是低效的，一个热编码的向量是稀疏的（意思是，大多数指标是零）。假设我们有10000个单词，要对每个单词进行一个热编码，我们将创建一个向量，其中99.99%的元素为零。
 
-### Encode each word with a unique number
+### 用唯一的数字编码每个单词
 
-A second approach we might try is to encode each word using a unique number. Continuing the example above, we could assign 1 to "cat", 2 to "mat", and so on. We could then encode the sentence "The cat sat on the mat" as a dense vector like [5, 1, 4, 3, 5, 2]. This appoach is efficient. Instead of a sparse vector, we now have a dense one (where all elements are full).
+我们尝试第二种方法，使用唯一的数字编码每个单词。继续上面的例子，我们可以将1赋值给“cat”，将2赋值给“mat”，以此类推，然后我们可以将句子“The cat sat on the mat”编码为像[5, 1, 4, 3, 5, 2]这样的密集向量。这种方法很有效，我们现有有一个稠密的向量（所有元素都是满的），而不是稀疏的向量。
 
-There are two downsides to this approach, however:
+然而，这种方法有两个缺点：
 
-* The integer-encoding is arbitrary (it does not capture any relationship between words).
+* 整数编码是任意的（它不捕获单词之间的任何关系）。
 
-* An integer-encoding can be challenging for a model to interpret. A linear classifier, for example, learns a single weight for each feature. Because there is no relationship between the similarity of any two words and the similarity of their encodings, this feature-weight combination is not meaningful.
+* 对于模型来说，整数编码的解释是很有挑战性的。例如，线性分类器为每个特征学习单个权重。由于任何两个单词的相似性与它们编码的相似性之间没有关系，所以这种特征权重组合没有意义。
 
-### Word embeddings
 
-Word embeddings give us a way to use an efficient, dense representation in which similar words have a similar encoding. Importantly, we do not have to specify this encoding by hand. An embedding is a dense vector of floating point values (the length of the vector is a parameter you specify). Instead of specifying the values for the embedding manually, they are trainable parameters (weights learned by the model during training, in the same way a model learns weights for a dense layer). It is common to see word embeddings that are 8-dimensional (for small datasets), up to 1024-dimensions when working with large datasets. A higher dimensional embedding can capture fine-grained relationships between words, but takes more data to learn.
+### 词嵌入
 
-<img src="https://github.com/tensorflow/docs/blob/88d3b244eca8088c6c406ff9bdc8505d7fb6cbe7/site/en/r2/tutorials/text/images/embedding2.png?raw=1" alt="Diagram of an embedding" width="400"/>
+词嵌入为我们提供了一种使用高效、密集表示的方法，其中相似的单词具有相似的编码，重要的是，我们不必手工指定这种编码，嵌入是浮点值的密集向量（向量的长度是您指定的参数），它们不是手工指定嵌入的值，而是可训练的参数（模型在训练期间学习的权重，与模型学习密集层的权重的方法相同）。通常会看到8维（对于小数据集）的词嵌入，在处理大型数据集时最多可达1024维。更高维度的嵌入可以捕获单词之间的细粒度关系，但需要更多的数据来学习。
 
-Above is a diagram for a word embedding. Each word is represented as a 4-dimensional vector of floating point values. Another way to think of an embedding is as "lookup table". After these weights have been learned, we can encode each word by looking up the dense vector it corresponds to in the table.
+![Diagram of an embedding](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding2.png?raw=1)
 
-## Using the Embedding layer
+上面是词嵌入的图表，每个单词表示为浮点值的4维向量，另一种考虑嵌入的方法是“查找表”，在学习了这些权重之后，我们可以通过查找表中对应的密集向量来编码每个单词。
+
+## 使用嵌入层Embedding Layer
 
 Keras makes it easy to use word embeddings. Let's take a look at the [Embedding](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Embedding) layer.
 
