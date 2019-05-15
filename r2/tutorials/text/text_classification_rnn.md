@@ -48,7 +48,7 @@ IMDB大型电影影评数据集是一个二元分类数据集，所有评论都�
 使用[TFDS](https://tensorflow.google.cn/datasets)下载数据集，数据集附带一个内置的子字标记器
 
 
-```
+```python
 dataset, info = tfds.load('imdb_reviews/subwords8k', with_info=True,
                           as_supervised=True)
 train_dataset, test_dataset = dataset['train'], dataset['test']
@@ -56,7 +56,7 @@ train_dataset, test_dataset = dataset['train'], dataset['test']
 
 由于这是一个子字标记器，它可以传递任何字符串，并且标记器将对其进行标记。
 
-```
+```python
 tokenizer = info.features['text'].encoder
 
 print ('Vocabulary size: {}'.format(tokenizer.vocab_size))
@@ -66,7 +66,7 @@ print ('Vocabulary size: {}'.format(tokenizer.vocab_size))
 ```
 
 
-```
+```python
 sample_string = 'TensorFlow is cool.'
 
 tokenized_string = tokenizer.encode(sample_string)
@@ -85,7 +85,7 @@ assert original_string == sample_string
 
 如果字符串不在字典中，则标记生成器通过将字符串分解为子字符串来对字符串进行编码。
 
-```
+```python
 for ts in tokenized_string:
   print ('{} ----> {}'.format(ts, tokenizer.decode([ts])))
 ```
@@ -101,7 +101,7 @@ for ts in tokenized_string:
 ```
 
 
-```
+```python
 BUFFER_SIZE = 10000
 BATCH_SIZE = 64
 
@@ -121,7 +121,7 @@ test_dataset = test_dataset.padded_batch(BATCH_SIZE, test_dataset.output_shapes)
 
 `tf.keras.layers.Bidirectional`包装器也可以与RNN层一起使用。这通过RNN层向前和向后传播输入，然后连接输出。这有助于RNN学习远程依赖性。
 
-```
+```python
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(tokenizer.vocab_size, 64),
     tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(64)),
@@ -137,7 +137,7 @@ model.compile(loss='binary_crossentropy',
 
 ## 训练模型
 
-```
+```python
 history = model.fit(train_dataset, epochs=10,
                     validation_data=test_dataset)
 ```
@@ -149,7 +149,7 @@ history = model.fit(train_dataset, epochs=10,
 ```
 
 
-```
+```python
 test_loss, test_acc = model.evaluate(test_dataset)
 
 print('Test Loss: {}'.format(test_loss))
@@ -166,7 +166,7 @@ print('Test Accuracy: {}'.format(test_acc))
 
 如果预测 >=0.5，则为正，否则为负。
 
-```
+```python
 def pad_to_size(vec, size):
   zeros = [0] * (size - len(vec))
   vec.extend(zeros)
@@ -184,7 +184,7 @@ def sample_predict(sentence, pad):
 ```
 
 
-```
+```python
 # 对不带填充的示例文本进行预测 
 
 sample_pred_text = ('The movie was cool. The animation and the graphics '
@@ -198,7 +198,7 @@ print (predictions)
 ```
 
 
-```
+```python
 # 对带填充的示例文本进行预测 
 
 sample_pred_text = ('The movie was cool. The animation and the graphics '
@@ -211,14 +211,14 @@ print (predictions)
        [[ 0.68634349]]
 ```
 
-```
+```python
 plot_graphs(history, 'accuracy')
 ```
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_29_0.png)
 
 
-```
+```python
 plot_graphs(history, 'loss')
 ```
 
@@ -234,7 +234,7 @@ Keras递归层有两种可以用的模式，由`return_sequences`构造函数参
 
 * 仅返回每个输入序列的最后一个输出（2D张量形状 `(batch_size, output_features)`）。
 
-```
+```python
 model = tf.keras.Sequential([
     tf.keras.layers.Embedding(tokenizer.vocab_size, 64),
     tf.keras.layers.Bidirectional(tf.keras.layers.LSTM(
@@ -258,7 +258,7 @@ history = model.fit(train_dataset, epochs=10,
       391/391 [==============================] - 154s 394ms/step - loss: 0.1120 - accuracy: 0.9643 - val_loss: 0.5646 - val_accuracy: 0.8070
 ```
 
-```
+```python
 test_loss, test_acc = model.evaluate(test_dataset)
 
 print('Test Loss: {}'.format(test_loss))
@@ -271,7 +271,7 @@ print('Test Accuracy: {}'.format(test_acc))
 ```
 
 
-```
+```python
 # 在没有填充的情况下预测示例文本
 
 sample_pred_text = ('The movie was not good. The animation and the graphics '
@@ -285,7 +285,7 @@ print (predictions)
 ```
 
 
-```
+```python
 # 在有填充的情况下预测示例文本
 
 sample_pred_text = ('The movie was not good. The animation and the graphics '
@@ -299,7 +299,7 @@ print (predictions)
 ```
 
 
-```
+```python
 plot_graphs(history, 'accuracy')
 ```
 
@@ -307,7 +307,7 @@ plot_graphs(history, 'accuracy')
 
 
 
-```
+```python
 plot_graphs(history, 'loss')
 ```
 
