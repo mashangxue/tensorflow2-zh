@@ -53,7 +53,7 @@
 
 词嵌入为我们提供了一种使用高效、密集表示的方法，其中相似的单词具有相似的编码，重要的是，我们不必手工指定这种编码，嵌入是浮点值的密集向量（向量的长度是您指定的参数），它们不是手工指定嵌入的值，而是可训练的参数（模型在训练期间学习的权重，与模型学习密集层的权重的方法相同）。通常会看到8维（对于小数据集）的词嵌入，在处理大型数据集时最多可达1024维。更高维度的嵌入可以捕获单词之间的细粒度关系，但需要更多的数据来学习。
 
-![Diagram of an embedding](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding2.png?raw=1)
+<img src="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding2.png?raw=1" alt="Diagram of an embedding" width="400" />
 
 上面是词嵌入的图表，每个单词表示为浮点值的4维向量，另一种考虑嵌入的方法是“查找表”，在学习了这些权重之后，我们可以通过查找表中对应的密集向量来编码每个单词。
 
