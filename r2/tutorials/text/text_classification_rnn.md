@@ -1,22 +1,6 @@
 
-##### Copyright 2018 The TensorFlow Authors.
 
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Text classification with an RNN
+# 使用RNN对文本进行分类
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -30,19 +14,18 @@
   </td>
 </table>
 
-This text classification tutorial trains a [recurrent neural network](https://developers.google.com/machine-learning/glossary/#recurrent_neural_network) on the [IMDB large movie review dataset](http://ai.stanford.edu/~amaas/data/sentiment/) for sentiment analysis.
 
+本文本分类教程在[IMDB大型影评数据集](http://ai.stanford.edu/~amaas/data/sentiment/) 上训练一个循环神经网络进行情感分类。
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow-gpu==2.0.0-alpha0
+# !pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow_datasets as tfds
 import tensorflow as tf
 ```
 
-Import `matplotlib` and create a helper function to plot graphs:
-
+导入matplotlib并创建一个辅助函数来绘制图形
 
 ```
 import matplotlib.pyplot as plt
@@ -57,13 +40,12 @@ def plot_graphs(history, string):
   plt.show()
 ```
 
-## Setup input pipeline
+## 设置输入管道
 
 
-The IMDB large movie review dataset is a *binary classification* dataset—all the reviews have either a *positive* or *negative* sentiment.
+IMDB大型电影影评数据集是一个二元分类数据集，所有评论都有正面或负面的情绪标签。
 
-Download the dataset using [TFDS](https://www.tensorflow.org/datasets). The dataset comes with an inbuilt subword tokenizer.
-
+使用[TFDS](https://tensorflow.google.cn/datasets)下载数据集，数据集附带一个内置的子字标记器
 
 
 ```
@@ -72,20 +54,16 @@ dataset, info = tfds.load('imdb_reviews/subwords8k', with_info=True,
 train_dataset, test_dataset = dataset['train'], dataset['test']
 ```
 
-As this is a subwords tokenizer, it can be passed any string and the tokenizer will tokenize it.
-
+由于这是一个子字标记器，它可以传递任何字符串，并且标记器将对其进行标记。
 
 ```
 tokenizer = info.features['text'].encoder
-```
 
-
-```
 print ('Vocabulary size: {}'.format(tokenizer.vocab_size))
 ```
-
-    Vocabulary size: 8185
-
+```
+      Vocabulary size: 8185
+```
 
 
 ```
@@ -100,18 +78,19 @@ print ('The original string: {}'.format(original_string))
 assert original_string == sample_string
 ```
 
-    Tokenized string is [6307, 2327, 4043, 4265, 9, 2724, 7975]
-    The original string: TensorFlow is cool.
+```
+      Tokenized string is [6307, 2327, 4043, 4265, 9, 2724, 7975]
+      The original string: TensorFlow is cool.
+```
 
-
-The tokenizer encodes the string by breaking it into subwords if the word is not in its dictionary.
-
+如果字符串不在字典中，则标记生成器通过将字符串分解为子字符串来对字符串进行编码。
 
 ```
 for ts in tokenized_string:
   print ('{} ----> {}'.format(ts, tokenizer.decode([ts])))
 ```
 
+```
     6307 ----> Ten
     2327 ----> sor
     4043 ----> Fl
@@ -119,32 +98,28 @@ for ts in tokenized_string:
     9 ----> is
     2724 ----> cool
     7975 ----> .
-
+```
 
 
 ```
 BUFFER_SIZE = 10000
 BATCH_SIZE = 64
-```
 
-
-```
 train_dataset = train_dataset.shuffle(BUFFER_SIZE)
 train_dataset = train_dataset.padded_batch(BATCH_SIZE, train_dataset.output_shapes)
 
 test_dataset = test_dataset.padded_batch(BATCH_SIZE, test_dataset.output_shapes)
 ```
 
-## Create the model
+## 创建模型
 
-Build a `tf.keras.Sequential` model and start with an embedding layer. An embedding layer stores one vector per word. When called, it converts the sequences of word indices to sequences of vectors. These vectors are trainable. After training (on enough data), words with similar meanings often have similar vectors.
+构建一个`tf.keras.Sequential`模型并从嵌入层开始，嵌入层每个字存储一个向量，当被调用时，它将单词索引的序列转换为向量序列，这些向量是可训练的，在训练之后（在足够的数据上），具有相似含义的词通常具有相似的向量。
 
-This index-lookup is much more efficient than the equivalent operation of passing a one-hot encoded vector through a `tf.keras.layers.Dense` layer.
+这种索引查找比通过`tf.keras.layers.Dense`层传递独热编码向量的等效操作更有效。
 
-A recurrent neural network (RNN) processes sequence input by iterating through the elements. RNNs pass the outputs from one timestep to their input—and then to the next.
+递归神经网络（RNN）通过迭代元素来处理序列输入，RNN将输出从一个时间步传递到其输入端，然后传递到下一个时间步。
 
-The `tf.keras.layers.Bidirectional` wrapper can also be used with an RNN layer. This propagates the input forward and backwards through the RNN layer and then concatenates the output. This helps the RNN to learn long range dependencies.
-
+`tf.keras.layers.Bidirectional`包装器也可以与RNN层一起使用。这通过RNN层向前和向后传播输入，然后连接输出。这有助于RNN学习远程依赖性。
 
 ```
 model = tf.keras.Sequential([
@@ -153,46 +128,25 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dense(1, activation='sigmoid')
 ])
-```
 
-Compile the Keras model to configure the training process:
-
-
-```
+# 编译Keras模型以配置训练过程：
 model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
 ```
 
-## Train the model
-
+## 训练模型
 
 ```
 history = model.fit(train_dataset, epochs=10,
                     validation_data=test_dataset)
 ```
 
-    Epoch 1/10
-    391/391 [==============================] - 75s 191ms/step - loss: 0.5536 - accuracy: 0.7140 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
-    Epoch 2/10
-    391/391 [==============================] - 73s 187ms/step - loss: 0.3922 - accuracy: 0.8311 - val_loss: 0.5141 - val_accuracy: 0.7940
-    Epoch 3/10
-    391/391 [==============================] - 71s 182ms/step - loss: 0.3120 - accuracy: 0.8807 - val_loss: 0.4517 - val_accuracy: 0.8098
-    Epoch 4/10
-    391/391 [==============================] - 78s 199ms/step - loss: 0.2548 - accuracy: 0.9030 - val_loss: 0.4383 - val_accuracy: 0.8235
-    Epoch 5/10
-    391/391 [==============================] - 72s 185ms/step - loss: 0.2387 - accuracy: 0.9078 - val_loss: 0.4918 - val_accuracy: 0.8214
-    Epoch 6/10
-    391/391 [==============================] - 71s 182ms/step - loss: 0.1905 - accuracy: 0.9293 - val_loss: 0.4849 - val_accuracy: 0.8162
-    Epoch 7/10
-    391/391 [==============================] - 71s 182ms/step - loss: 0.1900 - accuracy: 0.9282 - val_loss: 0.5919 - val_accuracy: 0.8257
-    Epoch 8/10
-    391/391 [==============================] - 74s 190ms/step - loss: 0.1321 - accuracy: 0.9526 - val_loss: 0.6331 - val_accuracy: 0.7657
-    Epoch 9/10
-    391/391 [==============================] - 73s 187ms/step - loss: 0.3290 - accuracy: 0.8516 - val_loss: 0.6709 - val_accuracy: 0.6501
-    Epoch 10/10
-    391/391 [==============================] - 70s 180ms/step - loss: 0.3074 - accuracy: 0.8692 - val_loss: 0.5533 - val_accuracy: 0.7873
-
+```
+      ...
+      Epoch 10/10
+      391/391 [==============================] - 70s 180ms/step - loss: 0.3074 - accuracy: 0.8692 - val_loss: 0.5533 - val_accuracy: 0.7873
+```
 
 
 ```
@@ -202,24 +156,22 @@ print('Test Loss: {}'.format(test_loss))
 print('Test Accuracy: {}'.format(test_acc))
 ```
 
-        391/Unknown - 19s 47ms/step - loss: 0.5533 - accuracy: 0.7873Test Loss: 0.553319326714
-    Test Accuracy: 0.787320017815
+```
+          391/Unknown - 19s 47ms/step - loss: 0.5533 - accuracy: 0.7873Test Loss: 0.553319326714
+      Test Accuracy: 0.787320017815
+```
 
 
-The above model does not mask the padding applied to the sequences. This can lead to skewness if we train on padded sequences and test on un-padded sequences. Ideally the model would learn to ignore the padding, but as you can see below it does have a small effect on the output.
+上面的模型没有屏蔽应用于序列的填充。如果我们对填充序列进行训练，并对未填充序列进行测试，就会导致偏斜。理想情况下，模型应该学会忽略填充，但是正如您在下面看到的，它对输出的影响确实很小。
 
-If the prediction is >= 0.5, it is positive else it is negative.
-
+如果预测 >=0.5，则为正，否则为负。
 
 ```
 def pad_to_size(vec, size):
   zeros = [0] * (size - len(vec))
   vec.extend(zeros)
   return vec
-```
 
-
-```
 def sample_predict(sentence, pad):
   tokenized_sample_pred_text = tokenizer.encode(sample_pred_text)
 
@@ -233,7 +185,7 @@ def sample_predict(sentence, pad):
 
 
 ```
-# predict on a sample text without padding.
+# 对不带填充的示例文本进行预测 
 
 sample_pred_text = ('The movie was cool. The animation and the graphics '
                     'were out of this world. I would recommend this movie.')
@@ -241,12 +193,13 @@ predictions = sample_predict(sample_pred_text, pad=False)
 print (predictions)
 ```
 
-    [[ 0.68914342]]
-
+```
+        [[ 0.68914342]]
+```
 
 
 ```
-# predict on a sample text with padding
+# 对带填充的示例文本进行预测 
 
 sample_pred_text = ('The movie was cool. The animation and the graphics '
                     'were out of this world. I would recommend this movie.')
@@ -254,34 +207,32 @@ predictions = sample_predict(sample_pred_text, pad=True)
 print (predictions)
 ```
 
-    [[ 0.68634349]]
-
-
+```
+       [[ 0.68634349]]
+```
 
 ```
 plot_graphs(history, 'accuracy')
 ```
 
-
-![png](text_classification_rnn_files/text_classification_rnn_31_0.png)
-
+![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_29_0.png)
 
 
 ```
 plot_graphs(history, 'loss')
 ```
 
+![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_30_0.png)
 
-![png](text_classification_rnn_files/text_classification_rnn_32_0.png)
+
+## 堆叠两个或更多LSTM层
 
 
-## Stack two or more LSTM layers
+Keras递归层有两种可以用的模式，由`return_sequences`构造函数参数控制：
 
-Keras recurrent layers have two available modes that are controlled by the `return_sequences` constructor argument:
+* 返回每个时间步的连续输出的完整序列（3D张量形状 `(batch_size, timesteps, output_features)`）。
 
-* Return either the full sequences of successive outputs for each timestep (a 3D tensor of shape `(batch_size, timesteps, output_features)`).
-* Return only the last output for each input sequence (a 2D tensor of shape (batch_size, output_features)).
-
+* 仅返回每个输入序列的最后一个输出（2D张量形状 `(batch_size, output_features)`）。
 
 ```
 model = tf.keras.Sequential([
@@ -292,43 +243,20 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(64, activation='relu'),
     tf.keras.layers.Dense(1, activation='sigmoid')
 ])
-```
 
-
-```
 model.compile(loss='binary_crossentropy',
               optimizer='adam',
               metrics=['accuracy'])
-```
 
-
-```
 history = model.fit(train_dataset, epochs=10,
                     validation_data=test_dataset)
 ```
 
-    Epoch 1/10
-    391/391 [==============================] - 155s 397ms/step - loss: 0.6349 - accuracy: 0.6162 - val_loss: 0.0000e+00 - val_accuracy: 0.0000e+00
-    Epoch 2/10
-    391/391 [==============================] - 155s 396ms/step - loss: 0.6333 - accuracy: 0.6134 - val_loss: 0.5872 - val_accuracy: 0.6914
-    Epoch 3/10
-    391/391 [==============================] - 153s 391ms/step - loss: 0.4199 - accuracy: 0.8217 - val_loss: 0.4361 - val_accuracy: 0.8187
-    Epoch 4/10
-    391/391 [==============================] - 156s 398ms/step - loss: 0.3088 - accuracy: 0.8785 - val_loss: 0.4131 - val_accuracy: 0.8319
-    Epoch 5/10
-    391/391 [==============================] - 153s 391ms/step - loss: 0.3328 - accuracy: 0.8564 - val_loss: 0.4689 - val_accuracy: 0.7958
-    Epoch 6/10
-    391/391 [==============================] - 156s 398ms/step - loss: 0.2383 - accuracy: 0.9128 - val_loss: 0.4299 - val_accuracy: 0.8404
-    Epoch 7/10
-    391/391 [==============================] - 152s 388ms/step - loss: 0.2426 - accuracy: 0.9039 - val_loss: 0.4934 - val_accuracy: 0.8299
-    Epoch 8/10
-    391/391 [==============================] - 155s 396ms/step - loss: 0.1638 - accuracy: 0.9440 - val_loss: 0.5106 - val_accuracy: 0.8279
-    Epoch 9/10
-    391/391 [==============================] - 150s 383ms/step - loss: 0.1616 - accuracy: 0.9420 - val_loss: 0.5287 - val_accuracy: 0.8245
-    Epoch 10/10
-    391/391 [==============================] - 154s 394ms/step - loss: 0.1120 - accuracy: 0.9643 - val_loss: 0.5646 - val_accuracy: 0.8070
-
-
+```
+      ...
+      Epoch 10/10
+      391/391 [==============================] - 154s 394ms/step - loss: 0.1120 - accuracy: 0.9643 - val_loss: 0.5646 - val_accuracy: 0.8070
+```
 
 ```
 test_loss, test_acc = model.evaluate(test_dataset)
@@ -337,13 +265,14 @@ print('Test Loss: {}'.format(test_loss))
 print('Test Accuracy: {}'.format(test_acc))
 ```
 
-        391/Unknown - 45s 115ms/step - loss: 0.5646 - accuracy: 0.8070Test Loss: 0.564571284348
-    Test Accuracy: 0.80703997612
-
+```
+            391/Unknown - 45s 115ms/step - loss: 0.5646 - accuracy: 0.8070Test Loss: 0.564571284348
+        Test Accuracy: 0.80703997612
+```
 
 
 ```
-# predict on a sample text without padding.
+# 在没有填充的情况下预测示例文本
 
 sample_pred_text = ('The movie was not good. The animation and the graphics '
                     'were terrible. I would not recommend this movie.')
@@ -351,12 +280,13 @@ predictions = sample_predict(sample_pred_text, pad=False)
 print (predictions)
 ```
 
-    [[ 0.00393916]]
-
+```
+       [[ 0.00393916]]
+```
 
 
 ```
-# predict on a sample text with padding
+# 在有填充的情况下预测示例文本
 
 sample_pred_text = ('The movie was not good. The animation and the graphics '
                     'were terrible. I would not recommend this movie.')
@@ -364,16 +294,16 @@ predictions = sample_predict(sample_pred_text, pad=True)
 print (predictions)
 ```
 
-    [[ 0.01098633]]
-
+```
+      [[ 0.01098633]]
+```
 
 
 ```
 plot_graphs(history, 'accuracy')
 ```
 
-
-![png](text_classification_rnn_files/text_classification_rnn_40_0.png)
+![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_38_0.png)
 
 
 
@@ -381,8 +311,7 @@ plot_graphs(history, 'accuracy')
 plot_graphs(history, 'loss')
 ```
 
+![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_39_0.png)
 
-![png](text_classification_rnn_files/text_classification_rnn_41_0.png)
+查看其它现有的递归层，例如[GRU层](https://tensorflow.google.cn/api_docs/python/tf/keras/layers/GRU)。
 
-
-Check out other existing recurrent layers such as [GRU layers](https://www.tensorflow.org/api_docs/python/tf/keras/layers/GRU).
