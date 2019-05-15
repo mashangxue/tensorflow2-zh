@@ -39,7 +39,7 @@ from six.moves import urllib
 
 您将使用泰坦尼克数据集，其以预测乘客的生存(相当病态)为目标，给出性别、年龄、阶级等特征。
 
-```
+```python
 import tensorflow.compat.v2.feature_column as fc
 
 import tensorflow as tf
@@ -55,7 +55,7 @@ y_eval = dfeval.pop('survived')
 
 数据集包含以下特征：
 
-```
+```python
 dftrain.head()
 ```
 
@@ -68,7 +68,7 @@ dftrain.head()
 | 4 | male   | 28.0 | 0                  | 0     | 8.4583  | Third | unknown | Queenstown  | y     |
 
 
-```
+```python
 dftrain.describe()
 ```
 
@@ -86,7 +86,7 @@ dftrain.describe()
 
 训练和评估集分别有627和264个样本数据：
 
-```
+```python
 dftrain.shape[0], dfeval.shape[0]
 ```
 
@@ -96,7 +96,7 @@ dftrain.shape[0], dfeval.shape[0]
 
 大多数乘客都在20和30年代
 
-```
+```python
 dftrain.age.hist(bins=20)
 ```
 
@@ -105,7 +105,7 @@ dftrain.age.hist(bins=20)
 
 机上的男性乘客大约是女性乘客的两倍。
 
-```
+```python
 dftrain.sex.value_counts().plot(kind='barh')
 ```
 
@@ -114,7 +114,7 @@ dftrain.sex.value_counts().plot(kind='barh')
 
 大多数乘客都在“第三”阶级：
 
-```
+```python
 dftrain['class'].value_counts().plot(kind='barh')
 ```
 
@@ -123,7 +123,7 @@ dftrain['class'].value_counts().plot(kind='barh')
 
 与男性相比，女性的生存机会要高得多，这显然是该模型的预测特征：
 
-```
+```python
 pd.concat([dftrain, y_train], axis=1).groupby('sex').survived.mean().plot(kind='barh').set_xlabel('% survive')
 ```
 
@@ -141,7 +141,7 @@ Estimator使用称为[特征列](https://www.tensorflow.org/guide/feature_column
 
 ### 基本特征列
 
-```
+```python
 CATEGORICAL_COLUMNS = ['sex', 'n_siblings_spouses', 'parch', 'class', 'deck',
                        'embark_town', 'alone']
 NUMERIC_COLUMNS = ['age', 'fare']
@@ -157,7 +157,7 @@ for feature_name in NUMERIC_COLUMNS:
 
 `input_function`指定如何将数据转换为以流方式提供输入管道的`tf.data.Dataset`。`tf.data.Dataset`采用多种来源，如数据帧DataFrame，csv格式的文件等。
 
-```
+```python
 def make_input_fn(data_df, label_df, num_epochs=10, shuffle=True, batch_size=32):
   def input_function():
     ds = tf.data.Dataset.from_tensor_slices((dict(data_df), label_df))
@@ -173,7 +173,7 @@ eval_input_fn = make_input_fn(dfeval, y_eval, num_epochs=1, shuffle=False)
 
 检查数据集：
 
-```
+```python
 ds = make_input_fn(dftrain, y_train, batch_size=10)()
 for feature_batch, label_batch in ds.take(1):
   print('Some feature keys:', list(feature_batch.keys()))
@@ -185,7 +185,7 @@ for feature_batch, label_batch in ds.take(1):
 
 您还可以使用`tf.keras.layers.DenseFeatures`层检查特征列的结果：
 
-```
+```python
 age_column = feature_columns[7]
 tf.keras.layers.DenseFeatures([age_column])(feature_batch).numpy()
 ```
@@ -205,7 +205,7 @@ tf.keras.layers.DenseFeatures([age_column])(feature_batch).numpy()
 
 `DenseFeatures`只接受密集张量，要检查分类列，需要先将其转换为指示列：
 
-```
+```python
 gender_column = feature_columns[0]
 tf.keras.layers.DenseFeatures([tf.feature_column.indicator_column(gender_column)])(feature_batch).numpy()
 ```
@@ -225,7 +225,7 @@ tf.keras.layers.DenseFeatures([tf.feature_column.indicator_column(gender_column)
 
 将所有基本特征添加到模型后，让我们训练模型。使用`tf.estimator` API训练模型只是一个命令：
 
-```
+```python
 linear_est = tf.estimator.LinearClassifier(feature_columns=feature_columns)
 linear_est.train(train_input_fn)
 result = linear_est.evaluate(eval_input_fn)
@@ -244,13 +244,13 @@ print(result)
 
 要了解不同特征组合之间的差异，可以将交叉特征列添加到模型中（也可以在交叉列之前对年龄进行分桶）：
 
-```
+```python
 age_x_gender = tf.feature_column.crossed_column(['age', 'sex'], hash_bucket_size=100)
 ```
 
 将组合特征添加到模型之后，让我们再次训练模型：
 
-```
+```python
 derived_feature_columns = [age_x_gender]
 linear_est = tf.estimator.LinearClassifier(feature_columns=feature_columns+derived_feature_columns)
 linear_est.train(train_input_fn)
@@ -268,7 +268,7 @@ print(result)
 
 现在，您可以使用训练模型从评估集对乘客进行预测。TensorFlow模型经过优化，可以同时对样本的批处理或集合进行预测，之前的`eval_input_fn`是使用整个评估集定义的。
 
-```
+```python
 pred_dicts = list(linear_est.predict(eval_input_fn))
 probs = pd.Series([pred['probabilities'][1] for pred in pred_dicts])
 
@@ -279,7 +279,7 @@ probs.plot(kind='hist', bins=20, title='predicted probabilities')
 
 最后，查看结果的接收器操作特性（即ROC），这将使我们更好地了解真阳性率和假阳性率之间的权衡。
 
-```
+```python
 from sklearn.metrics import roc_curve
 from matplotlib import pyplot as plt
 
