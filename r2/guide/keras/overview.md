@@ -1,22 +1,5 @@
 
-##### Copyright 2019 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Keras: a quick overview
+# Keras：概述
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -30,28 +13,31 @@
   </td>
 </table>
 
-## Import tf.keras
+Keras 是一个用于构建和训练深度学习模型的高阶API。它可用于快速设计原型、高级研究和生产，具有以下三个主要优势：
 
-`tf.keras` is TensorFlow's implementation of the
-[Keras API specification](https://keras.io){:.external}. This is a high-level
-API to build and train models that includes first-class support for
-TensorFlow-specific functionality, such as [eager execution](#eager_execution),
-`tf.data` pipelines, and [Estimators](./estimators.md).
-`tf.keras` makes TensorFlow easier to use without sacrificing flexibility and
-performance.
+* 方便用户使用
 
-To get started, import `tf.keras` as part of your TensorFlow program setup:
+Keras 具有针对常见用例做出优化的简单而一致的界面。它可针对用户错误提供切实可行的清晰反馈。
 
+* 模块化和可组合
 
-```
-!pip install -q pyyaml  # pyyaml is optional
-```
+将可配置的构造块连接在一起就可以构建 Keras 模型，并且几乎不受限制。
 
+* 易于扩展
+
+可以编写自定义构造块以表达新的研究创意，并且可以创建新层、损失函数并开发先进的模型。
+
+## 导入 tf.keras
+
+`tf.keras` 是 TensorFlow 对 [Keras API 规范](https://keras.io)的实现。这是一个用于构建和训练模型的高阶 API，包含对 TensorFlow 特定功能（例如[eager execution](https://tensorflow.google.cn/guide/keras#eager_execution)、[`tf.data` 管道](https://tensorflow.google.cn/api_docs/python/tf/data)和 [Estimators](https://tensorflow.google.cn/guide/estimators)）的顶级支持。 `tf.keras` 使 TensorFlow 更易于使用，并且不会牺牲灵活性和性能。
+
+首先，导入 `tf.keras` 以设置 TensorFlow 程序：
+
+安装pyyaml （可选）：`pip install -q pyyaml`
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 
 from tensorflow import keras
@@ -64,6 +50,11 @@ from tensorflow import keras
 * When [saving a model's weights](#weights_only), `tf.keras` defaults to the
   [checkpoint format](./checkpoints.md). Pass `save_format='h5'` to
   use HDF5.
+
+`tf.keras` 可以运行任何与 Keras 兼容的代码，但请注意：
+
+* 最新版 TensorFlow 中的 `tf.keras` 版本可能与 PyPI 中的最新 keras 版本不同。请查看 `tf.keras.version`。
+* [保存模型的权重](#weights_only)时，`tf.keras` 默认采用检查点格式。请传递 ` save_format='h5' `以使用 HDF5。
 
 ## Build a simple model
 
