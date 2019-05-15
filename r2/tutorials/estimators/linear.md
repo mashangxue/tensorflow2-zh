@@ -13,12 +13,12 @@
   </td>
 </table>
 
-## 概述
+## 1. 概述
 
 这个端到端的演练使用`tf.estimator` API训练逻辑回归模型。该模型通常用作其他更复杂算法的基准。
 Estimator 是可扩展性最强且面向生产的 TensorFlow 模型类型。如需了解详情，请参阅 [Estimator 指南](https://www.tensorflow.org/guide/estimators)。
 
-## 安装和导入
+## 2. 安装和导入
 
 安装sklearn命令:  `pip install sklearn`
 
@@ -35,7 +35,7 @@ from IPython.display import clear_output
 from six.moves import urllib
 ```
 
-## 加载泰坦尼克号数据集
+## 3. 加载泰坦尼克号数据集
 
 您将使用泰坦尼克数据集，其以预测乘客的生存(相当病态)为目标，给出性别、年龄、阶级等特征。
 
@@ -51,7 +51,7 @@ y_train = dftrain.pop('survived')
 y_eval = dfeval.pop('survived')
 ```
 
-## 探索数据
+## 4. 探索数据
 
 数据集包含以下特征：
 
@@ -130,7 +130,7 @@ pd.concat([dftrain, y_train], axis=1).groupby('sex').survived.mean().plot(kind='
 ![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_21_1.png)
 
 
-## 模型的特征工程
+## 5. 模型的特征工程
 
 Estimator使用称为[特征列](https://www.tensorflow.org/guide/feature_columns)的系统来描述模型应如何解释每个原始输入特征，Estimator需要一个数字输入向量，而特征列描述模型应如何转换每个特征。
 
@@ -139,7 +139,7 @@ Estimator使用称为[特征列](https://www.tensorflow.org/guide/feature_column
 线性Estimator同时使用数值和分类特征，特征列适用于所有TensorFlow Estimator，它们的目的是定义用于建模的特征。此外，它们还提供了一些特征工程功能，比如独热编码、归一化和分桶。
 
 
-### 基本特征列
+### 5.1. 基本特征列
 
 ```python
 CATEGORICAL_COLUMNS = ['sex', 'n_siblings_spouses', 'parch', 'class', 'deck',
@@ -238,7 +238,7 @@ print(result)
         {'accuracy_baseline': 0.625, 'auc': 0.83722067, 'accuracy': 0.7462121, 'recall': 0.6666667, 'global_step': 200, 'prediction/mean': 0.38311505, 'average_loss': 0.47361037, 'precision': 0.66, 'auc_precision_recall': 0.7851523, 'loss': 0.46608958, 'label/mean': 0.375}
 ```
 
-### 派生特征列
+### 5.2. 派生特征列
 
 现在你达到了75％的准确率。单独使用每个基本功能列可能不足以解释数据。例如，性别和标签之间的相关性可能因性别不同而不同。因此，如果您只学习`gender="Male"`和`gender="Female"`的单一模型权重，您将无法捕捉每个年龄-性别组合（例如，区分`gender="Male"`和`age="30"` 和`gender="Male"`和 `age="40"`）。
 

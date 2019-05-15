@@ -23,13 +23,13 @@ Caution: Be careful with untrusted code—TensorFlow models are code. See [Using
 
 注意：小心不受信任的代码(TensorFlow模型是代码)。有关详细信息，请参阅[安全使用TensorFlow](https://github.com/tensorflow/tensorflow/blob/master/SECURITY.md) 。
 
-### 选项
+**选项**
 
 保存TensorFlow模型有多种方法，具体取决于你使用的API。本章节使用tf.keras(一个高级API，用于TensorFlow中构建和训练模型)，有关其他方法，请参阅TensorFlow[保存和还原指南](https://tensorflow.google.cn/guide/saved_model)或[保存在eager中](https://tensorflow.google.cn/guide/eager#object-based_saving)。
 
-## 设置
+## 1. 设置
 
-### 安装和导入
+### 1.1. 安装和导入
 
 需要安装和导入TensorFlow和依赖项
 
@@ -37,7 +37,7 @@ Caution: Be careful with untrusted code—TensorFlow models are code. See [Using
 pip install h5py pyyaml
 ```
 
-### 获取样本数据集
+### 1.2. 获取样本数据集
 
 我们将使用[MNIST数据集](http://yann.lecun.com/exdb/mnist/)来训练我们的模型以演示保存权重，要加速这些演示运行，请只使用前1000个样本数据：
 
@@ -64,7 +64,7 @@ train_images = train_images[:1000].reshape(-1, 28 * 28) / 255.0
 test_images = test_images[:1000].reshape(-1, 28 * 28) / 255.0
 ```
 
-### 定义模型
+### 1.3. 定义模型
 
 让我们构建一个简单的模型，我们将用它来演示保存和加载权重。
 
@@ -106,7 +106,7 @@ Non-trainable params: 0
 _________________________________________________________________
 ```
 
-## 在训练期间保存检查点
+## 2. 在训练期间保存检查点
 
 The primary use case is to automatically save checkpoints *during* and at *the end* of training. This way you can use a trained model without having to retrain it, or pick-up training where you left of—in case the training process was interrupted.
 
@@ -116,7 +116,7 @@ The primary use case is to automatically save checkpoints *during* and at *the e
 
 `tf.keras.callbacks.ModelCheckpoint`是执行此任务的回调，回调需要几个参数来配置检查点。
 
-### 检查点回调使用情况
+### 2.1. 检查点回调使用情况
 
 训练模型并将其传递给 `ModelCheckpoint`回调
 
@@ -185,7 +185,7 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 Restored model, accuracy: 87.50%
 ```
 
-### 检查点选项
+### 2.2. 检查点选项
 
 回调提供了几个选项，可以为生成的检查点提供唯一的名称，并调整检查点频率。
 
@@ -244,7 +244,7 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 Restored model, accuracy: 88.10%
 ```
 
-## 这些文件是什么？
+## 3. 这些文件是什么？
 
 上述代码将权重存储到[检查点]((https://tensorflow.google.cn/guide/saved_model#save_and_restore_variables))格式的文件集合中，这些文件仅包含二进制格式的训练权重.
 检查点包含：
@@ -254,7 +254,7 @@ Restored model, accuracy: 88.10%
 如果您只在一台机器上训练模型，那么您将有一个带有后缀的分片：`.data-00000-of-00001`
 
 
-## 手动保存权重
+## 4. 手动保存权重
 
 上面你看到了如何将权重加载到模型中。手动保存权重同样简单，使用`Model.save_weights`方法。
 
@@ -270,13 +270,13 @@ loss,acc = model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
-## 保存整个模型
+## 5. 保存整个模型
 
 模型和优化器可以保存到包含其状态（权重和变量）和模型配置的文件中，这允许您导出模型，以便可以在不访问原始python代码的情况下使用它。由于恢复了优化器状态，您甚至可以从中断的位置恢复训练。
 
 保存完整的模型非常有用，您可以在TensorFlow.js([HDF5](https://tensorflow.google.cn/js/tutorials/import-keras.html), [Saved Model](https://tensorflow.google.cn/js/tutorials/conversion/import_saved_model)) 中加载它们，然后在Web浏览器中训练和运行它们，或者使用TensorFlow Lite([HDF5](https://tensorflow.google.cn/lite/convert/python_api#exporting_a_tfkeras_file_), [Saved Model](https://tensorflow.google.cn/lite/convert/python_api#exporting_a_savedmodel_))将它们转换为在移动设备上运行。
 
-### 作为HDF5文件
+### 5.1. 作为HDF5文件
 
 Keras使用[HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format)标准提供基本保存格式，出于我们的目的，可以将保存的模型视为单个二进制blob。
 
@@ -336,7 +336,7 @@ Restored model, accuracy: 85.40%
 Keras通过检查架构来保存模型，目前它无法保存TensorFlow优化器（来自`tf.train`）。使用这些时，您需要在加载后重新编译模型，否则您将失去优化程序的状态。
 
 
-### 作为 `saved_model`
+### 5.2. 作为 `saved_model`
 
 注意：这种保存`tf.keras`模型的方法是实验性的，在将来的版本中可能会有所改变。
 
@@ -416,7 +416,7 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 Restored model, accuracy: 85.70%
 ```
 
-## 下一步是什么
+## 6. 下一步是什么
 
 这是使用`tf.keras`保存和加载的快速指南。
 

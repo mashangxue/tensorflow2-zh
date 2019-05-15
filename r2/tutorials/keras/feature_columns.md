@@ -28,7 +28,7 @@
 * 从CSV中的列映射到用于训练模型的特性。
 * 使用Keras构建、训练和评估模型。
 
-## 数据集
+## 1. 数据集
 
 我们将使用克利夫兰诊所心脏病基金会提供的一个小[数据集](https://archive.ics.uci.edu/ml/datasets/heart+Disease) 。CSV中有几百行，每行描述一个患者，每列描述一个属性。我们将使用此信息来预测患者是否患有心脏病，该疾病在该数据集中是二元分类任务。
 
@@ -52,7 +52,7 @@
 >Thal | 3 = normal; 6 = fixed defect; 7 = reversable defect | Categorical | string
 >Target | Diagnosis of heart disease (1 = true; 0 = false) | Classification | integer
 
-## 导入TensorFlow和其他库
+## 2. 导入TensorFlow和其他库
 
 安装sklearn依赖库
 ```
@@ -72,7 +72,7 @@ from tensorflow.keras import layers
 from sklearn.model_selection import train_test_split
 ```
 
-## 使用Pandas创建数据帧
+## 3. 使用Pandas创建数据帧
 
 [Pandas](https://pandas.pydata.org/) 是一个Python库，包含许多有用的实用程序，用于加载和处理结构化数据。我们将使用Pandas从URL下载数据集，并将其加载到数据帧中。
 
@@ -83,7 +83,7 @@ dataframe = pd.read_csv(URL)
 dataframe.head()
 ```
 
-## 将数据拆分为训练、验证和测试
+## 4. 将数据拆分为训练、验证和测试
 
 我们下载的数据集是一个CSV文件，并将其分为训练，验证和测试集。
 
@@ -101,7 +101,7 @@ print(len(test), 'test examples')
 61 test examples
 ```
 
-## 使用tf.data创建输入管道
+## 5. 使用tf.data创建输入管道
 
 接下来，我们将使用tf.data包装数据帧，这将使我们能够使用特征列作为桥梁从Pandas数据框中的列映射到用于训练模型的特征。如果我们使用非常大的CSV文件（如此之大以至于它不适合内存），我们将使用tf.data直接从磁盘读取它，本教程不涉及这一点。
 
@@ -126,7 +126,7 @@ val_ds = df_to_dataset(val, shuffle=False, batch_size=batch_size)
 test_ds = df_to_dataset(test, shuffle=False, batch_size=batch_size)
 ```
 
-## 理解输入管道
+## 6. 理解输入管道
 
 现在我们已经创建了输入管道，让我们调用它来查看它返回的数据的格式，我们使用了一小批量来保持输出的可读性。
 
@@ -146,7 +146,7 @@ A batch of targets: tf.Tensor([1 0 1 0 0], shape=(5,), dtype=int32)
 
 我们可以看到数据集返回一个列名称（来自数据帧），该列表映射到数据帧中行的列值。
 
-## 演示几种类型的特征列
+## 7. 演示几种类型的特征列
 
 TensorFlow提供了许多类型的特性列。在本节中，我们将创建几种类型的特性列，并演示它们如何从dataframe转换列。
 
@@ -160,7 +160,7 @@ def demo(feature_column):
   print(feature_layer(example_batch).numpy())
 ```
 
-### 数字列
+### 7.1. 数字列
 
 特征列的输出成为模型的输入（使用上面定义的演示函数，我们将能够准确地看到数据帧中每列的转换方式），[数字列](https://tensorflow.google.cn/api_docs/python/tf/feature_column/numeric_column)是最简单的列类型，它用于表示真正有价值的特征，使用此列时，模型将从数据帧中接收未更改的列值。
 
@@ -197,7 +197,7 @@ demo(age_buckets)
  [0. 0. 0. 0. 0. 0. 0. 0. 1. 0. 0.]]
  ```
 
-### 分类列
+### 7.2. 分类列
 
 在该数据集中，thal表示为字符串（例如“固定”，“正常”或“可逆”），我们无法直接将字符串提供给模型，相反，我们必须首先将它们映射到数值。分类词汇表列提供了一种将字符串表示为独热矢量的方法（就像上面用年龄段看到的那样）。词汇表可以使用[categorical_column_with_vocabulary_list](https://tensorflow.google.cn/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_list)作为列表传递，或者使用[categorical_column_with_vocabulary_file](https://tensorflow.google.cn/api_docs/python/tf/feature_column/categorical_column_with_vocabulary_file)从文件加载。
 

@@ -27,7 +27,7 @@ Keras 具有针对常见用例做出优化的简单而一致的界面。它可�
 
 可以编写自定义构造块以表达新的研究创意，并且可以创建新层、损失函数并开发先进的模型。
 
-## 导入 tf.keras
+## 1. 导入 tf.keras
 
 `tf.keras` 是 TensorFlow 对 [Keras API 规范](https://keras.io)的实现。这是一个用于构建和训练模型的高阶 API，包含对 TensorFlow 特定功能（例如[eager execution](https://tensorflow.google.cn/guide/keras#eager_execution)、[`tf.data` 管道](https://tensorflow.google.cn/api_docs/python/tf/data)和 [Estimators](https://tensorflow.google.cn/guide/estimators)）的顶级支持。 `tf.keras` 使 TensorFlow 更易于使用，并且不会牺牲灵活性和性能。
 
@@ -56,9 +56,9 @@ from tensorflow import keras
 * 最新版 TensorFlow 中的 `tf.keras` 版本可能与 PyPI 中的最新 keras 版本不同。请查看 `tf.keras.version`。
 * [保存模型的权重](#weights_only)时，`tf.keras` 默认采用检查点格式。请传递 ` save_format='h5' `以使用 HDF5。
 
-## Build a simple model
+## 2. Build a simple model
 
-### Sequential model
+### 2.1. Sequential model
 
 In Keras, you assemble *layers* to build *models*. A model is (usually) a graph
 of layers. The most common type of model is a stack of layers: the
@@ -85,7 +85,7 @@ To learn about building more advanced models than Sequential models, see:
 - [Guide to the Keras Functional](./functional.ipynb)
 - [Guide to writing layers and models from scratch with subclassing](./custom_layers_and_models.ipynb)
 
-### Configure the layers
+### 2.2. Configure the layers
 
 There are many `tf.keras.layers` available with some common constructor
 parameters:
@@ -123,9 +123,9 @@ layers.Dense(64, kernel_initializer='orthogonal')
 layers.Dense(64, bias_initializer=tf.keras.initializers.Constant(2.0))
 ```
 
-## Train and evaluate
+## 3. Train and evaluate
 
-### Set up training
+### 3.1. Set up training
 
 After the model is constructed, configure its learning process by calling the
 `compile` method:
@@ -175,7 +175,7 @@ model.compile(optimizer=tf.keras.optimizers.RMSprop(0.01),
               metrics=[tf.keras.metrics.CategoricalAccuracy()])
 ```
 
-### Train from NumPy data
+### 3.2. Train from NumPy data
 
 For small datasets, use in-memory [NumPy](https://www.numpy.org/){:.external}
 arrays to train and evaluate a model. The model is "fit" to the training data
@@ -220,7 +220,7 @@ model.fit(data, labels, epochs=10, batch_size=32,
           validation_data=(val_data, val_labels))
 ```
 
-### Train from tf.data datasets
+### 3.3. Train from tf.data datasets
 
 Use the [Datasets API](./datasets.md) to scale to large datasets
 or multi-device training. Pass a `tf.data.Dataset` instance to the `fit`
@@ -254,7 +254,7 @@ model.fit(dataset, epochs=10,
           validation_data=val_dataset)
 ```
 
-### Evaluate and predict
+### 3.4. Evaluate and predict
 
 The `tf.keras.Model.evaluate` and `tf.keras.Model.predict` methods can use NumPy
 data and a `tf.data.Dataset`.
@@ -282,9 +282,9 @@ print(result.shape)
 
 For a complete guide on training and evaluation, including how to write custom training loops from sratch, see the [Guide to Training & Evaluation](./training_and_evaluation.ipynb).
 
-## Build advanced models
+## 4. Build advanced models
 
-### Functional API
+### 4.1. Functional API
 
  The `tf.keras.Sequential` model is a simple stack of layers that cannot
 represent arbitrary models. Use the
@@ -331,7 +331,7 @@ model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
 model.fit(data, labels, batch_size=32, epochs=5)
 ```
 
-### Model subclassing
+### 4.2. Model subclassing
 
 Build a fully-customizable model by subclassing `tf.keras.Model` and defining
 your own forward pass. Create layers in the `__init__` method and set them as
@@ -383,7 +383,7 @@ model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
 model.fit(data, labels, batch_size=32, epochs=5)
 ```
 
-### Custom layers
+### 4.3. Custom layers
 
 Create a custom layer by subclassing `tf.keras.layers.Layer` and implementing
 the following methods:
@@ -445,7 +445,7 @@ model.fit(data, labels, batch_size=32, epochs=5)
 
 Learn more about creating new layers and models from scratch with subclassing in the [Guide to writing layers and models from scratch](./custom_layers_and_models.ipynb).
 
-## Callbacks
+## 5. Callbacks
 
 A callback is an object passed to a model to customize and extend its behavior
 during training. You can write your own custom callback, or use the built-in
@@ -475,9 +475,9 @@ model.fit(data, labels, batch_size=32, epochs=5, callbacks=callbacks,
 ```
 
 
-## Save and restore
+## 6. Save and restore
 
-### Weights only
+### 6.1. Weights only
 
 Save and load the weights of a model using `tf.keras.Model.save_weights`:
 
@@ -516,7 +516,7 @@ model.save_weights('my_model.h5', save_format='h5')
 model.load_weights('my_model.h5')
 ```
 
-### Configuration only
+### 6.2. Configuration only
 
 A model's configuration can be saved—this serializes the model architecture
 without any weights. A saved configuration can recreate and initialize the same
@@ -563,7 +563,7 @@ Caution: Subclassed models are not serializable because their architecture is
 defined by the Python code in the body of the `call` method.
 
 
-### Entire model
+### 6.3. Entire model
 
 The entire model can be saved to a file that contains the weight values, the
 model's configuration, and even the optimizer's configuration. This allows you
@@ -592,7 +592,7 @@ model = tf.keras.models.load_model('my_model.h5')
 
 Learn more about saving and serialization for Keras models in the [Guide to saving and Serializing Models](./saving_and_serializing.ipynb).
 
-## Eager execution
+## 7. Eager execution
 
 [Eager execution](./eager.md) is an imperative programming
 environment that evaluates operations immediately. This is not required for
@@ -609,10 +609,10 @@ See the [eager execution guide](./eager.ipynb#build_a_model) for
 examples of using Keras models with custom training loops and `tf.GradientTape`.
 You can also find a complete, short example [here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/advanced.ipynb).
 
-## Distribution
+## 8. Distribution
 
 
-### Multiple GPUs
+### 8.1. Multiple GPUs
 
 `tf.keras` models can run on multiple GPUs using
 `tf.distribute.Strategy`. This API provides distributed

@@ -33,7 +33,7 @@ import numpy as np
 print(tf.__version__)
 ```
 `2.0.0-alpha0`                                                        
-## 下载IMDB数据集
+## 1. 下载IMDB数据集
 
 IMDB数据集与TensorFlow一起打包，它已经被预处理，使得评论（单词序列）已被转换为整数序列，其中每个整数表示字典中的特定单词。
 
@@ -49,7 +49,7 @@ imdb = keras.datasets.imdb
 
 参数 `num_words=10000` 保留训练数据中最常出现的10,000个单词，丢弃罕见的单词以保持数据的大小可管理。
 
-## 探索数据
+## 2. 探索数据
 
 我们花一点时间来理解数据的格式，数据集经过预处理：每个示例都是一个整数数组，表示电影评论的单词。每个标签都是0或1的整数值，其中0表示负面评论，1表示正面评论。
 
@@ -73,7 +73,7 @@ len(train_data[0]), len(train_data[1])
 ```
 *(218, 189)*
 
-### 将整数转换成文本
+### 2.1. 将整数转换成文本
 
 了解如何将整数转换回文本可能很有用。
 在这里，我们将创建一个辅助函数来查询包含整数到字符串映射的字典对象：
@@ -105,7 +105,7 @@ decode_review(train_data[0])
 
 *"<START> this film was just brilliant casting location scenery story direction everyone's really suited the part they played and you could just imagine being there robert <UNK> is an amazing actor and now the same being director <UNK> father came from the same scottish island as myself so i loved the fact there was a real connection with this film the witty remarks throughout the film were great it was just brilliant so much that i bought the film as soon as it was released for <UNK> and would recommend it to everyone to watch and the fly fishing was amazing really cried at the end it was so sad and you know what they say if you cry at a film it must have been good and this definitely was also <UNK> to the two little boy's that played the <UNK> of norman and paul they were just brilliant children are often left out of the <UNK> list i think because the stars that play them all grown up are such a big profile for the whole film but these children are amazing and should be praised for what they have done don't you think the whole story was so lovely because it was true and was someone's life after all that was shared with us all"*
 
-## 预处理数据
+## 3. 预处理数据
 
 影评（整数数组）必须转换为张量，然后才能馈送到神经网络中。我们可以通过以下两种方法实现这种转换：
 
@@ -150,7 +150,7 @@ print(train_data[0])
     0    0    0    0]
 ```
 
-## 构建模型
+## 4. 构建模型
 
 神经网络通过堆叠层创建而成，这需要做出两个架构方面的主要决策：
 
@@ -200,13 +200,13 @@ _________________________________________________________________
 
 4. 最后一层与单个输出节点密集连接。应用`sigmoid`激活函数后，结果是介于 0 到 1 之间的浮点值，表示概率或置信水平。
 
-### 隐藏单元
+### 4.1. 隐藏单元
 
 上述模型在输入和输出之间有两个中间层（也称为“隐藏”层）。输出（单元、节点或神经元）的数量是相应层的表示法空间的维度。换句话说，该数值表示学习内部表示法时网络所允许的自由度。
 
 如果模型具有更多隐藏单元（更高维度的表示空间）和/或更多层，则说明网络可以学习更复杂的表示法。不过，这会使网络耗费更多计算资源，并且可能导致学习不必要的模式（可以优化在训练数据上的表现，但不会优化在测试数据上的表现）。这称为过拟合，我们稍后会加以探讨。
 
-### 损失函数和优化器
+### 4.2. 损失函数和优化器
 
 模型需要一个损失函数和一个用于训练的优化器。由于这是一个二元分类问题，并且模型输出概率（网络最后一层使用sigmoid 激活函数，仅包含一个单元），那么最好使用`binary_crossentropy`（二元交叉熵）损失。
 
@@ -223,7 +223,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 ```
 
-## 创建验证集
+## 5. 创建验证集
 
 在训练时，我们想要检查模型在以前没有见过的数据上的准确性。通过从原始训练数据中分离10,000个示例来创建验证集。（为什么不立即使用测试集？我们的目标是仅使用训练数据开发和调整我们的模型，然后仅使用测试数据来评估我们的准确性）。
 
@@ -235,7 +235,7 @@ y_val = train_labels[:10000]
 partial_y_train = train_labels[10000:]
 ```
 
-## 训练模型
+## 6. 训练模型
 
 以512个样本的小批量训练模型40个周期，这是`x_train`和`y_train`张量中所有样本的40次迭代。在训练期间，监控模型在验证集中的10,000个样本的损失和准确性：
 
@@ -251,7 +251,7 @@ history = model.fit(partial_x_train,
 `Epoch 40/40
 15000/15000 [==============================] - 1s 54us/sample - loss: 0.0926 - accuracy: 0.9771 - val_loss: 0.3133 - val_accuracy: 0.8824`
 
-## 评估模型
+## 7. 评估模型
 
 让我们看看模型的表现，将返回两个值，损失（表示我们的错误的数字，更低的值更好）和准确性。
 
@@ -266,7 +266,7 @@ print(results)
 
 这种相当简单的方法实现了约87％的准确度，使用更先进的方法，模型应该接近95％。
 
-## 创建准确性和损失随时间变化的图表
+## 8. 创建准确性和损失随时间变化的图表
 
 `model.fit()`返回一个`History`对象，其中包含一个字典，其中包含训练期间发生的所有事情：
 

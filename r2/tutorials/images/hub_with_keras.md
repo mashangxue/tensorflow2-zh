@@ -20,7 +20,7 @@
 1. 如何使用TensorFlow Hub进行图像分类。
 1. 如何做简单的迁移学习。
 
-## 安装和导入包
+## 1. 安装和导入包
 
 安装命令：`pip install -U tensorflow_hub`
 
@@ -36,9 +36,9 @@ import tensorflow_hub as hub
 from tensorflow.keras import layers
 ```
 
-## ImageNet分类器
+## 2. ImageNet分类器
 
-### 下载分类器
+### 2.1. 下载分类器
 
 使用`hub.module`加载mobilenet，并使用`tf.keras.layers.Lambda`将其包装为keras层。
 来自tfhub.dev的任何兼容tf2的[图像分类器URL](https://tfhub.dev/s?q=tf2&module-type=image-classification)都可以在这里工作。
@@ -53,7 +53,7 @@ classifier = tf.keras.Sequential([
 ])
 ```
 
-### 在单个图像上运行它
+### 2.2. 在单个图像上运行它
 
 下载单个图像以试用该模型。
 
@@ -85,7 +85,7 @@ predicted_class
 653
 ```
 
-### 解码预测
+### 2.3. 解码预测
 
 
 我们有预测的类别ID，获取`ImageNet`标签，并解码预测
@@ -101,11 +101,11 @@ _ = plt.title("Prediction: " + predicted_class_name.title())
 ```
 ![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_20_0.png)
 
-## 简单的迁移学习
+## 3. 简单的迁移学习
 
 使用TF Hub可以很容易地重新训练模型的顶层以识别数据集中的类。
 
-### Dataset
+### 3.1. Dataset
 
 对于此示例，您将使用TensorFlow鲜花数据集：
 
@@ -141,7 +141,7 @@ for image_batch, label_batch in image_data:
     Labe batch shape:  (32, 5)
 ```
 
-### 在一批图像上运行分类器
+### 3.2. 在一批图像上运行分类器
 
 现在在图像批处理上运行分类器。
 
@@ -182,7 +182,7 @@ _ = plt.suptitle("ImageNet predictions")
 
 结果没有那么完美，但考虑到这些不是模型训练的类（“daisy雏菊”除外），这是合理的。
 
-### 下载无头模型
+### 3.3. 下载无头模型
 
 TensorFlow Hub还可以在没有顶级分类层的情况下分发模型。这些可以用来轻松做迁移学习。
 
@@ -213,7 +213,7 @@ print(feature_batch.shape)
 feature_extractor_layer.trainable = False
 ```
 
-### 附上分类头
+### 3.4. 附上分类头
 
 现在将中心层包装在`tf.keras.Sequential`模型中，并添加新的分类层。
 
@@ -248,7 +248,7 @@ predictions.shape
     TensorShape([32, 5])
 ```
 
-### 训练模型
+### 3.5. 训练模型
 
 使用compile配置训练过程：
 
@@ -311,7 +311,7 @@ plt.plot(batch_stats_callback.batch_acc)
 ```
 ![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_54_1.png?dcb_=0.5728569869098554)
 
-### 检查预测
+### 3.6. 检查预测
 
 要重做之前的图，首先获取有序的类名列表：
 
@@ -351,7 +351,7 @@ _ = plt.suptitle("Model predictions (green: correct, red: incorrect)")
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_61_0.png)
 
-## 导出你的模型
+## 4. 导出你的模型
 
 现在您已经训练了模型，将其导出为已保存的模型：
 

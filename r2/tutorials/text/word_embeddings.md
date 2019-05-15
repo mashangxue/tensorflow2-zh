@@ -24,11 +24,11 @@
 
 <img src="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding.jpg?raw=1" alt="Screenshot of the embedding projector" width="400"/>
 
-## 将文本表示为数字
+## 1. 将文本表示为数字
 
 机器学习模型以向量（数字数组）作为输入，在处理文本时，我们必须首先想出一个策略，将字符串转换为数字（或将文本“向量化”），然后再将其提供给模型。在本节中，我们将研究三种策略。
 
-### 独热编码（One-hot encodings）
+### 1.1. 独热编码（One-hot encodings）
 
 首先，我们可以用“one-hot”对词汇的每个单词进行编码，想想“the cat sat on the mat”这句话，这个句子中的词汇（或独特的单词）是（cat,mat,on,The），为了表示每个单词，我们将创建一个长度等于词汇表的零向量，然后再对应单词的索引中放置一个1。这种方法如下图所示：
 
@@ -38,7 +38,7 @@
 
 关键点：这种方法是低效的，一个热编码的向量是稀疏的（意思是，大多数指标是零）。假设我们有10000个单词，要对每个单词进行一个热编码，我们将创建一个向量，其中99.99%的元素为零。
 
-### 用唯一的数字编码每个单词
+### 1.2. 用唯一的数字编码每个单词
 
 我们尝试第二种方法，使用唯一的数字编码每个单词。继续上面的例子，我们可以将1赋值给“cat”，将2赋值给“mat”，以此类推，然后我们可以将句子“The cat sat on the mat”编码为像[5, 1, 4, 3, 5, 2]这样的密集向量。这种方法很有效，我们现有有一个稠密的向量（所有元素都是满的），而不是稀疏的向量。
 
@@ -49,7 +49,7 @@
 * 对于模型来说，整数编码的解释是很有挑战性的。例如，线性分类器为每个特征学习单个权重。由于任何两个单词的相似性与它们编码的相似性之间没有关系，所以这种特征权重组合没有意义。
 
 
-### 词嵌入
+### 1.3. 词嵌入
 
 词嵌入为我们提供了一种使用高效、密集表示的方法，其中相似的单词具有相似的编码，重要的是，我们不必手工指定这种编码，嵌入是浮点值的密集向量（向量的长度是您指定的参数），它们不是手工指定嵌入的值，而是可训练的参数（模型在训练期间学习的权重，与模型学习密集层的权重的方法相同）。通常会看到8维（对于小数据集）的词嵌入，在处理大型数据集时最多可达1024维。更高维度的嵌入可以捕获单词之间的细粒度关系，但需要更多的数据来学习。
 
@@ -57,7 +57,7 @@
 
 上面是词嵌入的图表，每个单词表示为浮点值的4维向量，另一种考虑嵌入的方法是“查找表”，在学习了这些权重之后，我们可以通过查找表中对应的密集向量来编码每个单词。
 
-## 利用Embedding 层学习词嵌入
+## 2. 利用Embedding 层学习词嵌入
 
 Keras可以轻松使用词嵌入。我们来看看[Embedding](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Embedding)层。
 
@@ -85,7 +85,7 @@ Embedding层可以理解为一个查询表，它从整数索引（表示特定�
 作为输出，Embedding层返回一个形状`(samples, sequence_length, embedding_dimensionality)`的三维浮点张量，这样一个三维张量可以由一个RNN层来处理，也可以简单地由一个扁平化或合并的密集层处理。我们将在本教程中展示第一种方法，您可以参考[使用RNN的文本分类](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/text_classification_rnn.ipynb)来学习第一种方法。
 
 
-## 从头开始学习嵌入
+## 3. 从头开始学习嵌入
 
 我们将在IMDB影评上训练一个情感分类器，在这个过程中，我们将从头开始学习嵌入，通过下载和预处理数据集的代码快速开始(请参阅本教程[tutorial](https://www.tensorflow.org/tutorials/keras/basic_text_classification)了解更多细节)。
 
@@ -106,7 +106,7 @@ print(train_data[0])
 
 
 
-### 将整数转换会单词
+### 3.1. 将整数转换会单词
 
 了解如何将整数转换回文本可能很有用，在这里我们将创建一个辅助函数来查询包含整数到字符串映射的字典对象：
 
@@ -164,7 +164,7 @@ print(train_data[0])
     0    0    0    0    0    0    0    0    0    0]
 ```
 
-### 创建一个简单的模型
+### 3.2. 创建一个简单的模型
 
 我们将使用 [Keras Sequential API](https://www.tensorflow.org/guide/keras)来定义我们的模型。
 
@@ -208,7 +208,7 @@ model.summary()
       _________________________________________________________________
 ```
 
-### 编译和训练模型
+### 3.3. 编译和训练模型
 
 
 ```python
@@ -258,7 +258,7 @@ plt.show()
 <Figure size 1200x900 with 1 Axes>
 ```
 
-## 检索学习的嵌入
+## 4. 检索学习的嵌入
 
 接下来，让我们检索在训练期间学习的嵌入词，这将是一个形状矩阵 `(vocab_size,embedding-dimension)`。
 
@@ -300,7 +300,7 @@ else:
   files.download('meta.tsv')
 ```
 
-## 可视化嵌入
+## 5. 可视化嵌入
 
 为了可视化我们的嵌入，我们将把它们上传到[Embedding Projector](http://projector.tensorflow.org)。
 
@@ -317,7 +317,7 @@ else:
 <img src="https://raw.githubusercontent.com/tensorflow/docs/master/site/en/r2/tutorials/text/images/embedding.jpg" alt="Screenshot of the embedding projector" width="400"/>
 
 
-## 下一步
+## 6. 下一步
 
 本教程向你展示了如何在小型数据集上从头开始训练和可视化词嵌入。
 
