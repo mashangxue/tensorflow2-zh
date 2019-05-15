@@ -20,7 +20,7 @@
   </td>
 </table>
 
-本章节介绍了词嵌入，它包含完整的代码，可以在小型数据集上从零开始训练词嵌入，并使用嵌入投影仪[Embedding Projector](http://projector.tensorflow.org) 可视化这些嵌入，如下图所示：
+本章节介绍了词嵌入，它包含完整的代码，可以在小型数据集上从零开始训练词嵌入，并使用[Embedding Projector](http://projector.tensorflow.org) 可视化这些嵌入，如下图所示：
 
 <img src="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding.jpg?raw=1" alt="Screenshot of the embedding projector" width="400"/>
 
@@ -57,62 +57,64 @@
 
 上面是词嵌入的图表，每个单词表示为浮点值的4维向量，另一种考虑嵌入的方法是“查找表”，在学习了这些权重之后，我们可以通过查找表中对应的密集向量来编码每个单词。
 
-## 使用嵌入层Embedding Layer
+## 利用Embedding 层学习词嵌入
 
-Keras makes it easy to use word embeddings. Let's take a look at the [Embedding](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Embedding) layer.
+Keras可以轻松使用词嵌入。我们来看看[Embedding](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Embedding)层。
 
-
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tf-nightly-2.0-preview
+# !pip install tf-nightly-2.0-preview
 import tensorflow as tf
 
 from tensorflow import keras
 from tensorflow.keras import layers
 
-# The Embedding layer takes at least two arguments:
-# the number of possible words in the vocabulary, here 1000 (1 + maximum word index),
-# and the dimensionality of the embeddings, here 32.
+# Embedding层至少需要两个参数： 
+# 词汇表中可能的单词数量，这里是1000（1+最大单词索引）； 
+# embeddings的维数，这里是32.。
 embedding_layer = layers.Embedding(1000, 32)
 ```
 
-The Embedding layer can be understood as a lookup table that maps from integer indices (which stand for specific words) to dense vectors (their embeddings). The dimensionality (or width) of the embedding is a parameter you can experiment with to see what works well for your problem, much in the same way you would experiment with the number of neurons in a Dense layer.
+Embedding层可以理解为一个查询表，它从整数索引（表示特定的单词）映射到密集向量（它们的嵌入）。嵌入的维数（或宽度）是一个参数，您可以用它进行试验，看看什么对您的问题有效，这与您在一个密集层中对神经元数量进行试验的方法非常相似。
 
-When you create an Embedding layer, the weights for the embedding are randomly initialized (just like any other layer). During training, they are gradually adjusted via backpropagation. Once trained, the learned word embeddings will roughly encode similarities between words (as they were learned for the specific problem your model is trained on).
+创建Embedding层时，嵌入的权重会随机初始化（就像任何其他层一样），在训练期间，它们通过反向传播逐渐调整，一旦经过训练，学习的词嵌入将粗略地编码单词之间的相似性（因为它们是针对您的模型所训练的特定问题而学习的）。
 
-As input, the Embedding layer takes a 2D tensor of integers, of shape `(samples, sequence_length)`, where each entry is a sequence of integers. It can embed sequences of variable lengths. You could feed into the embedding layer above batches with shapes `(32, 10)` (batch of 32 sequences of length 10) or `(64, 15)` (batch of 64 sequences of length 15). All sequences in a batch must have the same length, so sequences that are shorter than others should be padded with zeros, and sequences that are longer should be truncated.
+作为输入，Embedding层采用形状`(samples, sequence_length)`的整数2D张量，其中每个条目都是整数序列，它可以嵌入可以变长度的序列。您可以使用形状`(32, 10)` （批次为32个长度为10的序列）或`(64, 15)` （批次为64个长度为15的序列）导入上述批次的嵌入层，批处理中的序列必须具有相同的长度，因此较短的序列应该用零填充，较长的序列应该被截断。
 
-As output, the embedding layer returns a 3D floating point tensor, of shape `(samples, sequence_length, embedding_dimensionality)`. Such a 3D tensor can then be processed by a RNN layer, or can simply be flattened or pooled and processed by a Dense layer. We will show the latter approach in this tutorial, and you can refer to the [Text Classification with an RNN](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/text_classification_rnn.ipynb) to learn the first.
-
-## Learning embeddings from scratch
-
-We will train a sentiment classifier on IMDB movie reviews. In the process, we will learn embeddings from scratch. We will move quickly through the code that downloads and preprocesses the dataset (see this [tutorial](https://www.tensorflow.org/tutorials/keras/basic_text_classification) for more details).
+作为输出，Embedding层返回一个形状`(samples, sequence_length, embedding_dimensionality)`的三维浮点张量，这样一个三维张量可以由一个RNN层来处理，也可以简单地由一个扁平化或合并的密集层处理。我们将在本教程中展示第一种方法，您可以参考[使用RNN的文本分类](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/text_classification_rnn.ipynb)来学习第一种方法。
 
 
-```
+## 从头开始学习嵌入
+
+我们将在IMDB影评上训练一个情感分类器，在这个过程中，我们将从头开始学习嵌入，通过下载和预处理数据集的代码快速开始(请参阅本教程[tutorial](https://www.tensorflow.org/tutorials/keras/basic_text_classification)了解更多细节)。
+
+
+```python
 vocab_size = 10000
 imdb = keras.datasets.imdb
 (train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=vocab_size)
-```
 
-As imported, the text of reviews is integer-encoded (each integer represents a specific word in a dictionary).
-
-
-```
 print(train_data[0])
 ```
 
-### Convert the integers back to words
-
-It may be useful to know how to convert integers back to text. Here, we'll create a helper function to query a dictionary object that contains the integer to string mapping:
-
-
 ```
-# A dictionary mapping words to an integer index
+[1, 14, 22, 16, 43, 530, 973, 1622, 1385, 65, 458, 4468, 66, 3941, 4, 173, 36, 256, 5, 25, 100, 43, 838, 112, 50, 670, 2, 9, 35, 480, ...]
+```
+
+导入时，评论文本是整数编码的（每个整数代表字典中的特定单词）。
+
+
+
+### 将整数转换会单词
+
+了解如何将整数转换回文本可能很有用，在这里我们将创建一个辅助函数来查询包含整数到字符串映射的字典对象：
+
+```python
+# 将单词映射到整数索引的字典
 word_index = imdb.get_word_index()
 
-# The first indices are reserved
+# 第一个指数是保留的
 word_index = {k:(v+3) for k,v in word_index.items()}
 word_index["<PAD>"] = 0
 word_index["<START>"] = 1
@@ -127,10 +129,17 @@ def decode_review(text):
 decode_review(train_data[0])
 ```
 
-Movie reviews can be different lengths. We will use the `pad_sequences` function to standardize the lengths of the reviews.
-
-
 ```
+Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/imdb_word_index.json
+1646592/1641221 [==============================] - 0s 0us/step
+
+"<START> this film was just brilliant casting location scenery story direction everyone's really suited the part they played and you could just imagine being there robert ..."
+```
+
+电影评论可以有不同的长度，我们将使用`pad_sequences`函数来标准化评论的长度：
+
+
+```python
 maxlen = 500
 
 train_data = keras.preprocessing.sequence.pad_sequences(train_data,
@@ -142,29 +151,32 @@ test_data = keras.preprocessing.sequence.pad_sequences(test_data,
                                                        value=word_index["<PAD>"],
                                                        padding='post',
                                                        maxlen=maxlen)
+                                                       
+print(train_data[0])                                                       
 ```
 
-Let's inspect the first padded review.
-
-
-```
-print(train_data[0])
-```
-
-### Create a simple model
-
-We will use the [Keras Sequential API](https://www.tensorflow.org/guide/keras) to define our model.
-
-* The first layer is an Embedding layer. This layer takes the integer-encoded vocabulary and looks up the embedding vector for each word-index. These vectors are learned as the model trains. The vectors add a dimension to the output array. The resulting dimensions are: `(batch, sequence, embedding)``.
-
-* Next, a GlobalAveragePooling1D layer returns a fixed-length output vector for each example by averaging over the sequence dimension. This allows the model to handle input of variable length, in the simplest way possible.
-
-* This fixed-length output vector is piped through a fully-connected (Dense) layer with 16 hidden units.
-
-* The last layer is densely connected with a single output node. Using the sigmoid activation function, this value is a float between 0 and 1, representing a probability (or confidence level) that the review is positive.
-
+检查填充数据的第一个元素：
 
 ```
+[   1   14   22   16   43  530  973 1622 1385   65  458 4468   66 3941
+    4  173   36  256    5   25  100   43  838  112   50  670    2    9
+   ...
+    0    0    0    0    0    0    0    0    0    0]
+```
+
+### 创建一个简单的模型
+
+我们将使用 [Keras Sequential API](https://www.tensorflow.org/guide/keras)来定义我们的模型。
+
+* 第一层是`Embedding`层。该层采用整数编码的词汇表，并查找每个词索引的嵌入向量，这些向量是作为模型训练学习的，向量为输出数组添加维度，得到的维度是:`(batch, sequence, embedding)`。
+
+* 接下来，`GlobalAveragePooling1D`层通过对序列维度求平均，为每个示例返回固定长度的输出向量，这允许模型以尽可能最简单的方式处理可变长度的输入。
+
+* 该固定长度输出矢量通过具有16个隐藏单元的完全连接（`Dense`）层进行管道传输。
+
+* 最后一层与单个输出节点密集连接，使用`sigmoid`激活函数，此值是介于0和1之间的浮点值，表示评论为正的概率（或置信度）。
+
+```python
 embedding_dim=16
 
 model = keras.Sequential([
@@ -177,10 +189,29 @@ model = keras.Sequential([
 model.summary()
 ```
 
-### Compile and train the model
-
-
 ```
+      Model: "sequential"
+      _________________________________________________________________
+      Layer (type)                 Output Shape              Param #   
+      =================================================================
+      embedding_1 (Embedding)      (None, 500, 16)           160000    
+      _________________________________________________________________
+      global_average_pooling1d (Gl (None, 16)                0         
+      _________________________________________________________________
+      dense (Dense)                (None, 16)                272       
+      _________________________________________________________________
+      dense_1 (Dense)              (None, 1)                 17        
+      =================================================================
+      Total params: 160,289
+      Trainable params: 160,289
+      Non-trainable params: 0
+      _________________________________________________________________
+```
+
+### 编译和训练模型
+
+
+```python
 model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
@@ -193,10 +224,16 @@ history = model.fit(
     validation_split=0.2)
 ```
 
-With this approach our model reaches a validation accuracy of around 88% (note the model is overfitting, training accuracy is significantly higher).
-
-
 ```
+Train on 20000 samples, validate on 5000 samples
+...
+Epoch 30/30
+20000/20000 [==============================] - 1s 54us/sample - loss: 0.1639 - accuracy: 0.9449 - val_loss: 0.2840 - val_accuracy: 0.8912
+```
+
+通过这种方法，我们的模型达到了大约88%的验证精度（注意模型过度拟合，训练精度显著提高）。
+
+```python
 import matplotlib.pyplot as plt
 
 acc = history.history['accuracy']
@@ -216,21 +253,27 @@ plt.ylim((0.5,1))
 plt.show()
 ```
 
-## Retrieve the learned embeddings
-
-Next, let's retrieve the word embeddings learned during training. This will be a matrix of shape `(vocab_size,embedding-dimension)`.
-
-
 ```
+<Figure size 1200x900 with 1 Axes>
+<Figure size 1200x900 with 1 Axes>
+```
+
+## 检索学习的嵌入
+
+接下来，让我们检索在训练期间学习的嵌入词，这将是一个形状矩阵 `(vocab_size,embedding-dimension)`。
+
+```python
 e = model.layers[0]
 weights = e.get_weights()[0]
 print(weights.shape) # shape: (vocab_size, embedding_dim)
 ```
-
-We will now write the weights to disk. To use the [Embedding Projector](http://projector.tensorflow.org), we will upload two files in tab separated format: a file of vectors (containing the embedding), and a file of meta data (containing the words).
-
-
 ```
+(10000, 16)
+```
+
+我们现在将权重写入磁盘。要使用[Embedding Projector](http://projector.tensorflow.org)，我们将以制表符分隔格式上传两个文件：向量文件（包含嵌入）和元数据文件（包含单词）。
+
+```python
 import io
 
 out_v = io.open('vecs.tsv', 'w', encoding='utf-8')
@@ -244,10 +287,10 @@ out_v.close()
 out_m.close()
 ```
 
-If you are running this tutorial in [Colaboratory](https://colab.research.google.com), you can use the following snippet to download these files to your local machine (or use the file browser, *View -> Table of contents -> File browser*).
+如果您在Colaboratory中运行本教程，则可以使用以下代码段将这些文件下载到本地计算机（或使用文件浏览器， *View -> Table of contents -> File browser*）。
 
 
-```
+```python
 try:
   from google.colab import files
 except ImportError:
@@ -257,28 +300,29 @@ else:
   files.download('meta.tsv')
 ```
 
-## Visualize the embeddings
+## 可视化嵌入
 
-To visualize our embeddings we will upload them to the embedding projector.
+为了可视化我们的嵌入，我们将把它们上传到[Embedding Projector](http://projector.tensorflow.org)。
 
-Open the [Embedding Projector](http://projector.tensorflow.org/).
+打开[Embedding Projector](http://projector.tensorflow.org)：
 
-* Click on "Load data".
+* 点击“Load data”
 
-* Upload the two files we created above: ```vecs.tsv``` and ```meta.tsv```. T
+* 上传我们上面创建的两个文件：`vecs.tsv`和`meta.tsv`。
 
-The embeddings you have trained will now be displayed. You can search for words to find their closest neighbors. For example, try searching for "beautiful". You may see neighbors like "wonderful". Note: your results may be a bit different, depending on how weights were randomly initialized before training the embedding layer.
+现在将显示您已训练的嵌入，您可以搜索单词以查找最近的邻居。例如，尝试搜索“beautiful”，你可能会看到像“wonderful”这样的邻居。注意：您的结果可能有点不同，这取决于在训练嵌入层之前如何随机初始化权重。
 
-Note: experimentally, you may be able to produce more interpretable embeddings by using a simpler model. Try deleting the `Dense(16)` layer, retraining the model, and visualizing the embeddings again.
+*注意：通过实验，你可以使用更简单的模型生成更多可解释的嵌入，尝试删除`Dense（16）`层，重新训练模型，再次可视化嵌入。*
 
-<img src="https://github.com/tensorflow/docs/blob/88d3b244eca8088c6c406ff9bdc8505d7fb6cbe7/site/en/r2/tutorials/text/images/embedding.jpg?raw=1" alt="Screenshot of the embedding projector" width="400"/>
-
-
-## Next steps
+<img src="https://raw.githubusercontent.com/tensorflow/docs/master/site/en/r2/tutorials/text/images/embedding.jpg" alt="Screenshot of the embedding projector" width="400"/>
 
 
-This tutorial has shown you how to train and visualize word embeddings from scratch on a small dataset.
+## 下一步
 
-* To learn more about embeddings in Keras we recommend these [notebooks](https://github.com/fchollet/deep-learning-with-python-notebooks/blob/master/6.2-understanding-recurrent-neural-networks.ipynb) by François Chollet.
+本教程向你展示了如何在小型数据集上从头开始训练和可视化词嵌入。
 
-* To learn more about text classification (including the overall workflow, and if you're curious about when to use embeddings vs one-hot encodings) we recommend this practical text classification [guide](https://developers.google.com/machine-learning/guides/text-classification/step-2-5).
+* 要了解有关嵌入Keras的更多信息，我们推荐FrançoisChollet推出的教程，[链接](https://github.com/fchollet/deep-learning-with-python-notebooks/blob/master/6.2-understanding-recurrent-neural-networks.ipynb)。
+
+* 要了解有关文本分类的更多信息（包括整体工作流程，如果您对何时使用嵌入与one-hot编码感到好奇），我们推荐[Google的实战课程-文本分类指南](https://developers.google.cn/machine-learning/guides/text-classification/step-2-5)。
+
+
