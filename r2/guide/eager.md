@@ -1,6 +1,5 @@
 
-# Eager Execution
-
+# Eager Execution 概述
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -13,32 +12,6 @@
     <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/guide/eager.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
   </td>
 </table>
-
-
-
-TensorFlow's eager execution is an imperative programming environment that
-evaluates operations immediately, without building graphs: operations return
-concrete values instead of constructing a computational graph to run later. This
-makes it easy to get started with TensorFlow and debug models, and it
-reduces boilerplate as well. To follow along with this guide, run the code
-samples below in an interactive `python` interpreter.
-
-Eager execution is a flexible machine learning platform for research and
-experimentation, providing:
-
-* *An intuitive interface*—Structure your code naturally and use Python data
-  structures. Quickly iterate on small models and small data.
-* *Easier debugging*—Call ops directly to inspect running models and test
-  changes. Use standard Python debugging tools for immediate error reporting.
-* *Natural control flow*—Use Python control flow instead of graph control
-  flow, simplifying the specification of dynamic models.
-
-Eager execution supports most TensorFlow operations and GPU acceleration.
-
-Note: Some models may experience increased overhead with eager execution
-enabled. Performance improvements are ongoing, but please
-[file a bug](https://github.com/tensorflow/tensorflow/issues) if you find a
-problem and share your benchmarks.
 
 TensorFlow 的 Eager Execution 是一种命令式编程环境，可立即评估操作，无需构建图：操作会返回具体的值，而不是构建以后再运行的计算图。这样能让您轻松地开始使用 TensorFlow 和调试模型，并且还减少了样板代码。要遵循本指南，请在交互式 python 解释器中运行下面的代码示例。
 
@@ -59,7 +32,7 @@ Eager Execution 支持大多数 TensorFlow 操作和 GPU 加速。
 
 升级到最新版本的 TensorFlow：
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 # pip install tensorflow==2.0.0-alpha0
@@ -68,7 +41,7 @@ import tensorflow as tf
 
 在Tensorflow 2.0中，默认情况下启用了Eager Execution。
 
-```
+```python
 tf.executing_eagerly()
 ```
 
@@ -78,7 +51,7 @@ tf.executing_eagerly()
 
 现在您可以运行TensorFlow操作，结果将立即返回：
 
-```
+```python
 x = [[2.]]
 m = tf.matmul(x, x)
 print("hello, {}".format(m))
@@ -92,7 +65,7 @@ print("hello, {}".format(m))
 
 Eager Execution 适合与 NumPy 一起使用。NumPy 操作接受`tf.Tensor` 参数。TensorFlow [数学运算](https://tensorflow.google.cn/api_guides/python/math_ops) 将 Python 对象和 NumPy 数组转换为 `tf.Tensor` 对象。`tf.Tensor.numpy` 方法返回对象的值作为 NumPy  `ndarray`。
 
-```
+```python
 a = tf.constant([[1, 2],
                  [3, 4]])
 print(a)
@@ -105,7 +78,7 @@ print(a)
 ```
 
 
-```
+```python
 # Broadcasting support
 b = tf.add(a, 1)
 print(b)
@@ -117,7 +90,7 @@ print(b)
        [4 5]], shape=(2, 2), dtype=int32)
 ```
 
-```
+```python
 # Operator overloading is supported
 print(a * b)
 ```
@@ -129,7 +102,7 @@ print(a * b)
 ```
 
 
-```
+```python
 # 使用NumPy值
 import numpy as np
 
@@ -143,7 +116,7 @@ print(c)
 ```
 
 
-```
+```python
 # 从张量中获取numpy值：
 print(a.numpy())
 # => [[1 2]
@@ -156,7 +129,7 @@ Eager Execution 的一个主要好处是，在执行模型时，主机语言的�
 
 *FizzBuzz问题：举个例子，编写一个程序从1到100.当遇到数字为3的倍数的时候，点击“Fizz”替代数字，5的倍数用“Buzz”代替，既是3的倍数又是5的倍数点击“FizzBuzz”。* 
 
-```
+```python
 def fizzbuzz(max_num):
   counter = tf.constant(0)
   max_num = tf.convert_to_tensor(max_num)
@@ -173,8 +146,7 @@ def fizzbuzz(max_num):
     counter += 1
 ```
 
-
-```
+```python
 fizzbuzz(15)
 ```
 
@@ -191,7 +163,7 @@ fizzbuzz(15)
 
 虽然您可以使用任何 Python 对象表示层，但 TensorFlow 提供了便利的基类 `tf.keras.layers.Layer`。您可以通过继承它实现自己的层，如果必须强制执行该层，在构造函数中设置 `self.dynamic=True`：
 
-```
+```python
 class MySimpleLayer(tf.keras.layers.Layer):
   def __init__(self, output_units):
     super(MySimpleLayer, self).__init__()
@@ -215,7 +187,7 @@ class MySimpleLayer(tf.keras.layers.Layer):
 
 将层组合成模型时，可以使用 `tf.keras.Sequential` 表示由层线性堆叠的模型。它非常适合用于基本模型：
 
-```
+```python
 model = tf.keras.Sequential([
   tf.keras.layers.Dense(10, input_shape=(784,)),  # must declare input shape
   tf.keras.layers.Dense(10)
@@ -224,7 +196,7 @@ model = tf.keras.Sequential([
 
 或者，通过继承 `tf.keras.Model` 将模型整理为类。这是一个本身也是层的层容器，允许 `tf.keras.Model`对象包含其他  `tf.keras.Model` 对象。
 
-```
+```python
 class MNISTModel(tf.keras.Model):
   def __init__(self):
     super(MNISTModel, self).__init__()
@@ -253,7 +225,7 @@ model = MNISTModel()
 
 `tf.GradientTape`  是一种选择性功能，可在不跟踪时提供最佳性能。由于在每次调用期间都可能发生不同的操作，因此所有前向传播操作都会记录到“磁带”中。要计算梯度，请反向播放磁带，然后放弃。特定的 `tf.GradientTape`  只能计算一个梯度；随后的调用会抛出运行时错误。
 
-```
+```python
 w = tf.Variable([[1.0]])
 with tf.GradientTape() as tape:
   loss = w * w
@@ -267,7 +239,7 @@ print(grad)  # => tf.Tensor([[ 2.]], shape=(1, 1), dtype=float32)
 
 以下示例将创建一个多层模型，该模型会对标准 MNIST 手写数字进行分类。它演示了在 Eager Execution 环境中构建可训练图的优化器和层 API。
 
-```
+```python
 # 获取并格式化mnist数据
 (mnist_images, mnist_labels), _ = tf.keras.datasets.mnist.load_data()
 
@@ -278,7 +250,7 @@ dataset = dataset.shuffle(1000).batch(32)
 ```
 
 
-```
+```python
 # 建立模型
 mnist_model = tf.keras.Sequential([
   tf.keras.layers.Conv2D(16,[3,3], activation='relu',
@@ -291,18 +263,18 @@ mnist_model = tf.keras.Sequential([
 
 即使没有训练，也可以在 Eager Execution 中调用模型并检查输出：
 
-```
+```python
 for images,labels in dataset.take(1):
   print("Logits: ", mnist_model(images[0:1]).numpy())
 ```
 
 ```
-Logits: [[-1.9521490e-02 2.2975644e-02 2.8935237e-02 2.0388789e-02 -1.8511273e-02 -6.4317137e-05 6.0662534e-03 -1.7174225e-02 5.4899108e-02 -2.8871424e-02]]
+      Logits: [[-1.9521490e-02 2.2975644e-02 2.8935237e-02 2.0388789e-02 -1.8511273e-02 -6.4317137e-05 6.0662534e-03 -1.7174225e-02 5.4899108e-02 -2.8871424e-02]]
 ```
 
 虽然 keras 模型具有内置训练循环（使用 `fit` 方法），但有时您需要更多自定义设置。下面是一个用 eager 实现的训练循环示例：
 
-```
+```python
 optimizer = tf.keras.optimizers.Adam()
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
@@ -310,7 +282,7 @@ loss_history = []
 ```
 
 
-```
+```python
 for (batch, (images, labels)) in enumerate(dataset.take(400)):
   if batch % 10 == 0:
     print('.', end='')
@@ -324,7 +296,7 @@ for (batch, (images, labels)) in enumerate(dataset.take(400)):
 ```
 
 
-```
+```python
 import matplotlib.pyplot as plt
 
 plt.plot(loss_history)
@@ -344,7 +316,7 @@ plt.ylabel('Loss [entropy]')
 
 通过将 `tf.Variable` 与 `tf.GradientTape` 结合使用可以更好地封装模型参数。例如，上面的自动微分示例可以重写为：
 
-```
+```python
 class Model(tf.keras.Model):
   def __init__(self):
     super(Model, self).__init__()
@@ -397,7 +369,7 @@ print("W = {}, B = {}".format(model.W.numpy(), model.B.numpy()))
 
 在 Eager Execution 期间，变量会一直存在，直到相应对象的最后一个引用被移除，然后变量被删除。
 
-```
+```python
 if tf.test.is_gpu_available():
   with tf.device("gpu:0"):
     v = tf.Variable(tf.random.normal([1000, 1000]))
@@ -410,7 +382,7 @@ if tf.test.is_gpu_available():
 
 `tf.train.Checkpoint` 可以将 `tf.Variable` 保存到检查点并从中恢复：
 
-```
+```python
 x = tf.Variable(10.)
 checkpoint = tf.train.Checkpoint(x=x)
 ```
@@ -421,7 +393,7 @@ checkpoint_path = './ckpt/'
 checkpoint.save('./ckpt/')
 ```
 
-```
+```python
 x.assign(11.)  # 保存后更改变量。
 
 # 从检查点恢复值
@@ -432,7 +404,7 @@ print(x)  # => 2.0
 
 要保存和加载模型，`tf.train.Checkpoint` 会存储对象的内部状态，而不需要隐藏变量。要记录 `model`、`optimizer` 和全局步的状态，请将它们传递到 `tf.train.Checkpoint`：
 
-```
+```python
 import os
 
 model = tf.keras.Sequential([
@@ -458,7 +430,7 @@ root.restore(tf.train.latest_checkpoint(checkpoint_dir))
 
 `tf.keras.metrics`存储为对象。通过将新数据传递给可调用对象来更新指标，并使用  `tf.keras.metrics.result`方法检索结果，例如：
 
-```
+```python
 m = tf.keras.metrics.Mean("loss")
 m(0)
 m(5)
@@ -473,7 +445,7 @@ m.result()  # => 5.5
 
 `tf.GradientTape` 也可用于动态模型。这个回溯线搜索算法示例看起来像普通的 NumPy 代码，除了存在梯度并且可微分，尽管控制流比较复杂：
 
-```
+```python
 def line_search_step(fn, init_x, rate=1.0):
   with tf.GradientTape() as tape:
     # Variables are automatically recorded, but manually watch a tensor
@@ -493,7 +465,7 @@ def line_search_step(fn, init_x, rate=1.0):
 
 自定义梯度是一种覆盖梯度的简单方法。在正向函数中，定义相对于输入、输出或中间结果的梯度。例如，下面是在反向传播中截断梯度范数的一种简单方式：
 
-```
+```python
 @tf.custom_gradient
 def clip_gradient_by_norm(x, norm):
   y = tf.identity(x)
@@ -504,7 +476,7 @@ def clip_gradient_by_norm(x, norm):
 
 自定义梯度通常用于为一系列操作提供数值稳定的梯度：
 
-```
+```python
 def log1pexp(x):
   return tf.math.log(1 + tf.exp(x))
 
@@ -517,14 +489,14 @@ def grad_log1pexp(x):
 ```
 
 
-```
+```python
 # 梯度计算在x = 0时工作正常。
 grad_log1pexp(tf.constant(0.)).numpy()   # => 0.5
 ```
 
 `0.5`
 
-```
+```python
 # 但是，由于数值不稳定，x = 100失败。
 grad_log1pexp(tf.constant(100.)).numpy()  # => nan
 ```
@@ -533,7 +505,7 @@ grad_log1pexp(tf.constant(100.)).numpy()  # => nan
 
 在此处，`log1pexp` 函数可以通过自定义梯度进行分析简化。下面的实现重用了在前向传播期间计算的`tf.exp(x)`的值，通过消除冗余计算，变得更加高效：
 
-```
+```python
 @tf.custom_gradient
 def log1pexp(x):
   e = tf.exp(x)
@@ -550,13 +522,13 @@ def grad_log1pexp(x):
 ```
 
 
-```
+```python
 # 和以前一样，梯度计算在x = 0时工作正常。
 grad_log1pexp(tf.constant(0.)).numpy()    # => 0.5
 ```
 
 
-```
+```python
 # 并且梯度计算也适用于x = 100。
 grad_log1pexp(tf.constant(100.)).numpy()   # => 1.0
 ```
@@ -565,7 +537,7 @@ grad_log1pexp(tf.constant(100.)).numpy()   # => 1.0
 
 在Eager Execution期间，计算会自动分流到 GPU。如果要控制计算运行的位置，可以将其放在`tf.device('/gpu:0')`  块（或 CPU 等效块）中：
 
-```
+```python
 import time
 
 def measure(x, steps):
@@ -608,7 +580,7 @@ else:
 
 `tf.Tensor`对象可以复制到不同的设备来执行其操作：
 
-```
+```python
 if tf.test.is_gpu_available():
   x = tf.random.normal([10, 10])
 
