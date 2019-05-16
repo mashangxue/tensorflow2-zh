@@ -1,21 +1,4 @@
 
-##### Copyright 2018 The TensorFlow Authors.
-
-
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
 # Eager Execution
 
 
@@ -57,27 +40,43 @@ enabled. Performance improvements are ongoing, but please
 [file a bug](https://github.com/tensorflow/tensorflow/issues) if you find a
 problem and share your benchmarks.
 
-## Setup and basic usage
+TensorFlow 的 Eager Execution 是一种命令式编程环境，可立即评估操作，无需构建图：操作会返回具体的值，而不是构建以后再运行的计算图。这样能让您轻松地开始使用 TensorFlow 和调试模型，并且还减少了样板代码。要遵循本指南，请在交互式 python 解释器中运行下面的代码示例。
 
-Upgrade to the latest version of TensorFlow:
+Eager Execution 是一个灵活的机器学习平台，用于研究和实验，可提供：
 
+* *直观的界面* - 自然地组织代码结构并使用 Python 数据结构。快速迭代小模型和小型数据集。
+
+* *更轻松的调试功能* - 直接调用操作以检查正在运行的模型并测试更改。使用标准 Python 调试工具进行即时错误报告。
+
+* *自然控制流程* - 使用 Python 控制流程而不是图控制流程，简化了动态模型的规范。
+
+Eager Execution 支持大多数 TensorFlow 操作和 GPU 加速。
+
+注意：如果启用 Eager Execution，某些模型的开销可能会增加。我们正在改进性能；如果发现问题，请报告错误，并分享您的基准测试结果。
+
+
+## 设置和基本用法
+
+升级到最新版本的 TensorFlow：
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow==2.0.0-alpha0
+# pip install tensorflow==2.0.0-alpha0
 import tensorflow as tf
 ```
 
-In Tensorflow 2.0, eager execution is enabled by default.
-
+在Tensorflow 2.0中，默认情况下启用了Eager Execution。
 
 ```
 tf.executing_eagerly()
 ```
 
-Now you can run TensorFlow operations and the results will return immediately:
+```
+      True
+```
 
+现在您可以运行TensorFlow操作，结果将立即返回：
 
 ```
 x = [[2.]]
@@ -85,25 +84,24 @@ m = tf.matmul(x, x)
 print("hello, {}".format(m))
 ```
 
-Enabling eager execution changes how TensorFlow operations behave—now they
-immediately evaluate and return their values to Python. `tf.Tensor` objects
-reference concrete values instead of symbolic handles to nodes in a computational
-graph. Since there isn't a computational graph to build and run later in a
-session, it's easy to inspect results using `print()` or a debugger. Evaluating,
-printing, and checking tensor values does not break the flow for computing
-gradients.
+```
+      hello, [[4.]]
+```
 
-Eager execution works nicely with [NumPy](http://www.numpy.org/). NumPy
-operations accept `tf.Tensor` arguments. TensorFlow
-[math operations](https://www.tensorflow.org/api_guides/python/math_ops) convert
-Python objects and NumPy arrays to `tf.Tensor` objects. The
-`tf.Tensor.numpy` method returns the object's value as a NumPy `ndarray`.
+启用 Eager Execution 会改变 TensorFlow 操作的行为方式(现在它们会立即评估并将值返回给 Python)。`tf.Tensor` 对象会引用具体值，而不是指向计算图中的节点的符号句柄。由于不需要构建稍后在会话中运行的计算图，因此使用 `print()` 或调试程序很容易检查结果。评估、输出和检查张量值不会中断计算梯度的流程。
 
+Eager Execution 适合与 NumPy 一起使用。NumPy 操作接受`tf.Tensor` 参数。TensorFlow [数学运算](https://tensorflow.google.cn/api_guides/python/math_ops) 将 Python 对象和 NumPy 数组转换为 `tf.Tensor` 对象。`tf.Tensor.numpy` 方法返回对象的值作为 NumPy  `ndarray`。
 
 ```
 a = tf.constant([[1, 2],
                  [3, 4]])
 print(a)
+```
+
+```
+      tf.Tensor(
+      [[1 2]
+       [3 4]], shape=(2, 2), dtype=int32)
 ```
 
 
@@ -113,35 +111,50 @@ b = tf.add(a, 1)
 print(b)
 ```
 
+```
+      tf.Tensor(
+      [[2 3]
+       [4 5]], shape=(2, 2), dtype=int32)
+```
 
 ```
 # Operator overloading is supported
 print(a * b)
 ```
 
+```
+      tf.Tensor(
+      [[ 2  6]
+       [12 20]], shape=(2, 2), dtype=int32)
+```
+
 
 ```
-# Use NumPy values
+# 使用NumPy值
 import numpy as np
 
 c = np.multiply(a, b)
 print(c)
 ```
 
+```
+      [[ 2  6]
+       [12 20]]
+```
+
 
 ```
-# Obtain numpy value from a tensor:
+# 从张量中获取numpy值：
 print(a.numpy())
 # => [[1 2]
 #     [3 4]]
 ```
 
-## Dynamic control flow
+## 动态控制流
 
-A major benefit of eager execution is that all the functionality of the host
-language is available while your model is executing. So, for example,
-it is easy to write [fizzbuzz](https://en.wikipedia.org/wiki/Fizz_buzz):
+Eager Execution 的一个主要好处是，在执行模型时，主机语言的所有功能都可用。因此，编写 [fizzbuzz](https://baike.baidu.com/item/FizzBuzz%E9%97%AE%E9%A2%98/16083686?fr=aladdin)很容易（举例而言）：
 
+*FizzBuzz问题：举个例子，编写一个程序从1到100.当遇到数字为3的倍数的时候，点击“Fizz”替代数字，5的倍数用“Buzz”代替，既是3的倍数又是5的倍数点击“FizzBuzz”。* 
 
 ```
 def fizzbuzz(max_num):
@@ -165,19 +178,18 @@ def fizzbuzz(max_num):
 fizzbuzz(15)
 ```
 
-This has conditionals that depend on tensor values and it prints these values
-at runtime.
+```
+1 2 Fizz 4 Buzz Fizz 7 8 Fizz Buzz 11 Fizz 13 14 FizzBuzz
+```
 
-## Build a model
+这段代码具有依赖于张量值的条件并在运行时输出这些值。
 
-Many machine learning models are represented by composing layers. When
-using TensorFlow with eager execution you can either write your own layers or
-use a layer provided in the `tf.keras.layers` package.
 
-While you can use any Python object to represent a layer,
-TensorFlow has `tf.keras.layers.Layer` as a convenient base class. Inherit from
-it to implement your own layer, and set `self.dynamic=True` in the constructor if the layer must be executed imperatively:
+## 构建模型
 
+许多机器学习模型通过组合层来表示。将 TensorFlow 与 Eager Execution 结合使用时，您可以编写自己的层或使用在 `tf.keras.layers` 程序包中提供的层。
+
+虽然您可以使用任何 Python 对象表示层，但 TensorFlow 提供了便利的基类 `tf.keras.layers.Layer`。您可以通过继承它实现自己的层，如果必须强制执行该层，在构造函数中设置 `self.dynamic=True`：
 
 ```
 class MySimpleLayer(tf.keras.layers.Layer):
@@ -188,24 +200,20 @@ class MySimpleLayer(tf.keras.layers.Layer):
 
   def build(self, input_shape):
     # The build method gets called the first time your layer is used.
-    # Creating variables on build() allows you to make their shape depend
-    # on the input shape and hence removes the need for the user to specify
-    # full shapes. It is possible to create variables during __init__() if
-    # you already know their full shapes.
+    # 构建方法在第一次使用图层时被调用。
+    # 在build()上创建变量允许您使其形状取决于输入形状，因此无需用户指定完整形状。 
+    # 如果您已经知道它们的完整形状，则可以在` __init__()`期间创建变量。
     self.kernel = self.add_variable(
       "kernel", [input_shape[-1], self.output_units])
 
   def call(self, input):
-    # Override call() instead of __call__ so we can perform some bookkeeping.
+    # 覆盖 `call()` 而不是`__call__`，这样我们就可以执行一些记帐。
     return tf.matmul(input, self.kernel)
 ```
 
-Use `tf.keras.layers.Dense` layer instead  of `MySimpleLayer` above as it has
-a superset of its functionality (it can also add a bias).
+请使用`tf.keras.layers.Dense`层（而不是上面的`MySimpleLayer`），因为它具有其功能的超集（它也可以添加偏差）。
 
-When composing layers into models you can use `tf.keras.Sequential` to represent
-models which are a linear stack of layers. It is easy to use for basic models:
-
+将层组合成模型时，可以使用 `tf.keras.Sequential` 表示由层线性堆叠的模型。它非常适合用于基本模型：
 
 ```
 model = tf.keras.Sequential([
@@ -214,10 +222,7 @@ model = tf.keras.Sequential([
 ])
 ```
 
-Alternatively, organize models in classes by inheriting from `tf.keras.Model`.
-This is a container for layers that is a layer itself, allowing `tf.keras.Model`
-objects to contain other `tf.keras.Model` objects.
-
+或者，通过继承 `tf.keras.Model` 将模型整理为类。这是一个本身也是层的层容器，允许 `tf.keras.Model`对象包含其他  `tf.keras.Model` 对象。
 
 ```
 class MNISTModel(tf.keras.Model):
@@ -236,29 +241,17 @@ class MNISTModel(tf.keras.Model):
 model = MNISTModel()
 ```
 
-It's not required to set an input shape for the `tf.keras.Model` class since
-the parameters are set the first time input is passed to the layer.
+因为第一次将输入传递给层时已经设置参数，所以不需要为`tf.keras.Model` 类设置输入形状。
 
-`tf.keras.layers` classes create and contain their own model variables that
-are tied to the lifetime of their layer objects. To share layer variables, share
-their objects.
+`tf.keras.layers` 类会创建并包含自己的模型变量，这些变量与其层对象的生命周期相关联。要共享层变量，请共享其对象。
 
-## Eager training
+## Eager 训练
 
-### Computing gradients
+### 计算梯度
 
-[Automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation)
-is useful for implementing machine learning algorithms such as
-[backpropagation](https://en.wikipedia.org/wiki/Backpropagation) for training
-neural networks. During eager execution, use `tf.GradientTape` to trace
-operations for computing gradients later.
+[自动微分](https://en.wikipedia.org/wiki/Automatic_differentiation)对于实现机器学习算法（例如用于训练神经网络的[反向传播](https://en.wikipedia.org/wiki/Backpropagation)）来说很有用。在 Eager Execution 期间，请使用 `tf.GradientTape` 跟踪操作以便稍后计算梯度。
 
-`tf.GradientTape` is an opt-in feature to provide maximal performance when
-not tracing. Since different operations can occur during each call, all
-forward-pass operations get recorded to a "tape". To compute the gradient, play
-the tape backwards and then discard. A particular `tf.GradientTape` can only
-compute one gradient; subsequent calls throw a runtime error.
-
+`tf.GradientTape`  是一种选择性功能，可在不跟踪时提供最佳性能。由于在每次调用期间都可能发生不同的操作，因此所有前向传播操作都会记录到“磁带”中。要计算梯度，请反向播放磁带，然后放弃。特定的 `tf.GradientTape`  只能计算一个梯度；随后的调用会抛出运行时错误。
 
 ```
 w = tf.Variable([[1.0]])
@@ -269,15 +262,13 @@ grad = tape.gradient(loss, w)
 print(grad)  # => tf.Tensor([[ 2.]], shape=(1, 1), dtype=float32)
 ```
 
-### Train a model
 
-The following example creates a multi-layer model that classifies the standard
-MNIST handwritten digits. It demonstrates the optimizer and layer APIs to build
-trainable graphs in an eager execution environment.
+### 训练模型
 
+以下示例将创建一个多层模型，该模型会对标准 MNIST 手写数字进行分类。它演示了在 Eager Execution 环境中构建可训练图的优化器和层 API。
 
 ```
-# Fetch and format the mnist data
+# 获取并格式化mnist数据
 (mnist_images, mnist_labels), _ = tf.keras.datasets.mnist.load_data()
 
 dataset = tf.data.Dataset.from_tensor_slices(
@@ -288,7 +279,7 @@ dataset = dataset.shuffle(1000).batch(32)
 
 
 ```
-# Build the model
+# 建立模型
 mnist_model = tf.keras.Sequential([
   tf.keras.layers.Conv2D(16,[3,3], activation='relu',
                          input_shape=(None, None, 1)),
@@ -298,17 +289,18 @@ mnist_model = tf.keras.Sequential([
 ])
 ```
 
-
-Even without training, call the model and inspect the output in eager execution:
-
+即使没有训练，也可以在 Eager Execution 中调用模型并检查输出：
 
 ```
 for images,labels in dataset.take(1):
   print("Logits: ", mnist_model(images[0:1]).numpy())
 ```
 
-While keras models have a builtin training loop (using the `fit` method), sometimes you need more customization. Here's an example, of a training loop implemented with eager:
+```
+Logits: [[-1.9521490e-02 2.2975644e-02 2.8935237e-02 2.0388789e-02 -1.8511273e-02 -6.4317137e-05 6.0662534e-03 -1.7174225e-02 5.4899108e-02 -2.8871424e-02]]
+```
 
+虽然 keras 模型具有内置训练循环（使用 `fit` 方法），但有时您需要更多自定义设置。下面是一个用 eager 实现的训练循环示例：
 
 ```
 optimizer = tf.keras.optimizers.Adam()
@@ -338,6 +330,10 @@ import matplotlib.pyplot as plt
 plt.plot(loss_history)
 plt.xlabel('Batch #')
 plt.ylabel('Loss [entropy]')
+```
+
+```
+      Text(0, 0.5, 'Loss [entropy]')
 ```
 
 ### Variables and optimizers
