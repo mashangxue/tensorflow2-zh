@@ -1,3 +1,10 @@
+---
+title: 专家入门TensorFlow 2.0
+categories: tensorflow2.0官方文档
+tags: tensorflow2.0
+date: 2019-05-20
+abbrlink: tensorflow/tensorflow2-tutorials-quickstart-advanced
+---
 
 # 专家入门TensorFlow 2.0
 

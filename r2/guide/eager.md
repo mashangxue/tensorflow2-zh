@@ -1,3 +1,12 @@
+---
+title: Eager Execution 概述
+tags: 
+    - tensorflow2.0
+categories: 
+    - tensorflow2.0官方文档
+date: 2019-05-10
+abbrlink: tensorflow/tensorflow2-guide-eager
+---
 
 # Eager Execution 概述
 
