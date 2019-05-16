@@ -607,41 +607,25 @@ Learn more about saving and serialization for Keras models in the [Guide to savi
 
 ## 7. Eager execution
 
-[Eager execution](./eager.md) is an imperative programming
-environment that evaluates operations immediately. This is not required for
-Keras, but is supported by `tf.keras` and useful for inspecting your program and
-debugging.
+[Eager execution](https://tensorflow.google.cn/guide/estimators) 是一种命令式编程环境，可立即评估操作。这不是Keras所必需的，但是由`tf.keras`支持，对于检查程序和调试很有用。
 
-All of the `tf.keras` model-building APIs are compatible with eager execution.
-And while the `Sequential` and functional APIs can be used, eager execution
-especially benefits *model subclassing* and building *custom layers*—the APIs
-that require you to write the forward pass as code (instead of the APIs that
-create models by assembling existing layers).
+所有 `tf.keras` 模型构建 API 都与 Eager Execution 兼容。虽然可以使用 `Sequential` 和函数式 API，但 Eager Execution 对模型子类化和构建自定义层特别有用。与通过组合现有层来创建模型的 API 不同，函数式 API 要求您编写前向传播代码。
 
-See the [eager execution guide](./eager.ipynb#build_a_model) for
-examples of using Keras models with custom training loops and `tf.GradientTape`.
-You can also find a complete, short example [here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/advanced.ipynb).
+请参阅 [Eager Execution 指南](https://tensorflow.google.cn/guide/eager#build_a_model)，了解将 Keras 模型与自定义训练循环和 [tf.GradientTape](https://tensorflow.google.cn/api_docs/python/tf/GradientTape) 搭配使用的示例 [here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/advanced.ipynb).。
 
-## 8. Distribution
+## 8. 分布
 
 
-### 8.1. Multiple GPUs
+### 8.1. 多个 GPU
 
-`tf.keras` models can run on multiple GPUs using
-`tf.distribute.Strategy`. This API provides distributed
-training on multiple GPUs with almost no changes to existing code.
+`tf.keras` 模型可以使用 `tf.distribute.Strategy`在多个 GPU 上运行。此 API 在多个 GPU 上提供分布式训练，几乎不需要更改现有代码。
 
-Currently, `tf.distribute.MirroredStrategy` is the only supported
-distribution strategy. `MirroredStrategy` does in-graph replication with
-synchronous training using all-reduce on a single machine. To use
-`distribute.Strategy`s , nest the optimizer instantiation and model construction and compilation in a `Strategy`'s `.scope()`, then
-train the model.
+目前，`tf.distribute.MirroredStrategy`是唯一受支持的分布策略。`MirroredStrategy` 通过在一台机器上使用规约在同步训练中进行图内复制。要使用`distribute.Strategy`s，请在 `Strategy`'s `.scope()`中嵌套优化器实例化和模型构造和编译，然后训练模型。
 
-The following example distributes a `tf.keras.Model` across multiple GPUs on a
-single machine.
 
-First, define a model inside the distributed strategy scope:
+以下示例在单个计算机上的多个GPU之间分发`tf.keras.Model`。
 
+首先，在分布式策略范围内定义模型：
 
 ```
 strategy = tf.distribute.MirroredStrategy()
@@ -658,8 +642,16 @@ with strategy.scope():
 model.summary()
 ```
 
-Next, train the model on data as usual:
+```
+      Model: "sequential_5"
+      _________________________________________________________________ 
+      Layer (type) Output Shape Param # =================================================================
+      dense_21 (Dense) (None, 16) 176 _________________________________________________________________ 
+      dense_22 (Dense) (None, 1) 17 ================================================================= 
+      Total params: 193 Trainable params: 193 Non-trainable params: 0 _________________________________________________________________
+```
 
+接下来，像往常一样训练模型数据：
 
 ```
 x = np.random.random((1024, 10))
@@ -671,4 +663,8 @@ dataset = dataset.shuffle(buffer_size=1024).batch(32)
 model.fit(dataset, epochs=1)
 ```
 
-For more information, see the [full guide on Distributed Training in TensorFlow](../distribute_strategy.ipynb).
+```
+32/32 [==============================] - 3s 82ms/step - loss: 0.7005 <tensorflow.python.keras.callbacks.History at 0x7fdfa057fb00>
+```
+
+有关更多信息，请参阅[TensorFlow中的分布式训练完整指南](https://tensorflow.google.cn/alpha/guide/distribute_strategy)。
