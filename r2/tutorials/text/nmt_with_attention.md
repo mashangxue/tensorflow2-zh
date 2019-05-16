@@ -1,3 +1,11 @@
+---
+title: Neural Machine Translation with Attention
+categories: tensorflow2官方文档
+tags: tensorflow2.0
+date: 2019-05-20
+abbrlink: tensorflow/tensorflow2-tutorials-text-nmt_with_attention
+---
+
 
 ##### Copyright 2019 The TensorFlow Authors.
 
