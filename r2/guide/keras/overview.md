@@ -41,17 +41,6 @@ import tensorflow as tf
 from tensorflow import keras
 ```
 
-安装pyyaml （可选）：`pip install -q pyyaml`
-
-
-`tf.keras` can run any Keras-compatible code, but keep in mind:
-
-* The `tf.keras` version in the latest TensorFlow release might not be the same
-  as the latest `keras` version from PyPI. Check `tf.keras.__version__`.
-* When [saving a model's weights](#weights_only), `tf.keras` defaults to the
-  [checkpoint format](./checkpoints.md). Pass `save_format='h5'` to
-  use HDF5.
-
 `tf.keras` 可以运行任何与 Keras 兼容的代码，但请注意：
 
 * 最新版 TensorFlow 中的 `tf.keras` 版本可能与 PyPI 中的最新 keras 版本不同。请查看 `tf.keras.version`。
@@ -212,27 +201,28 @@ Train on 1000 samples, validate on 100 samples
 
 ### 3.3. 输入 tf.data 数据集
 
-Use the [Datasets API](./datasets.md) to scale to large datasets
-or multi-device training. Pass a `tf.data.Dataset` instance to the `fit`
-method:
-
-使用 Datasets API 可扩展为大型数据集或多设备训练。将 tf.data.Dataset 实例传递到 fit 方法：
+使用 [Datasets API](https://tensorflow.google.cn/guide/datasets) 可扩展为大型数据集或多设备训练。将 `tf.data.Dataset` 实例传递到 `fit` 方法：
 
 ```
-# Instantiates a toy dataset instance:
+# 实例化玩具数据集实例：
 dataset = tf.data.Dataset.from_tensor_slices((data, labels))
 dataset = dataset.batch(32)
 
-# Don't forget to specify `steps_per_epoch` when calling `fit` on a dataset.
+# 在数据集上调用`fit`时，不要忘记指定`steps_per_epoch`。
 model.fit(dataset, epochs=10, steps_per_epoch=30)
 ```
 
-Here, the `fit` method uses the `steps_per_epoch` argument—this is the number of
-training steps the model runs before it moves to the next epoch. Since the
-`Dataset` yields batches of data, this snippet does not require a `batch_size`.
+```
+      Epoch 1/10
+      30/30 [==============================] - 0s 7ms/step - loss: 11.4902 - categorical_accuracy: 0.1094
+      在上方代码中，fit 方法使用了 steps_per_epoch 参数（表示模型在进入下一个周期之前运行的训练步数）。由于 Dataset 会生成批次数据，因此该代码段不需要 batch_size。
 
-Datasets can also be used for validation:
+数据集也可用于验证：...
+```
 
+在上方代码中，`fit` 方法使用了 `steps_per_epoch` 参数（表示模型在进入下一个周期之前运行的训练步数）。由于 `Dataset` 会生成批次数据，因此该代码段不需要 `batch_size`。
+
+数据集也可用于验证：
 
 ```
 dataset = tf.data.Dataset.from_tensor_slices((data, labels))
@@ -245,13 +235,19 @@ model.fit(dataset, epochs=10,
           validation_data=val_dataset)
 ```
 
-### 3.4. Evaluate and predict
+```
+      ...
+      Epoch 10/10
+      32/32 [==============================] - 0s 4ms/step - loss: 11.4778 - categorical_accuracy: 0.1560 - val_loss: 11.6653 - val_categorical_accuracy: 0.1300
 
-The `tf.keras.Model.evaluate` and `tf.keras.Model.predict` methods can use NumPy
-data and a `tf.data.Dataset`.
+      <tensorflow.python.keras.callbacks.History at 0x7fdfd8329d30>
+```
 
-To *evaluate* the inference-mode loss and metrics for the data provided:
+### 3.4. 评估和预测
 
+`tf.keras.Model.evaluate`和`tf.keras.Model.predict`方法可以使用NumPy数据和`tf.data.Dataset`。
+
+要评估所提供数据的推理模式损失和指标，请运行以下代码：
 
 ```
 data = np.random.random((1000, 32))
@@ -262,20 +258,29 @@ model.evaluate(data, labels, batch_size=32)
 model.evaluate(dataset, steps=30)
 ```
 
-And to *predict* the output of the last layer in inference for the data provided,
-as a NumPy array:
+```
+      1000/1000 [==============================] - 0s 72us/sample - loss: 11.5580 - categorical_accuracy: 0.0960
+      30/30 [==============================] - 0s 2ms/step - loss: 11.4651 - categorical_accuracy: 0.1594
 
+      [11.465100129445394, 0.159375]
+```
+
+要在所提供数据（采用 NumPy 数组形式）的推理中预测最后一层的输出，请运行以下代码：
 
 ```
 result = model.predict(data, batch_size=32)
 print(result.shape)
 ```
 
-For a complete guide on training and evaluation, including how to write custom training loops from sratch, see the [Guide to Training & Evaluation](./training_and_evaluation.ipynb).
+```
+      (1000, 10)
+```
 
-## 4. Build advanced models
+有关训练和评估的完整指南，包括如何从头开始编写自定义训练循环，请参阅[训练和评估指南](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)。
 
-### 4.1. Functional API
+## 4. 构建高级模型
+
+### 4.1. 函数式 API
 
  The `tf.keras.Sequential` model is a simple stack of layers that cannot
 represent arbitrary models. Use the
@@ -297,50 +302,63 @@ Building a model with the functional API works like this:
 The following example uses the functional API to build a simple, fully-connected
 network:
 
+`tf.keras.Sequential` 模型是层的简单堆叠，无法表示任意模型。使用 [Keras 函数式 API](https://tensorflow.google.cn/alpha/guide/keras/functional) 可以构建复杂的模型拓扑，例如：
+
+* 多输入模型，
+* 多输出模型，
+* 具有共享层的模型（同一层被调用多次），
+* 具有非序列数据流的模型（例如，剩余连接）。
+
+使用函数式 API 构建的模型具有以下特征：
+
+1. 层实例可调用并返回张量。
+2. 输入张量和输出张量用于定义 `tf.keras.Model` 实例。
+3. 此模型的训练方式和 `Sequential` 模型一样。
+
+以下示例使用函数式 API 构建一个简单的全连接网络：
 
 ```
-inputs = tf.keras.Input(shape=(32,))  # Returns an input placeholder
+inputs = tf.keras.Input(shape=(32,))  # 返回输入占位符
 
-# A layer instance is callable on a tensor, and returns a tensor.
+# 层实例可在张量上调用，并返回张量。
 x = layers.Dense(64, activation='relu')(inputs)
 x = layers.Dense(64, activation='relu')(x)
 predictions = layers.Dense(10, activation='softmax')(x)
 ```
 
-Instantiate the model given inputs and outputs.
-
+在给定输入和输出的情况下实例化模型。
 
 ```
 model = tf.keras.Model(inputs=inputs, outputs=predictions)
 
-# The compile step specifies the training configuration.
+# compile步骤指定训练配置
 model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-# Trains for 5 epochs
+# 训练5个周期
 model.fit(data, labels, batch_size=32, epochs=5)
 ```
 
-### 4.2. Model subclassing
+```
+      ...
+      Epoch 5/5
+      1000/1000 [==============================] - 0s 81us/sample - loss: 11.4819 - accuracy: 0.1270
 
-Build a fully-customizable model by subclassing `tf.keras.Model` and defining
-your own forward pass. Create layers in the `__init__` method and set them as
-attributes of the class instance. Define the forward pass in the `call` method.
+      <tensorflow.python.keras.callbacks.History at 0x7fdfd820b898>
+```
 
-Model subclassing is particularly useful when
-[eager execution](./eager.md) is enabled since the forward pass
-can be written imperatively.
+### 4.2. 模型子类化
 
-Note: to make sure the forward pass is *always* run imperatively, you must set `dynamic=True` when calling the super constructor.
+通过对 `tf.keras.Model`进行子类化，并定义您自己的前向传播来构建完全可自定义的模型。在` __init__` 方法中创建层并将它们设置为类实例的属性。在 `call`方法中定义前向传播。
 
-Key Point: Use the right API for the job. While model subclassing offers
-flexibility, it comes at a cost of greater complexity and more opportunities for
-user errors. If possible, prefer the functional API.
+在启用 [eager execution](https://tensorflow.google.cn/alpha/guide/eager) 时，模型子类化特别有用，因为可以强制写入前向传播。
 
-The following example shows a subclassed `tf.keras.Model` using a custom forward
-pass that does not have to be run imperatively:
+*注意：为了确保正向传递总是强制运行，你必须在调用超级构造函数时设置`dynamic = True`*
 
+要点：针对作业使用正确的 API。虽然模型子类化较为灵活，但代价是复杂性更高且用户出错率更高。如果可能，请首选函数式 API。
+
+以下示例展示了使用自定义前向传播进行子类化的 `tf.keras.Model`，该传递不必强制运行：
 
 ```
 class MyModel(tf.keras.Model):
@@ -348,19 +366,18 @@ class MyModel(tf.keras.Model):
   def __init__(self, num_classes=10):
     super(MyModel, self).__init__(name='my_model')
     self.num_classes = num_classes
-    # Define your layers here.
+    # 在此处定义层。.
     self.dense_1 = layers.Dense(32, activation='relu')
     self.dense_2 = layers.Dense(num_classes, activation='sigmoid')
 
   def call(self, inputs):
-    # Define your forward pass here,
-    # using layers you previously defined (in `__init__`).
+    # 在这里定义你的前向传播
+    # 使用之前定义的层（在`__init__`中）
     x = self.dense_1(inputs)
     return self.dense_2(x)
 ```
 
-Instantiate the new model class:
-
+实例化新模型类：
 
 ```
 model = MyModel(num_classes=10)
@@ -370,25 +387,28 @@ model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-# Trains for 5 epochs.
+# 训练5个周期
 model.fit(data, labels, batch_size=32, epochs=5)
 ```
 
-### 4.3. Custom layers
+```
+      ...
+      Epoch 5/5 1000/1000 [==============================] - 0s 74us/sample - loss: 11.4954 - accuracy: 0.1110 
+```
 
-Create a custom layer by subclassing `tf.keras.layers.Layer` and implementing
-the following methods:
+### 4.3. 自定义层
 
-* `__init__`: Optionally define sublayers to be used by this layer.
-* `build`: Create the weights of the layer. Add weights with the `add_weight`
-  method.
-* `call`: Define the forward pass.
-* Optionally, a layer can be serialized by implementing the `get_config` method
-  and the `from_config` class method.
+通过继承 `tf.keras.layers.Layer` 并实现以下方法来创建自定义层：
 
-Here's an example of a custom layer that implements a `matmul` of an input with
-a kernel matrix:
+* `__init__`: （可选）定义此层要使用的子层
 
+* `build`: 创建层的权重。使用 `add_weight` 方法添加权重。
+
+* `call`: 定义前向传播。
+
+* 或者，可以通过实现 `get_config` 方法和 `from_config` 类方法序列化层。
+
+下面是一个自定义层的示例，它使用核矩阵实现输入的`matmul`：
 
 ```
 class MyLayer(layers.Layer):
@@ -417,61 +437,62 @@ class MyLayer(layers.Layer):
     return cls(**config)
 ```
 
-Create a model using your custom layer:
-
+使用自定义层创建模型：
 
 ```
 model = tf.keras.Sequential([
     MyLayer(10),
     layers.Activation('softmax')])
 
-# The compile step specifies the training configuration
+# 训练配置
 model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-# Trains for 5 epochs.
+# 训练5个周期
 model.fit(data, labels, batch_size=32, epochs=5)
 ```
 
-Learn more about creating new layers and models from scratch with subclassing in the [Guide to writing layers and models from scratch](./custom_layers_and_models.ipynb).
+了解有关从头开始创建新层和模型的更多信息，在[从头开始编写层和模型指南](https://tensorflow.google.cn/alpha/guide/keras/custom_layers_and_models)。
 
-## 5. Callbacks
+## 5. 回调
 
-A callback is an object passed to a model to customize and extend its behavior
-during training. You can write your own custom callback, or use the built-in
-`tf.keras.callbacks` that include:
+回调是传递给模型的对象，用于在训练期间自定义该模型并扩展其行为。您可以编写自定义回调，也可以使用包含以下方法的内置 `tf.keras.callbacks`：
 
-* `tf.keras.callbacks.ModelCheckpoint`: Save checkpoints of your model at
-  regular intervals.
-* `tf.keras.callbacks.LearningRateScheduler`: Dynamically change the learning
-  rate.
-* `tf.keras.callbacks.EarlyStopping`: Interrupt training when validation
-  performance has stopped improving.
-* `tf.keras.callbacks.TensorBoard`: Monitor the model's behavior using
-  [TensorBoard](https://tensorflow.org/tensorboard).
 
-To use a `tf.keras.callbacks.Callback`, pass it to the model's `fit` method:
+* `tf.keras.callbacks.ModelCheckpoint`: 定期保存模型的检查点。
 
+* `tf.keras.callbacks.LearningRateScheduler`: 动态更改学习速率。
+
+* `tf.keras.callbacks.EarlyStopping`:在验证效果不再改进时中断训练。
+
+* `tf.keras.callbacks.TensorBoard`: 使用  [TensorBoard](https://tensorflow.google.cn/tensorboard) 监控模型的行为。
+
+要使用  `tf.keras.callbacks.Callback`，请将其传递给模型的 `fit` 方法：
 
 ```
 callbacks = [
-  # Interrupt training if `val_loss` stops improving for over 2 epochs
+  # 如果`val_loss`在2个以上的周期内停止改进，则进行中断训练
   tf.keras.callbacks.EarlyStopping(patience=2, monitor='val_loss'),
-  # Write TensorBoard logs to `./logs` directory
+  # 将TensorBoard日志写入`./logs`目录
   tf.keras.callbacks.TensorBoard(log_dir='./logs')
 ]
 model.fit(data, labels, batch_size=32, epochs=5, callbacks=callbacks,
           validation_data=(val_data, val_labels))
 ```
 
+```
+      Train on 1000 samples, validate on 100 samples 
+      ...
+      Epoch 5/5 1000/1000 [==============================] - 0s 76us/sample - loss: 11.4813 - accuracy: 0.1190 - val_loss: 11.5753 - val_accuracy: 0.1100 <tensorflow.python.keras.callbacks.History at 0x7fdfd12e7080>
+```
 
-## 6. Save and restore
 
-### 6.1. Weights only
+## 6. 保存和恢复
 
-Save and load the weights of a model using `tf.keras.Model.save_weights`:
+### 6.1. 仅限权重
 
+使用 `tf.keras.Model.save_weights`保存并加载模型的权重：
 
 ```
 model = tf.keras.Sequential([
@@ -485,42 +506,38 @@ model.compile(optimizer=tf.keras.optimizers.Adam(0.001),
 
 
 ```
-# Save weights to a TensorFlow Checkpoint file
+# 将权重保存到TensorFlow检查点文件
 model.save_weights('./weights/my_model')
 
-# Restore the model's state,
-# this requires a model with the same architecture.
+# 恢复模型的状态，这需要具有相同架构的模型。
 model.load_weights('./weights/my_model')
 ```
 
-By default, this saves the model's weights in the
-[TensorFlow checkpoint](../checkpoints.md) file format. Weights can
-also be saved to the Keras HDF5 format (the default for the multi-backend
-implementation of Keras):
-
+默认情况下，会以 [TensorFlow 检查点](https://tensorflow.google.cn/alpha/guide/checkpoints)文件格式保存模型的权重。权重也可以另存为 Keras HDF5 格式（Keras 多后端实现的默认格式）：
 
 ```
-# Save weights to a HDF5 file
+# 将权重保存到HDF5文件
 model.save_weights('my_model.h5', save_format='h5')
 
-# Restore the model's state
+# 恢复模型的状态
 model.load_weights('my_model.h5')
 ```
 
-### 6.2. Configuration only
+### 6.2. 仅限配置
 
-A model's configuration can be saved—this serializes the model architecture
-without any weights. A saved configuration can recreate and initialize the same
-model, even without the code that defined the original model. Keras supports
-JSON and YAML serialization formats:
+可以保存模型的配置，此操作会对模型架构（不含任何权重）进行序列化。即使没有定义原始模型的代码，保存的配置也可以重新创建并初始化相同的模型。Keras 支持 JSON 和 YAML 序列化格式：
+
 
 
 ```
-# Serialize a model to JSON format
+# 将模型序列化为JSON格式
 json_string = model.to_json()
 json_string
 ```
 
+```
+      '{"class_name": "Sequential", "config": {"layers": [{"class_name": "Dense", "config": {"units": 64, "activity_regularizer": null, "dtype": "float32",....... "backend": "tensorflow", "keras_version": "2.2.4-tf"}'
+```
 
 ```
 import json
@@ -528,42 +545,40 @@ import pprint
 pprint.pprint(json.loads(json_string))
 ```
 
-Recreate the model (newly initialized) from the JSON:
+```
+      {'backend': 'tensorflow', 'class_name': 'Sequential', 'config': {'layers': [{'class_name': 'Dense', 'config': {'activation': 'relu', 'activity_regularizer': None, '......'keras_version': '2.2.4-tf'}
+```
 
+更多运行的输出内容请看英文版https://tensorflow.google.cn/alpha/guide/keras/overview
+
+从 json 重新创建模型（刚刚初始化）。
 
 ```
 fresh_model = tf.keras.models.model_from_json(json_string)
 ```
 
-Serializing a model to YAML format requires that you install `pyyaml` *before you import TensorFlow*:
-
+将模型序列化为YAML格式，要求您在导入TensorFlow之前安装pyyaml（命令：`pip install -q pyyaml`）：
 
 ```
 yaml_string = model.to_yaml()
 print(yaml_string)
 ```
 
-Recreate the model from the YAML:
-
+从YAML重新创建模型：
 
 ```
 fresh_model = tf.keras.models.model_from_yaml(yaml_string)
 ```
 
-Caution: Subclassed models are not serializable because their architecture is
-defined by the Python code in the body of the `call` method.
+注意：子类化模型不可序列化，因为它们的架构由`call`方法正文中的 Python 代码定义。
 
 
-### 6.3. Entire model
+### 6.3. 整个模型
 
-The entire model can be saved to a file that contains the weight values, the
-model's configuration, and even the optimizer's configuration. This allows you
-to checkpoint a model and resume training later—from the exact same
-state—without access to the original code.
-
+整个模型可以保存到一个文件中，其中包含权重值、模型配置乃至优化器配置。这样，您就可以对模型设置检查点并稍后从完全相同的状态继续训练，而无需访问原始代码。
 
 ```
-# Create a simple model
+# 创建一个简单的模型
 model = tf.keras.Sequential([
   layers.Dense(10, activation='softmax', input_shape=(32,)),
   layers.Dense(10, activation='softmax')
@@ -574,14 +589,21 @@ model.compile(optimizer='rmsprop',
 model.fit(data, labels, batch_size=32, epochs=5)
 
 
-# Save entire model to a HDF5 file
+# 将整个模型保存到HDF5文件
 model.save('my_model.h5')
 
-# Recreate the exact same model, including weights and optimizer.
+# 重新创建完全相同的模型，包括权重和优化器
 model = tf.keras.models.load_model('my_model.h5')
 ```
 
+```
+      ...
+      Epoch 5/5 1000/1000 [==============================] - 0s 76us/sample - loss: 11.4913 - accuracy: 0.0990
+```
+
 Learn more about saving and serialization for Keras models in the [Guide to saving and Serializing Models](./saving_and_serializing.ipynb).
+
+在[保存和序列化模型指南](https://tensorflow.google.cn/alpha/guide/keras/saving_and_serializing)中，了解有关Keras模型的保存和序列化的更多信息。
 
 ## 7. Eager execution
 
