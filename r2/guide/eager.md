@@ -336,16 +336,13 @@ plt.ylabel('Loss [entropy]')
       Text(0, 0.5, 'Loss [entropy]')
 ```
 
-### Variables and optimizers
+该示例使用了 [TensorFlow MNIST 示例](https://github.com/tensorflow/models/tree/master/official/mnist) 中的 [dataset.py](https://github.com/tensorflow/models/blob/master/official/mnist/dataset.py) 模块，请将该文件下载到本地目录。运行以下命令以将 MNIST 数据文件下载到工作目录并准备要进行训练的 tf.data.Dataset：
 
-`tf.Variable` objects store mutable `tf.Tensor` values accessed during
-training to make automatic differentiation easier. The parameters of a model can
-be encapsulated in classes as variables.
+### 变量和优化器
 
-Better encapsulate model parameters by using `tf.Variable` with
-`tf.GradientTape`. For example, the automatic differentiation example above
-can be rewritten:
+`tf.Variable` 对象会存储在训练期间访问的可变 `tf.Tensor` 值，以更加轻松地实现自动微分。模型的参数可以作为变量封装在类中。
 
+通过将 `tf.Variable` 与 `tf.GradientTape` 结合使用可以更好地封装模型参数。例如，上面的自动微分示例可以重写为：
 
 ```
 class Model(tf.keras.Model):
@@ -356,13 +353,13 @@ class Model(tf.keras.Model):
   def call(self, inputs):
     return inputs * self.W + self.B
 
-# A toy dataset of points around 3 * x + 2
+# 点数约为3 * x + 2的玩具数据集
 NUM_EXAMPLES = 2000
 training_inputs = tf.random.normal([NUM_EXAMPLES])
 noise = tf.random.normal([NUM_EXAMPLES])
 training_outputs = training_inputs * 3 + 2 + noise
 
-# The loss function to be optimized
+# 要优化的损失函数
 def loss(model, inputs, targets):
   error = model(inputs) - targets
   return tf.reduce_mean(tf.square(error))
@@ -392,18 +389,13 @@ print("Final loss: {:.3f}".format(loss(model, training_inputs, training_outputs)
 print("W = {}, B = {}".format(model.W.numpy(), model.B.numpy()))
 ```
 
-## Use objects for state during eager execution
+## 在Eager Execution期间将对象用于状态
 
-With TF 1.x graph execution, program state (such as the variables) is stored in global
-collections and their lifetime is managed by the `tf.Session` object. In
-contrast, during eager execution the lifetime of state objects is determined by
-the lifetime of their corresponding Python object.
+使用 TF 1.x的 Graph Execution 时，程序状态（如变量）存储在全局集合中，它们的生命周期由 `tf.Session` 对象管理。相反，在Eager Execution期间，状态对象的生命周期由其对应的 Python 对象的生命周期决定。
 
-### Variables are objects
+### 变量是对象
 
-During eager execution, variables persist until the last reference to the object
-is removed, and is then deleted.
-
+在 Eager Execution 期间，变量会一直存在，直到相应对象的最后一个引用被移除，然后变量被删除。
 
 ```
 if tf.test.is_gpu_available():
@@ -412,40 +404,33 @@ if tf.test.is_gpu_available():
     v = None  # v no longer takes up GPU memory
 ```
 
-### Object-based saving
+### 基于对象的保存
 
-This section is an abbreviated version of the [guide to training checkpoints](./checkpoints.ipynb).
+本节是[训练检查点指南](https://tensorflow.google.cn/alpha/guide/checkpoints)的简短版本。
 
-`tf.train.Checkpoint` can save and restore `tf.Variable`s to and from
-checkpoints:
-
+`tf.train.Checkpoint` 可以将 `tf.Variable` 保存到检查点并从中恢复：
 
 ```
 x = tf.Variable(10.)
 checkpoint = tf.train.Checkpoint(x=x)
 ```
 
-
 ```
-x.assign(2.)   # Assign a new value to the variables and save.
+x.assign(2.)   # 为变量分配新值并保存。
 checkpoint_path = './ckpt/'
 checkpoint.save('./ckpt/')
 ```
 
-
 ```
-x.assign(11.)  # Change the variable after saving.
+x.assign(11.)  # 保存后更改变量。
 
-# Restore values from the checkpoint
+# 从检查点恢复值
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_path))
 
 print(x)  # => 2.0
 ```
 
-To save and load models, `tf.train.Checkpoint` stores the internal state of objects,
-without requiring hidden variables. To record the state of a `model`,
-an `optimizer`, and a global step, pass them to a `tf.train.Checkpoint`:
-
+要保存和加载模型，`tf.train.Checkpoint` 会存储对象的内部状态，而不需要隐藏变量。要记录 `model`、`optimizer` 和全局步的状态，请将它们传递到 `tf.train.Checkpoint`：
 
 ```
 import os
@@ -467,14 +452,11 @@ root.save(checkpoint_prefix)
 root.restore(tf.train.latest_checkpoint(checkpoint_dir))
 ```
 
-Note: In many training loops, variables are created after `tf.train.Checkpoint.restore` is called. These variables will be restored as soon as they are created, and assertions are available to ensure that a checkpoint has been fully loaded. See the [guide to training checkpoints](./checkpoints.ipynb) for details.
+注意：在许多训练循环中，在调用`tf.train.Checkpoint.restore`之后创建变量。这些变量将在创建后立即恢复，并且可以使用断言来确保检查点已完全加载。有关详细信息，请参阅[训练检查点指南](https://tensorflow.google.cn/alpha/guide/checkpoints)。
 
-### Object-oriented metrics
+### 面向对象的指标
 
-`tf.keras.metrics` are stored as objects. Update a metric by passing the new data to
-the callable, and retrieve the result using the `tf.keras.metrics.result` method,
-for example:
-
+`tf.keras.metrics`存储为对象。通过将新数据传递给可调用对象来更新指标，并使用  `tf.keras.metrics.result`方法检索结果，例如：
 
 ```
 m = tf.keras.metrics.Mean("loss")
@@ -485,15 +467,11 @@ m([8, 9])
 m.result()  # => 5.5
 ```
 
-## Advanced automatic differentiation topics
+## 自动微分高级内容
 
-### Dynamic models
+### 动态模型
 
-`tf.GradientTape` can also be used in dynamic models. This example for a
-[backtracking line search](https://wikipedia.org/wiki/Backtracking_line_search)
-algorithm looks like normal NumPy code, except there are gradients and is
-differentiable, despite the complex control flow:
-
+`tf.GradientTape` 也可用于动态模型。这个回溯线搜索算法示例看起来像普通的 NumPy 代码，除了存在梯度并且可微分，尽管控制流比较复杂：
 
 ```
 def line_search_step(fn, init_x, rate=1.0):
@@ -511,12 +489,9 @@ def line_search_step(fn, init_x, rate=1.0):
   return x, value
 ```
 
-### Custom gradients
+### 自定义梯度
 
-Custom gradients are an easy way to override gradients. Within the forward function, define the gradient with respect to the
-inputs, outputs, or intermediate results. For example, here's an easy way to clip
-the norm of the gradients in the backward pass:
-
+自定义梯度是一种覆盖梯度的简单方法。在正向函数中，定义相对于输入、输出或中间结果的梯度。例如，下面是在反向传播中截断梯度范数的一种简单方式：
 
 ```
 @tf.custom_gradient
@@ -527,9 +502,7 @@ def clip_gradient_by_norm(x, norm):
   return y, grad_fn
 ```
 
-Custom gradients are commonly used to provide a numerically stable gradient for a
-sequence of operations:
-
+自定义梯度通常用于为一系列操作提供数值稳定的梯度：
 
 ```
 def log1pexp(x):
@@ -545,21 +518,20 @@ def grad_log1pexp(x):
 
 
 ```
-# The gradient computation works fine at x = 0.
-grad_log1pexp(tf.constant(0.)).numpy()
+# 梯度计算在x = 0时工作正常。
+grad_log1pexp(tf.constant(0.)).numpy()   # => 0.5
 ```
 
+`0.5`
 
 ```
-# However, x = 100 fails because of numerical instability.
-grad_log1pexp(tf.constant(100.)).numpy()
+# 但是，由于数值不稳定，x = 100失败。
+grad_log1pexp(tf.constant(100.)).numpy()  # => nan
 ```
 
-Here, the `log1pexp` function can be analytically simplified with a custom
-gradient. The implementation below reuses the value for `tf.exp(x)` that is
-computed during the forward pass—making it more efficient by eliminating
-redundant calculations:
+`nan`
 
+在此处，`log1pexp` 函数可以通过自定义梯度进行分析简化。下面的实现重用了在前向传播期间计算的`tf.exp(x)`的值，通过消除冗余计算，变得更加高效：
 
 ```
 @tf.custom_gradient
@@ -579,28 +551,25 @@ def grad_log1pexp(x):
 
 
 ```
-# As before, the gradient computation works fine at x = 0.
-grad_log1pexp(tf.constant(0.)).numpy()
+# 和以前一样，梯度计算在x = 0时工作正常。
+grad_log1pexp(tf.constant(0.)).numpy()    # => 0.5
 ```
 
 
 ```
-# And the gradient computation also works at x = 100.
-grad_log1pexp(tf.constant(100.)).numpy()
+# 并且梯度计算也适用于x = 100。
+grad_log1pexp(tf.constant(100.)).numpy()   # => 1.0
 ```
 
-## Performance
+## 性能
 
-Computation is automatically offloaded to GPUs during eager execution. If you
-want control over where a computation runs you can enclose it in a
-`tf.device('/gpu:0')` block (or the CPU equivalent):
-
+在Eager Execution期间，计算会自动分流到 GPU。如果要控制计算运行的位置，可以将其放在`tf.device('/gpu:0')`  块（或 CPU 等效块）中：
 
 ```
 import time
 
 def measure(x, steps):
-  # TensorFlow initializes a GPU the first time it's used, exclude from timing.
+  # TensorFlow在第一次使用时初始化GPU，从计时中排除。
   tf.matmul(x, x)
   start = time.time()
   for i in range(steps):
@@ -631,9 +600,13 @@ else:
   print("GPU: not found")
 ```
 
-A `tf.Tensor` object can be copied to a different device to execute its
-operations:
+```
+      Time to multiply a (1000, 1000) matrix by itself 200 times:
+      CPU: 0.7741374969482422 secs
+      GPU: not found
+```
 
+`tf.Tensor`对象可以复制到不同的设备来执行其操作：
 
 ```
 if tf.test.is_gpu_available():
@@ -647,16 +620,11 @@ if tf.test.is_gpu_available():
 
 ```
 
-### Benchmarks
+### 基准
 
-For compute-heavy models, such as
-[ResNet50](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/eager/python/examples/resnet50)
-training on a GPU, eager execution performance is comparable to `tf.function` execution.
-But this gap grows larger for models with less computation and there is work to
-be done for optimizing hot code paths for models with lots of small operations.
+对于计算量繁重的模型（如在 GPU 上训练的 [ResNet50](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/eager/python/examples/resnet50)），Eager Execution 性能与 `tf.function` Execution 相当。但是对于计算量较小的模型来说，这种性能差距会越来越大，并且有很多工作要做，以便为具有大量小操作的模型优化热代码路径。
 
-## Work with functions
+## 使用`tf.function`
 
-While eager execution makes development and debugging more interactive,
-TensorFlow 1.x style graph execution has advantages for distributed training, performance
-optimizations, and production deployment. To bridge this gap, TensorFlow 2.0 introduces `function`s via the `tf.function` API. For more information, see the [Autograph](./autograph.ipynb) guide.
+虽然Eager Execution使开发和调试更具交互性，但TensorFlow 1.x样式图执行在分布式训练，性能优化和生产部署方面具有优势。为了弥补这一差距，TensorFlow 2.0通过`tf.function` API引入此功能。有关更多信息，请参阅[Autograph指南](https://tensorflow.google.cn/alpha/guide/autograph)。
+
