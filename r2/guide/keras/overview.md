@@ -55,7 +55,7 @@ from tensorflow import keras
 
 要构建一个简单的全连接网络（即多层感知器），请运行以下代码：
 
-```
+```python
 from tensorflow.keras import layers
 
 model = tf.keras.Sequential()
@@ -85,7 +85,7 @@ model.add(layers.Dense(10, activation='softmax'))
 
 以下代码使用构造函数参数实例化 `tf.keras.layers. Dense` 层：
 
-```
+```python
 # 创建一个sigmoid层:
 layers.Dense(64, activation='sigmoid')
 # 或者使用下面的代码创建:
@@ -110,7 +110,7 @@ layers.Dense(64, bias_initializer=tf.keras.initializers.Constant(2.0))
 
 构建好模型后，通过调用 `compile` 方法配置该模型的学习流程：
 
-```
+```python
 model = tf.keras.Sequential([
 # 向模型添加一个64单元的密集连接层：
 layers.Dense(64, activation='relu', input_shape=(32,)),
@@ -136,7 +136,7 @@ model.compile(optimizer=tf.keras.optimizers.Adam(0.001),
 
 以下代码展示了配置模型以进行训练的几个示例：
 
-```
+```python
 # 配置均方误差回归模型。
 model.compile(optimizer=tf.keras.optimizers.Adam(0.01),
               loss='mse',       # 均方误差
@@ -152,7 +152,7 @@ model.compile(optimizer=tf.keras.optimizers.RMSprop(0.01),
 
 对于小型数据集，请使用内存中的[NumPy](https://www.numpy.org/)数组训练和评估模型。使用 fit 方法使模型与训练数据“拟合”：
 
-```
+```python
 import numpy as np
 
 data = np.random.random((1000, 32))
@@ -162,7 +162,7 @@ model.fit(data, labels, epochs=10, batch_size=32)
 ```
 
 ```
-...
+      ...
       Epoch 10/10
       1000/1000 [==============================] - 0s 82us/sample - loss: 11.4075 - categorical_accuracy: 0.1690
 ```
@@ -177,7 +177,7 @@ model.fit(data, labels, epochs=10, batch_size=32)
 
 下面是使用 `validation_data` 的示例：
 
-```
+```python
 import numpy as np
 
 data = np.random.random((1000, 32))
@@ -191,11 +191,11 @@ model.fit(data, labels, epochs=10, batch_size=32,
 ```
 
 ```
-Train on 1000 samples, validate on 100 samples
-...
-      Epoch 10/10
-      1000/1000 [==============================] - 0s 93us/sample - loss: 11.5019 - categorical_accuracy: 0.1220 - val_loss: 11.5879 - val_categorical_accuracy: 0.0800
-      <tensorflow.python.keras.callbacks.History at 0x7fe0642970b8>
+      Train on 1000 samples, validate on 100 samples
+      ...
+            Epoch 10/10
+            1000/1000 [==============================] - 0s 93us/sample - loss: 11.5019 - categorical_accuracy: 0.1220 - val_loss: 11.5879 - val_categorical_accuracy: 0.0800
+            <tensorflow.python.keras.callbacks.History at 0x7fe0642970b8>
 ```
 
 
@@ -203,7 +203,7 @@ Train on 1000 samples, validate on 100 samples
 
 使用 [Datasets API](https://tensorflow.google.cn/guide/datasets) 可扩展为大型数据集或多设备训练。将 `tf.data.Dataset` 实例传递到 `fit` 方法：
 
-```
+```python
 # 实例化玩具数据集实例：
 dataset = tf.data.Dataset.from_tensor_slices((data, labels))
 dataset = dataset.batch(32)
@@ -224,7 +224,7 @@ model.fit(dataset, epochs=10, steps_per_epoch=30)
 
 数据集也可用于验证：
 
-```
+```python
 dataset = tf.data.Dataset.from_tensor_slices((data, labels))
 dataset = dataset.batch(32)
 
@@ -249,7 +249,7 @@ model.fit(dataset, epochs=10,
 
 要评估所提供数据的推理模式损失和指标，请运行以下代码：
 
-```
+```python
 data = np.random.random((1000, 32))
 labels = np.random.random((1000, 10))
 
@@ -267,7 +267,7 @@ model.evaluate(dataset, steps=30)
 
 要在所提供数据（采用 NumPy 数组形式）的推理中预测最后一层的输出，请运行以下代码：
 
-```
+```python
 result = model.predict(data, batch_size=32)
 print(result.shape)
 ```
@@ -281,26 +281,6 @@ print(result.shape)
 ## 4. 构建高级模型
 
 ### 4.1. 函数式 API
-
- The `tf.keras.Sequential` model is a simple stack of layers that cannot
-represent arbitrary models. Use the
-[Keras functional API](./functional.ipynb)
-to build complex model topologies such as:
-
-* Multi-input models,
-* Multi-output models,
-* Models with shared layers (the same layer called several times),
-* Models with non-sequential data flows (e.g. residual connections).
-
-Building a model with the functional API works like this:
-
-1. A layer instance is callable and returns a tensor.
-2. Input tensors and output tensors are used to define a `tf.keras.Model`
-   instance.
-3. This model is trained just like the `Sequential` model.
-
-The following example uses the functional API to build a simple, fully-connected
-network:
 
 `tf.keras.Sequential` 模型是层的简单堆叠，无法表示任意模型。使用 [Keras 函数式 API](https://tensorflow.google.cn/alpha/guide/keras/functional) 可以构建复杂的模型拓扑，例如：
 
@@ -317,7 +297,7 @@ network:
 
 以下示例使用函数式 API 构建一个简单的全连接网络：
 
-```
+```python
 inputs = tf.keras.Input(shape=(32,))  # 返回输入占位符
 
 # 层实例可在张量上调用，并返回张量。
@@ -328,7 +308,7 @@ predictions = layers.Dense(10, activation='softmax')(x)
 
 在给定输入和输出的情况下实例化模型。
 
-```
+```python
 model = tf.keras.Model(inputs=inputs, outputs=predictions)
 
 # compile步骤指定训练配置
@@ -360,7 +340,7 @@ model.fit(data, labels, batch_size=32, epochs=5)
 
 以下示例展示了使用自定义前向传播进行子类化的 `tf.keras.Model`，该传递不必强制运行：
 
-```
+```python
 class MyModel(tf.keras.Model):
 
   def __init__(self, num_classes=10):
@@ -379,7 +359,7 @@ class MyModel(tf.keras.Model):
 
 实例化新模型类：
 
-```
+```python
 model = MyModel(num_classes=10)
 
 # The compile step specifies the training configuration.
@@ -410,7 +390,7 @@ model.fit(data, labels, batch_size=32, epochs=5)
 
 下面是一个自定义层的示例，它使用核矩阵实现输入的`matmul`：
 
-```
+```python
 class MyLayer(layers.Layer):
 
   def __init__(self, output_dim, **kwargs):
@@ -439,7 +419,7 @@ class MyLayer(layers.Layer):
 
 使用自定义层创建模型：
 
-```
+```python
 model = tf.keras.Sequential([
     MyLayer(10),
     layers.Activation('softmax')])
@@ -470,7 +450,7 @@ model.fit(data, labels, batch_size=32, epochs=5)
 
 要使用  `tf.keras.callbacks.Callback`，请将其传递给模型的 `fit` 方法：
 
-```
+```python
 callbacks = [
   # 如果`val_loss`在2个以上的周期内停止改进，则进行中断训练
   tf.keras.callbacks.EarlyStopping(patience=2, monitor='val_loss'),
@@ -494,7 +474,7 @@ model.fit(data, labels, batch_size=32, epochs=5, callbacks=callbacks,
 
 使用 `tf.keras.Model.save_weights`保存并加载模型的权重：
 
-```
+```python
 model = tf.keras.Sequential([
 layers.Dense(64, activation='relu', input_shape=(32,)),
 layers.Dense(10, activation='softmax')])
@@ -529,7 +509,7 @@ model.load_weights('my_model.h5')
 
 
 
-```
+```python
 # 将模型序列化为JSON格式
 json_string = model.to_json()
 json_string
@@ -539,7 +519,7 @@ json_string
       '{"class_name": "Sequential", "config": {"layers": [{"class_name": "Dense", "config": {"units": 64, "activity_regularizer": null, "dtype": "float32",....... "backend": "tensorflow", "keras_version": "2.2.4-tf"}'
 ```
 
-```
+```python
 import json
 import pprint
 pprint.pprint(json.loads(json_string))
@@ -553,7 +533,7 @@ pprint.pprint(json.loads(json_string))
 
 从 json 重新创建模型（刚刚初始化）。
 
-```
+```python
 fresh_model = tf.keras.models.model_from_json(json_string)
 ```
 
@@ -566,7 +546,7 @@ print(yaml_string)
 
 从YAML重新创建模型：
 
-```
+```python
 fresh_model = tf.keras.models.model_from_yaml(yaml_string)
 ```
 
@@ -577,7 +557,7 @@ fresh_model = tf.keras.models.model_from_yaml(yaml_string)
 
 整个模型可以保存到一个文件中，其中包含权重值、模型配置乃至优化器配置。这样，您就可以对模型设置检查点并稍后从完全相同的状态继续训练，而无需访问原始代码。
 
-```
+```python
 # 创建一个简单的模型
 model = tf.keras.Sequential([
   layers.Dense(10, activation='softmax', input_shape=(32,)),
@@ -627,7 +607,7 @@ Learn more about saving and serialization for Keras models in the [Guide to savi
 
 首先，在分布式策略范围内定义模型：
 
-```
+```python
 strategy = tf.distribute.MirroredStrategy()
 
 with strategy.scope():
@@ -653,7 +633,7 @@ model.summary()
 
 接下来，像往常一样训练模型数据：
 
-```
+```python
 x = np.random.random((1024, 10))
 y = np.random.randint(2, size=(1024, 1))
 x = tf.cast(x, tf.float32)
