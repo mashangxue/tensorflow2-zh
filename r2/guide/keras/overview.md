@@ -33,15 +33,16 @@ Keras 具有针对常见用例做出优化的简单而一致的界面。它可�
 
 首先，导入 `tf.keras` 以设置 TensorFlow 程序：
 
-安装pyyaml （可选）：`pip install -q pyyaml`
-
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import tensorflow as tf
 
 from tensorflow import keras
 ```
+
+安装pyyaml （可选）：`pip install -q pyyaml`
+
 
 `tf.keras` can run any Keras-compatible code, but keep in mind:
 
@@ -54,90 +55,79 @@ from tensorflow import keras
 `tf.keras` 可以运行任何与 Keras 兼容的代码，但请注意：
 
 * 最新版 TensorFlow 中的 `tf.keras` 版本可能与 PyPI 中的最新 keras 版本不同。请查看 `tf.keras.version`。
+
 * [保存模型的权重](#weights_only)时，`tf.keras` 默认采用检查点格式。请传递 ` save_format='h5' `以使用 HDF5。
 
-## 2. Build a simple model
+## 2. 构建简单的模型
 
-### 2.1. Sequential model
+### 2.1. 序列模型
 
-In Keras, you assemble *layers* to build *models*. A model is (usually) a graph
-of layers. The most common type of model is a stack of layers: the
-`tf.keras.Sequential` model.
+在 Keras 中，您可以通过组合层来构建模型。模型（通常）是由层构成的图。最常见的模型类型是层的堆叠：`tf.keras.Sequential` 模型。
 
-To build a simple, fully-connected network (i.e. multi-layer perceptron):
-
+要构建一个简单的全连接网络（即多层感知器），请运行以下代码：
 
 ```
 from tensorflow.keras import layers
 
 model = tf.keras.Sequential()
-# Adds a densely-connected layer with 64 units to the model:
+# 向模型添加一个64单元的密集连接层：
 model.add(layers.Dense(64, activation='relu'))
-# Add another:
+# 加上另一个：
 model.add(layers.Dense(64, activation='relu'))
-# Add a softmax layer with 10 output units:
+# 添加一个包含10个输出单位的softmax层：
 model.add(layers.Dense(10, activation='softmax'))
 ```
 
-You can find a complete, short example of how to use Sequential models [here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/beginner.ipynb).
+您可以找到有关如何使用Sequential模型的完整简短示例 [here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/beginner.ipynb).
 
-To learn about building more advanced models than Sequential models, see:
-- [Guide to the Keras Functional](./functional.ipynb)
-- [Guide to writing layers and models from scratch with subclassing](./custom_layers_and_models.ipynb)
+要了解如何构建比Sequential模型更高级的模型，请参阅:
+- [Guide to the Keras Functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
+- [Guide to writing layers and models from scratch with subclassing](https://tensorflow.google.cn/alpha/guide/keras/custom_layers_and_models)
 
-### 2.2. Configure the layers
+### 2.2. 配置层
 
-There are many `tf.keras.layers` available with some common constructor
-parameters:
+我们可以使用很多 `tf.keras.layers`，它们具有一些相同的构造函数参数：
 
-* `activation`: Set the activation function for the layer. This parameter is
-  specified by the name of a built-in function or as a callable object. By
-  default, no activation is applied.
-* `kernel_initializer` and `bias_initializer`: The initialization schemes
-  that create the layer's weights (kernel and bias). This parameter is a name or
-  a callable object. This defaults to the `"Glorot uniform"` initializer.
-* `kernel_regularizer` and `bias_regularizer`: The regularization schemes
-  that apply the layer's weights (kernel and bias), such as L1 or L2
-  regularization. By default, no regularization is applied.
+* `activation`：设置层的激活函数。此参数由内置函数的名称指定，或指定为可调用对象。默认情况下，系统不会应用任何激活函数。
 
-The following instantiates `tf.keras.layers.Dense` layers using constructor
-arguments:
+* `kernel_initializer` 和 `bias_initializer`：创建层权重（核和偏差）的初始化方案。此参数是一个名称或可调用对象，默认为 "Glorot uniform" 初始化器。
 
+* `kernel_regularizer` 和 `bias_regularizer`：应用层权重（核和偏差）的正则化方案，例如 L1 或 L2 正则化。默认情况下，系统不会应用正则化函数。
+
+以下代码使用构造函数参数实例化 `tf.keras.layers. Dense` 层：
 
 ```
-# Create a sigmoid layer:
+# 创建一个sigmoid层:
 layers.Dense(64, activation='sigmoid')
-# Or:
+# 或者使用下面的代码创建:
 layers.Dense(64, activation=tf.keras.activations.sigmoid)
 
-# A linear layer with L1 regularization of factor 0.01 applied to the kernel matrix:
+# 将具有因子0.01的L1正则化的线性层应用于核矩阵:
 layers.Dense(64, kernel_regularizer=tf.keras.regularizers.l1(0.01))
 
-# A linear layer with L2 regularization of factor 0.01 applied to the bias vector:
+# 将L2正则化系数为0.01的线性层应用于偏置向量：
 layers.Dense(64, bias_regularizer=tf.keras.regularizers.l2(0.01))
 
-# A linear layer with a kernel initialized to a random orthogonal matrix:
+# 一个内核初始化为随机正交矩阵的线性层：
 layers.Dense(64, kernel_initializer='orthogonal')
 
-# A linear layer with a bias vector initialized to 2.0s:
+# 偏置矢量初始化为2.0s的线性层：
 layers.Dense(64, bias_initializer=tf.keras.initializers.Constant(2.0))
 ```
 
-## 3. Train and evaluate
+## 3. 训练和评估
 
-### 3.1. Set up training
+### 3.1. 设置训练流程
 
-After the model is constructed, configure its learning process by calling the
-`compile` method:
-
+构建好模型后，通过调用 `compile` 方法配置该模型的学习流程：
 
 ```
 model = tf.keras.Sequential([
-# Adds a densely-connected layer with 64 units to the model:
+# 向模型添加一个64单元的密集连接层：
 layers.Dense(64, activation='relu', input_shape=(32,)),
-# Add another:
+# 加上另一个:
 layers.Dense(64, activation='relu'),
-# Add a softmax layer with 10 output units:
+# 添加具有10个输出单位的softmax层:
 layers.Dense(10, activation='softmax')])
 
 model.compile(optimizer=tf.keras.optimizers.Adam(0.001),
@@ -145,42 +135,33 @@ model.compile(optimizer=tf.keras.optimizers.Adam(0.001),
               metrics=['accuracy'])
 ```
 
-`tf.keras.Model.compile` takes three important arguments:
+`tf.keras.Model.compile` 采用三个重要参数：
 
-* `optimizer`: This object specifies the training procedure. Pass it optimizer
-  instances from the `tf.keras.optimizers` module, such as
-  `tf.keras.optimizers.Adam` or
-  `tf.keras.optimizers.SGD`. If you just want to use the default parameters, you can also specify optimizers via strings, such as `'adam'` or `'sgd'`.
-* `loss`: The function to minimize during optimization. Common choices include
-  mean square error (`mse`), `categorical_crossentropy`, and
-  `binary_crossentropy`. Loss functions are specified by name or by
-  passing a callable object from the `tf.keras.losses` module.
-* `metrics`: Used to monitor training. These are string names or callables from
-  the `tf.keras.metrics` module.
-* Additionally, to make sure the model trains and evaluates eagerly, you can make sure to pass `run_eagerly=True` as a parameter to compile.
+* `optimizer`：此对象会指定训练过程。从`tf.keras.optimizers`  模块向其传递优化器实例，例如  `tf.keras.optimizers.Adam` 、`tf.keras.optimizers.SGD` 。如果您只想使用默认参数，还可以通过字符串指定优化器，例如'adam'或'sgd'。
 
+* `loss`：要在优化期间最小化的函数。常见选择包括均方误差 (`mse`)、`categorical_crossentropy` 和 `binary_crossentropy`。损失函数由名称或通过从 `tf.keras.losses` 模块传递可调用对象来指定。
 
-The following shows a few examples of configuring a model for training:
+* `metrics`：用于监控训练。它们是 `tf.keras.metrics` 模块中的字符串名称或可调用对象。
 
+* 此外，为了确保模型能够热切地进行训练和评估，您可以确保将`run_eagerly=True` 作为参数进行编译。
+
+以下代码展示了配置模型以进行训练的几个示例：
 
 ```
-# Configure a model for mean-squared error regression.
+# 配置均方误差回归模型。
 model.compile(optimizer=tf.keras.optimizers.Adam(0.01),
-              loss='mse',       # mean squared error
-              metrics=['mae'])  # mean absolute error
+              loss='mse',       # 均方误差
+              metrics=['mae'])  # 平均绝对误差
 
-# Configure a model for categorical classification.
+# 为分类分类配置一个模型
 model.compile(optimizer=tf.keras.optimizers.RMSprop(0.01),
               loss=tf.keras.losses.CategoricalCrossentropy(),
               metrics=[tf.keras.metrics.CategoricalAccuracy()])
 ```
 
-### 3.2. Train from NumPy data
+### 3.2. 输入 NumPy 数据
 
-For small datasets, use in-memory [NumPy](https://www.numpy.org/){:.external}
-arrays to train and evaluate a model. The model is "fit" to the training data
-using the `fit` method:
-
+对于小型数据集，请使用内存中的[NumPy](https://www.numpy.org/)数组训练和评估模型。使用 fit 方法使模型与训练数据“拟合”：
 
 ```
 import numpy as np
@@ -191,21 +172,21 @@ labels = np.random.random((1000, 10))
 model.fit(data, labels, epochs=10, batch_size=32)
 ```
 
-`tf.keras.Model.fit` takes three important arguments:
+```
+...
+      Epoch 10/10
+      1000/1000 [==============================] - 0s 82us/sample - loss: 11.4075 - categorical_accuracy: 0.1690
+```
 
-* `epochs`: Training is structured into *epochs*. An epoch is one iteration over
-  the entire input data (this is done in smaller batches).
-* `batch_size`: When passed NumPy data, the model slices the data into smaller
-  batches and iterates over these batches during training. This integer
-  specifies the size of each batch. Be aware that the last batch may be smaller
-  if the total number of samples is not divisible by the batch size.
-* `validation_data`: When prototyping a model, you want to easily monitor its
-  performance on some validation data. Passing this argument—a tuple of inputs
-  and labels—allows the model to display the loss and metrics in inference mode
-  for the passed data, at the end of each epoch.
+`tf.keras.Model.fit` 采用三个重要参数：
 
-Here's an example using `validation_data`:
+* `epochs`：以周期为单位进行训练。一个周期是对整个输入数据的一次迭代（以较小的批次完成迭代）。
 
+* `batch_size`：当传递 NumPy 数据时，模型将数据分成较小的批次，并在训练期间迭代这些批次。此整数指定每个批次的大小。请注意，如果样本总数不能被批次大小整除，则最后一个批次可能更小。
+
+* `validation_data`：在对模型进行原型设计时，您需要轻松监控该模型在某些验证数据上达到的效果。传递此参数（输入和标签元组）可以让该模型在每个周期结束时以推理模式显示所传递数据的损失和指标。
+
+下面是使用 `validation_data` 的示例：
 
 ```
 import numpy as np
@@ -220,12 +201,22 @@ model.fit(data, labels, epochs=10, batch_size=32,
           validation_data=(val_data, val_labels))
 ```
 
-### 3.3. Train from tf.data datasets
+```
+Train on 1000 samples, validate on 100 samples
+...
+      Epoch 10/10
+      1000/1000 [==============================] - 0s 93us/sample - loss: 11.5019 - categorical_accuracy: 0.1220 - val_loss: 11.5879 - val_categorical_accuracy: 0.0800
+      <tensorflow.python.keras.callbacks.History at 0x7fe0642970b8>
+```
+
+
+### 3.3. 输入 tf.data 数据集
 
 Use the [Datasets API](./datasets.md) to scale to large datasets
 or multi-device training. Pass a `tf.data.Dataset` instance to the `fit`
 method:
 
+使用 Datasets API 可扩展为大型数据集或多设备训练。将 tf.data.Dataset 实例传递到 fit 方法：
 
 ```
 # Instantiates a toy dataset instance:
