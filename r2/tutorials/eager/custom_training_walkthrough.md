@@ -1,3 +1,12 @@
+---
+title: 自定义训练：演示
+tags: 
+    - tensorflow2.0
+categories: 
+    - tensorflow2.0官方文档
+date: 2019-05-10
+abbrlink: tensorflow/tensorflow2-tutorials-eager-custom_training_walkthrough
+---
 
 # 自定义训练：演示
 
