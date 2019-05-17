@@ -83,10 +83,10 @@ While some of the sentences are grammatical, most do not make sense. The model h
 ### 导入 TensorFlow 和其他库 Import TensorFlow and other libraries
 
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow-gpu==2.0.0-alpha0
+# !pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 
 import numpy as np
@@ -105,7 +105,7 @@ Change the following line to run this code on your own data.
 
 通过更改以下行可使用您自己的数据运行此代码。
 
-```
+```python
 path_to_file = tf.keras.utils.get_file('shakespeare.txt', 'https://storage.googleapis.com/download.tensorflow.org/data/shakespeare.txt')
 ```
 
@@ -119,7 +119,7 @@ First, look in the text:
 
 首先，我们来看一下文本内容。
 
-```
+```python
 # Read, then decode for py2 compat.
 text = open(path_to_file, 'rb').read().decode(encoding='utf-8')
 # length of text is the number of characters in it
@@ -130,7 +130,7 @@ print ('Length of text: {} characters'.format(len(text)))
 
 
 
-```
+```python
 # Take a look at the first 250 characters in text
 print(text[:250])
 ```
@@ -153,7 +153,7 @@ print(text[:250])
 
 
 
-```
+```python
 # The unique characters in the file
 vocab = sorted(set(text))
 print ('{} unique characters'.format(len(vocab)))
@@ -170,7 +170,7 @@ Before training, we need to map strings to a numerical representation. Create tw
 
 在训练之前，我们需要将字符串映射到数字表示值。创建两个对照表：一个用于将字符映射到数字，另一个用于将数字映射到字符。
 
-```
+```python
 # Creating a mapping from unique characters to indices
 char2idx = {u:i for i, u in enumerate(vocab)}
 idx2char = np.array(vocab)
@@ -182,7 +182,7 @@ Now we have an integer representation for each character. Notice that we mapped 
 
 现在，每个字符都有一个对应的整数表示值。请注意，我们按从 0 到 `len(unique)` 的索引映射字符。
 
-```
+```python
 print('{')
 for char,_ in zip(char2idx, range(20)):
     print('  {:4s}: {:3d},'.format(repr(char), char2idx[char]))
@@ -193,21 +193,7 @@ print('  ...\n}')
       '\n':   0,
       ' ' :   1,
       '!' :   2,
-      '$' :   3,
-      '&' :   4,
-      "'" :   5,
-      ',' :   6,
-      '-' :   7,
-      '.' :   8,
-      '3' :   9,
-      ':' :  10,
-      ';' :  11,
-      '?' :  12,
-      'A' :  13,
-      'B' :  14,
-      'C' :  15,
-      'D' :  16,
-      'E' :  17,
+      ...
       'F' :  18,
       'G' :  19,
       ...
@@ -251,7 +237,7 @@ To do this first use the `tf.data.Dataset.from_tensor_slices` function to conver
 
 为此，首先使用`tf.data.Dataset.from_tensor_slices`函数将文本向量转换为字符索引流。
 
-```
+```python
 # The maximum length sentence we want for a single input in characters
 seq_length = 100
 examples_per_epoch = len(text)//seq_length
@@ -274,7 +260,7 @@ The `batch` method lets us easily convert these individual characters to sequenc
 
 批处理方法可以让我们轻松地将这些单个字符转换为所需大小的序列。
 
-```
+```python
 sequences = char_dataset.batch(seq_length+1, drop_remainder=True)
 
 for item in sequences.take(5):
@@ -292,7 +278,7 @@ For each sequence, duplicate and shift it to form the input and target text by u
 
 对于每个序列，复制并移动它以创建输入文本和目标文本，方法是使用 `map` 方法将简单函数应用于每个批处理：
 
-```
+```python
 def split_input_target(chunk):
     input_text = chunk[:-1]
     target_text = chunk[1:]
@@ -305,7 +291,7 @@ Print the first examples input and target values:
 
 打印第一个样本输入和目标值：
 
-```
+```python
 for input_example, target_example in  dataset.take(1):
   print ('Input data: ', repr(''.join(idx2char[input_example.numpy()])))
   print ('Target data:', repr(''.join(idx2char[target_example.numpy()])))
@@ -319,7 +305,7 @@ Each index of these vectors are processed as one time step. For the input at tim
 
 这些向量的每个索引均作为一个时间步来处理。对于时间步 0 的输入，我们收到了映射到字符 “F” 的索引，并尝试预测 “i” 的索引作为下一个字符。在下一个时间步，执行相同的操作，但除了当前字符外，`RNN` 还要考虑上一步的信息。
 
-```
+```python
 for i, (input_idx, target_idx) in enumerate(zip(input_example[:5], target_example[:5])):
     print("Step {:4d}".format(i))
     print("  input: {} ({:s})".format(input_idx, repr(idx2char[input_idx])))
@@ -329,15 +315,7 @@ for i, (input_idx, target_idx) in enumerate(zip(input_example[:5], target_exampl
     Step    0
       input: 18 ('F')
       expected output: 47 ('i')
-    Step    1
-      input: 47 ('i')
-      expected output: 56 ('r')
-    Step    2
-      input: 56 ('r')
-      expected output: 57 ('s')
-    Step    3
-      input: 57 ('s')
-      expected output: 58 ('t')
+    ...
     Step    4
       input: 58 ('t')
       expected output: 1 (' ')
@@ -364,12 +342,9 @@ dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE, drop_remainder=True)
 dataset
 ```
 
-
-
-
+```
     <BatchDataset shapes: ((64, 100), (64, 100)), types: (tf.int64, tf.int64)>
-
-
+```
 
 ## 实现模型 Build The Model
 
@@ -387,7 +362,7 @@ Use `tf.keras.Sequential` to define the model. For this simple example three lay
 
 * `tf.keras.layers.Dense`：密集层（输出层），带有`vocab_size`个单元输出。
 
-```
+```python
 # Length of the vocabulary in chars
 vocab_size = len(vocab)
 
@@ -399,7 +374,7 @@ rnn_units = 1024
 ```
 
 
-```
+```python
 def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
   model = tf.keras.Sequential([
     tf.keras.layers.Embedding(vocab_size, embedding_dim,
@@ -414,7 +389,7 @@ def build_model(vocab_size, embedding_dim, rnn_units, batch_size):
 ```
 
 
-```
+```python
 model = build_model(
   vocab_size = len(vocab),
   embedding_dim=embedding_dim,
@@ -435,7 +410,7 @@ Now run the model to see that it behaves as expected. First check the shape of t
 现在运行模型以查看它的行为符合预期，首先检查输出的形状：
 
 
-```
+```python
 for input_example_batch, target_example_batch in dataset.take(1):
   example_batch_predictions = model(input_example_batch)
   print(example_batch_predictions.shape, "# (batch_size, sequence_length, vocab_size)")
@@ -448,7 +423,7 @@ In the above example the sequence length of the input is `100` but the model can
 
 在上面的示例中，输入的序列长度为 `100` ，但模型可以在任何长度的输入上运行：
 
-```
+```python
 model.summary()
 ```
 
@@ -480,7 +455,7 @@ Try it for the first example in the batch:
 
 尝试批处理中的第一个样本：
 
-```
+```python
 sampled_indices = tf.random.categorical(example_batch_predictions[0], num_samples=1)
 sampled_indices = tf.squeeze(sampled_indices,axis=-1).numpy()
 ```
@@ -489,11 +464,9 @@ This gives us, at each timestep, a prediction of the next character index:
 
 这使我们在每个时间步都预测下一个字符索引：
 
-```
+```python
 sampled_indices
 ```
-
-
 
 
     array([21,  2, 58, 40, 42, 32, 39,  7, 18, 38, 30, 58, 23, 58, 37, 10, 23,
@@ -510,7 +483,7 @@ Decode these to see the text predicted by this untrained model:
 解码这些以查看此未经训练的模型预测的文本：
 
 
-```
+```python
 print("Input: \n", repr("".join(idx2char[input_example_batch[0]])))
 print()
 print("Next Char Predictions: \n", repr("".join(idx2char[sampled_indices ])))
@@ -539,7 +512,7 @@ Because our model returns logits, we need to set the `from_logits` flag.
 
 因为我们的模型返回logits，所以我们需要设置`from_logits`标志。
 
-```
+```python
 def loss(labels, logits):
   return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
 
@@ -557,7 +530,7 @@ Configure the training procedure using the `tf.keras.Model.compile` method. We'l
 使用 `tf.keras.Model.compile` 方法配置培训过程。我们将使用带有默认参数和损失函数的 `tf.keras.optimizers.Adam`。
 
 
-```
+```python
 model.compile(optimizer='adam', loss=loss)
 ```
 
@@ -567,7 +540,7 @@ Use a `tf.keras.callbacks.ModelCheckpoint` to ensure that checkpoints are saved 
 
 使用`tf.keras.callbacks.ModelCheckpoint`确保在训练期间保存检查点：
 
-```
+```python
 # Directory where the checkpoints will be saved
 checkpoint_dir = './training_checkpoints'
 # Name of the checkpoint files
@@ -584,7 +557,7 @@ To keep training time reasonable, use 10 epochs to train the model. In Colab, se
 
 为了使训练时间合理，使用10个时期来训练模型。在Colab中，将运行时设置为GPU以便更快地进行训练。
 
-```
+```python
 EPOCHS=10
 
 history = model.fit(dataset, epochs=EPOCHS, callbacks=[checkpoint_callback])
@@ -613,7 +586,7 @@ To run the model with a different `batch_size`, we need to rebuild the model and
 
 要使用不同的 `batch_size` 运行模型，我们需要重建模型并从检查点恢复权重。
 
-```
+```python
 tf.train.latest_checkpoint(checkpoint_dir)
 ```
 
@@ -621,7 +594,7 @@ tf.train.latest_checkpoint(checkpoint_dir)
         './training_checkpoints/ckpt_10'
 ```
 
-```
+```python
 model = build_model(vocab_size, embedding_dim, rnn_units, batch_size=1)
 
 model.load_weights(tf.train.latest_checkpoint(checkpoint_dir))
@@ -676,7 +649,7 @@ Looking at the generated text, you'll see the model knows when to capitalize, ma
 
 查看生成的文本后，您会发现模型知道何时应使用大写字母，以及如何构成段落和模仿莎士比亚风格的词汇。由于执行的训练周期较少，因此该模型尚未学会生成连贯的句子。
 
-```
+```python
 def generate_text(model, start_string):
   # Evaluation step (generating text using the learned model)
 
@@ -716,7 +689,7 @@ def generate_text(model, start_string):
 ```
 
 
-```
+```python
 print(generate_text(model, start_string=u"ROMEO: "))
 ```
 
@@ -793,7 +766,7 @@ The procedure works as follows:
 * 使用 `tf.GradientTape.grads` 方法计算相对于模型变量的损失梯度。
 * 最后，使用优化器的 `tf.train.Optimizer.apply_gradients` 方法向下迈出一步。
 
-```
+```python
 model = build_model(
   vocab_size = len(vocab),
   embedding_dim=embedding_dim,
@@ -805,7 +778,7 @@ optimizer = tf.keras.optimizers.Adam()
 ```
 
 
-```
+```python
 @tf.function
 def train_step(inp, target):
   with tf.GradientTape() as tape:
@@ -820,7 +793,7 @@ def train_step(inp, target):
 ```
 
 
-```
+```python
 # Training step
 EPOCHS = 10
 
