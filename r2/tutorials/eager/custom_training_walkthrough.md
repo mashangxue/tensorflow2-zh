@@ -1,5 +1,5 @@
 
-# 自定义训练：演示 Custom training: walkthrough
+# 自定义训练：演示
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
@@ -13,11 +13,6 @@
   </td>
 </table>
 
-This guide uses machine learning to *categorize* Iris flowers by species. It uses TensorFlow to:
-1. Build a model,
-2. Train this model on example data, and
-3. Use the model to make predictions about unknown data.
-
 本指南使用机器学习按品种对鸢尾花进行分类。它利用 TensorFlow 的 Eager Execution 来执行以下操作： 
 
 1. 构建模型
@@ -26,13 +21,7 @@ This guide uses machine learning to *categorize* Iris flowers by species. It use
 
 3. 利用该模型对未知数据进行预测。
 
-## TensorFlow 编程 TensorFlow programming
-
-This guide uses these high-level TensorFlow concepts:
-
-* Use TensorFlow's default [eager execution](https://www.tensorflow.org/guide/eager) development environment,
-* Import data with the [Datasets API](https://www.tensorflow.org/guide/datasets),
-* Build models and layers with TensorFlow's [Keras API](https://keras.io/getting-started/sequential-model-guide/).
+## TensorFlow 编程
 
 本指南采用了以下高级 TensorFlow 概念：
 
@@ -41,14 +30,6 @@ This guide uses these high-level TensorFlow concepts:
 * 使用 [Datasets API](https://www.tensorflow.org/guide/datasets) 导入数据，
 
 * 使用 TensorFlow 的 [Keras API](https://keras.io/getting-started/sequential-model-guide/) 构建模型和层。
-
-This tutorial is structured like many TensorFlow programs:
-
-1. Import and parse the data sets.
-2. Select the type of model.
-3. Train the model.
-4. Evaluate the model's effectiveness.
-5. Use the trained model to make predictions.
 
 本教程采用了与许多 TensorFlow 程序相似的结构：
 
@@ -62,11 +43,9 @@ This tutorial is structured like many TensorFlow programs:
 
 5. 使用经过训练的模型进行预测。
 
-## 设置程序 Setup program
+## 设置程序
 
-### 配置导入 Configure imports
-
-Import TensorFlow and the other required Python modules. By default, TensorFlow uses [eager execution](https://www.tensorflow.org/guide/eager) to evaluate operations immediately, returning concrete values instead of creating a [computational graph](https://www.tensorflow.org/guide/graphs) that is executed later. If you are used to a REPL or the `python` interactive console, this feels familiar.
+### 配置导入
 
 导入所需的 Python 模块（包括 TensorFlow），默认情况下，TensorFlow使用 Eager Execution 来立即评估操作，并返回具体的值，而不是创建稍后执行的计算图。如果您习惯使用 REPL 或 python 交互控制台，对于 Eager Execution 您会用起来得心应手。
 
@@ -88,15 +67,7 @@ print("Eager execution: {}".format(tf.executing_eagerly()))
 
 ## 鸢尾花分类问题 The Iris classification problem
 
-Imagine you are a botanist seeking an automated way to categorize each Iris flower you find. Machine learning provides many algorithms to classify flowers statistically. For instance, a sophisticated machine learning program could classify flowers based on photographs. Our ambitions are more modest—we're going to classify Iris flowers based on the length and width measurements of their [sepals](https://en.wikipedia.org/wiki/Sepal) and [petals](https://en.wikipedia.org/wiki/Petal).
-
 想象一下，您是一名植物学家，正在寻找一种能够对所发现的每株鸢尾花进行自动归类的方法。机器学习可提供多种从统计学上分类花卉的算法。例如，一个复杂的机器学习程序可以根据照片对花卉进行分类。我们的要求并不高，我们将根据鸢尾花花萼和花瓣的长度和宽度对其进行分类。
-
-The Iris genus entails about 300 species, but our program will only classify the following three:
-
-* Iris setosa
-* Iris virginica
-* Iris versicolor
 
 鸢尾属约有 300 个品种，但我们的程序将仅对下列三个品种进行分类：
 
@@ -106,32 +77,23 @@ The Iris genus entails about 300 species, but our program will only classify the
 
 <table>
   <tr><td>
-    <img src="https://www.tensorflow.org/images/iris_three_species.jpg"
+    <img src="https://tensorflow.google.cn/images/iris_three_species.jpg"
          alt="Petal geometry compared for three iris species: Iris setosa, Iris virginica, and Iris versicolor">
   </td></tr>
   <tr><td align="center">
-    <b>Figure 1.</b> <a href="https://commons.wikimedia.org/w/index.php?curid=170298">Iris setosa</a> (by <a href="https://commons.wikimedia.org/wiki/User:Radomil">Radomil</a>, CC BY-SA 3.0), <a href="https://commons.wikimedia.org/w/index.php?curid=248095">Iris versicolor</a>, (by <a href="https://commons.wikimedia.org/wiki/User:Dlanglois">Dlanglois</a>, CC BY-SA 3.0), and <a href="https://www.flickr.com/photos/33397993@N05/3352169862">Iris virginica</a> (by <a href="https://www.flickr.com/photos/33397993@N05">Frank Mayfield</a>, CC BY-SA 2.0).<br/>&nbsp;
+    <b>图1.</b> <a href="https://commons.wikimedia.org/w/index.php?curid=170298">山鸢尾Iris setosa, <a href="https://commons.wikimedia.org/w/index.php?curid=248095">变色鸢尾Iris versicolor</a>，和 <a href="https://www.flickr.com/photos/33397993@N05/3352169862">维吉尼亚鸢尾Iris virginica</a> <br/>&nbsp;
   </td></tr>
 </table>
 
-Fortunately, someone has already created a [data set of 120 Iris flowers](https://en.wikipedia.org/wiki/Iris_flower_data_set) with the sepal and petal measurements. This is a classic dataset that is popular for beginner machine learning classification problems.
-
 幸运的是，有人已经创建了一个包含 120 株鸢尾花的数据集（其中有花萼和花瓣的测量值）。这是一个在入门级机器学习分类问题中经常使用的经典数据集。
 
-
-## 导入和解析训练数据集 Import and parse the training dataset
-
-Download the dataset file and convert it into a structure that can be used by this Python program.
+## 导入和解析训练数据集
 
 下载数据集文件并将其转换为可供此 Python 程序使用的结构。
 
-
-### 下载数据集 Download the dataset
-
-Download the training dataset file using the [tf.keras.utils.get_file](https://www.tensorflow.org/api_docs/python/tf/keras/utils/get_file) function. This returns the file path of the downloaded file.
+### 下载数据集
 
 使用 [tf.keras.utils.get_file](https://www.tensorflow.org/api_docs/python/tf/keras/utils/get_file) 函数下载训练数据集文件。该函数会返回下载文件的文件路径。
-
 
 ```python
 train_dataset_url = "https://storage.googleapis.com/download.tensorflow.org/data/iris_training.csv"
@@ -143,8 +105,6 @@ print("Local copy of the dataset file: {}".format(train_dataset_fp))
 ```
 
 ### 检查数据 Inspect the data
-
-This dataset, `iris_training.csv`, is a plain text file that stores tabular data formatted as comma-separated values (CSV). Use the `head -n5` command to take a peak at the first five entries:
 
 数据集 `iris_training.csv` 是一个纯文本文件，其中存储了逗号分隔值 (CSV) 格式的表格式数据。请使用 `head -n5` 命令查看前 5 个条目：
 
@@ -159,16 +119,6 @@ This dataset, `iris_training.csv`, is a plain text file that stores tabular data
       4.9,2.5,4.5,1.7,2 
       4.9,3.1,1.5,0.1,0
 ```
-
-From this view of the dataset, notice the following:
-
-1. The first line is a header containing information about the dataset:
-  * There are 120 total examples. Each example has four features and one of three possible label names.
-2. Subsequent rows are data records, one *[example](https://developers.google.com/machine-learning/glossary/#example)* per line, where:
-  * The first four fields are *[features](https://developers.google.com/machine-learning/glossary/#feature)*: these are characteristics of an example. Here, the fields hold float numbers representing flower measurements.
-  * The last column is the *[label](https://developers.google.com/machine-learning/glossary/#label)*: this is the value we want to predict. For this dataset, it's an integer value of 0, 1, or 2 that corresponds to a flower name.
-
-Let's write that out in code:
 
 我们可以从该数据集视图中注意到以下信息：
 
@@ -195,14 +145,6 @@ print("Label: {}".format(label_name))
 ```
       Features: ['sepal_length', 'sepal_width', 'petal_length', 'petal_width'] Label: species
 ```
-
-Each label is associated with string name (for example, "setosa"), but machine learning typically relies on numeric values. The label numbers are mapped to a named representation, such as:
-
-* `0`: Iris setosa
-* `1`: Iris versicolor
-* `2`: Iris virginica
-
-For more information about features and labels, see the [ML Terminology section of the Machine Learning Crash Course](https://developers.google.com/machine-learning/crash-course/framing/ml-terminology).
 
 每个标签都分别与一个字符串名称（例如“setosa”）相关联，但机器学习通常依赖于数字值。标签编号会映射到一个指定的表示法，例如：
 
