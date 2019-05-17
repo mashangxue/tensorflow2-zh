@@ -1,7 +1,7 @@
 ---
 title: 训练您的第一个神经网络：基本分类
 categories: 
-    - tensorflow2.0官方文档
+    - tensorflow2官方文档
 tags: 
     - tensorflow2.0
 date: 2019-05-10

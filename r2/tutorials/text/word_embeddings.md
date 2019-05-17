@@ -1,6 +1,6 @@
 ---
 title: 使用词嵌入
-categories: tensorflow2.0官方文档
+categories: tensorflow2官方文档
 tags: tensorflow2.0
 date: 2019-05-20
 abbrlink: tensorflow/tensorflow2-tutorials-text-word_embeddings
