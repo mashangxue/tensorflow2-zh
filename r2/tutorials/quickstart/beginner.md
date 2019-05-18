@@ -8,6 +8,8 @@ abbrlink: tensorflow/tensorflow2-tutorials-quickstart-beginner
 
 # 初学者入门 TensorFlow 2.0
 
+> [最新版本：http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner)
+
 <table class="tfo-notebook-buttons" align="left">
   <td>
     <a target="_blank" href="https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner"><img src="https://tensorflow.google.cn/images/tf_logo_32px.png" />View on TensorFlow.org</a>
