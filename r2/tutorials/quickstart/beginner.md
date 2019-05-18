@@ -8,7 +8,9 @@ abbrlink: tensorflow/tensorflow2-tutorials-quickstart-beginner
 
 # 初学者入门 TensorFlow 2.0
 
-> [最新版本：http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner)
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner)
+> 英文版本：
+
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
