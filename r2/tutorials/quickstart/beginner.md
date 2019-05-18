@@ -2,14 +2,14 @@
 title: 初学者入门 TensorFlow 2.0
 categories: tensorflow2官方文档
 tags: tensorflow2.0
-date: 2019-05-20
 abbrlink: tensorflow/tensorflow2-tutorials-quickstart-beginner
 ---
 
 # 初学者入门 TensorFlow 2.0
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tensorflow2-tutorials-quickstart-beginner)
-> 英文版本：
+  英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner](https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner)
+  翻译反馈PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md)
 
 
 <table class="tfo-notebook-buttons" align="left">
