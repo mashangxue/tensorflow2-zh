@@ -1,6 +1,6 @@
 ---
 title: Text generation with an RNN
-categories: tensorflow2官方文档
+categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 199
 abbrlink: tensorflow/tf2-tutorials-text-text_generation

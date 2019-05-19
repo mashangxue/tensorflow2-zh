@@ -1,6 +1,6 @@
 ---
 title: 保存和加载模型
-categories: tensorflow2官方文档
+categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 199
 abbrlink: tensorflow/tf2-tutorials-keras-save_and_restore_models

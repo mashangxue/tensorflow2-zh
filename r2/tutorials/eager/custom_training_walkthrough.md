@@ -3,7 +3,7 @@ title: 自定义训练：演示
 tags: 
     - tensorflow2.0
 categories: 
-    - tensorflow2官方文档
+    - tensorflow2官方教程
 top: 199
 abbrlink: tensorflow/tf2-tutorials-eager-custom_training_walkthrough
 ---

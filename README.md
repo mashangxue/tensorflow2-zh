@@ -1,6 +1,6 @@
 ---
 title: tensorflow2-zh
-categories: tensorflow2官方文档
+categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 199
 abbrlink: tensorflow/tensorflow2-zh-readme

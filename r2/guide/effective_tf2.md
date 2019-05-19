@@ -3,7 +3,7 @@ title: 高效的TensorFlow 2.0
 tags: 
     - tensorflow2.0
 categories: 
-    - tensorflow2官方文档
+    - tensorflow2官方教程
 top: 102
 abbrlink: tensorflow/tf2-guide-effective_tf2
 ---

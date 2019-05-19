@@ -3,7 +3,7 @@ title: 使用 Estimator 构建线性模型
 tags: 
     - tensorflow2.0
 categories: 
-    - tensorflow2官方文档
+    - tensorflow2官方教程
 top: 199
 abbrlink: tensorflow/tf2-tutorials-estimators-linear
 ---
