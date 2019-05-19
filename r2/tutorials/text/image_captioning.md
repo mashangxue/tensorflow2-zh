@@ -2,7 +2,7 @@
 title: Image Captioning with Attention
 categories: tensorflow2官方教程
 tags: tensorflow2.0
-top: 199
+top: 1999
 abbrlink: tensorflow/tf2-tutorials-text-image_captioning
 ---
 

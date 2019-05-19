@@ -4,7 +4,7 @@ categories:
     - tensorflow2官方教程
 tags: 
     - tensorflow2.0
-top: 111
+top: 1911
 abbrlink: tensorflow/tf2-tutorials-keras-basic_classification
 ---
 

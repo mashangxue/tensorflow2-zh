@@ -4,7 +4,7 @@ tags:
     - tensorflow2.0
 categories: 
     - tensorflow2官方教程
-top: 102
+top: 1902
 abbrlink: tensorflow/tf2-guide-effective_tf2
 ---
 

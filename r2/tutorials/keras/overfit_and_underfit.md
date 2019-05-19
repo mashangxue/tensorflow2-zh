@@ -2,7 +2,7 @@
 title: 探索过拟合和欠拟合
 categories: tensorflow2官方教程
 tags: tensorflow2.0
-top: 199
+top: 1999
 abbrlink: tensorflow/tf2-tutorials-keras-overfit_and_underfit
 ---
 
