@@ -2,7 +2,7 @@
 title: 使用预训练的CNN模型进行迁移学习
 tags: tensorflow2.0
 categories: tensorflow2官方文档
-date: 2019-05-10
+top: 199
 abbrlink: tensorflow/tf2-tutorials-images-transfer_learning
 ---
 

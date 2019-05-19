@@ -2,6 +2,7 @@
 title: 初学者入门 TensorFlow 2.0
 categories: tensorflow2官方文档
 tags: tensorflow2.0
+top: 105
 abbrlink: tensorflow/tf2-tutorials-quickstart-beginner
 ---
 
