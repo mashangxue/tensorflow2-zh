@@ -3,7 +3,7 @@ title: 图像分类
 tags: tensorflow2.0
 categories: tensorflow2官方文档
 date: 2019-05-10
-abbrlink: tensorflow/tensorflow2-tutorials-images-image_classification
+abbrlink: tensorflow/tf2-tutorials-images-image_classification
 ---
 
 # Image classification

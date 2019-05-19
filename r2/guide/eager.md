@@ -5,7 +5,7 @@ tags:
 categories: 
     - tensorflow2官方文档
 date: 2019-05-10
-abbrlink: tensorflow/tensorflow2-guide-eager
+abbrlink: tensorflow/tf2-guide-eager
 ---
 
 # Eager Execution 概述

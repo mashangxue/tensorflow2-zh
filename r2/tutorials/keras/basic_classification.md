@@ -5,7 +5,7 @@ categories:
 tags: 
     - tensorflow2.0
 date: 2019-05-10
-abbrlink: tensorflow/tensorflow2-tutorials-keras-basic_classification
+abbrlink: tensorflow/tf2-tutorials-keras-basic_classification
 ---
 
 <table class="tfo-notebook-buttons" align="left">

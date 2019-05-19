@@ -5,7 +5,7 @@ tags:
 categories: 
     - tensorflow2官方文档
 date: 2019-05-10
-abbrlink: tensorflow/tensorflow2-guide-keras-overview
+abbrlink: tensorflow/tf2-guide-keras-overview
 ---
 
 # Keras：概述

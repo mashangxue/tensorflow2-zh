@@ -5,7 +5,7 @@ tags:
 categories: 
     - tensorflow2官方文档
 date: 2019-05-10
-abbrlink: tensorflow/tensorflow2-tutorials-estimators-linear
+abbrlink: tensorflow/tf2-tutorials-estimators-linear
 ---
 
 # 使用 Estimator 构建线性模型

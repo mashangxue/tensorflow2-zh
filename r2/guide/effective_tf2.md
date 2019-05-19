@@ -5,7 +5,7 @@ tags:
 categories: 
     - tensorflow2官方文档
 date: 2019-05-10
-abbrlink: tensorflow/tensorflow2-guide-effective_tf2
+abbrlink: tensorflow/tf2-guide-effective_tf2
 ---
 
 # 高效的TensorFlow 2.0

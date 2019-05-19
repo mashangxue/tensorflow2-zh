@@ -5,7 +5,7 @@ tags:
 categories: 
     - tensorflow2官方文档
 date: 2019-05-10
-abbrlink: tensorflow/tensorflow2-tutorials-eager-custom_training_walkthrough
+abbrlink: tensorflow/tf2-tutorials-eager-custom_training_walkthrough
 ---
 
 # 自定义训练：演示

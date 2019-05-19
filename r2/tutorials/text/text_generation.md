@@ -3,7 +3,7 @@ title: Text generation with an RNN
 categories: tensorflow2官方文档
 tags: tensorflow2.0
 date: 2019-05-20
-abbrlink: tensorflow/tensorflow2-tutorials-text-text_generation
+abbrlink: tensorflow/tf2-tutorials-text-text_generation
 ---
 
 # 使用 RNN 生成文本Text generation with an RNN
