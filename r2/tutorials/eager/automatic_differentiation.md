@@ -1,53 +1,42 @@
+---
+title: 自动微分和梯度带 (tensorflow2官方教程翻译）
+categories: tensorflow2官方教程
+tags: tensorflow2.0
+top: 1999
+abbrlink: tensorflow/tf2-tutorials-eager-automatic_differentiation
+---
 
-##### Copyright 2018 The TensorFlow Authors.
+# 自动微分和梯度带 (tensorflow2官方教程翻译）
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation)
+
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation](https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation)
+
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md)
 
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Automatic differentiation and gradient tape
-
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/eager/automatic_differentiation"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/automatic_differentiation.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/automatic_differentiation.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
 
 In the previous tutorial we introduced `Tensor`s and operations on them. In this tutorial we will cover [automatic differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation), a key technique for optimizing machine learning models.
+在上一个教程中，我们介绍了张量及其操作。在本教程中，我们将介绍自动微分，这是优化机器学习模型的关键技术。
 
-## Setup
 
-
+## 导入包
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow==2.0.0-alpha0
 import tensorflow as tf
 ```
 
-## Gradient tapes
+## 梯度带(Gradient tapes)
 
 TensorFlow provides the [tf.GradientTape](https://www.tensorflow.org/api_docs/python/tf/GradientTape) API for automatic differentiation - computing the gradient of a computation with respect to its input variables. Tensorflow "records" all operations executed inside the context of a `tf.GradientTape` onto a "tape". Tensorflow then uses that tape and the gradients associated with each recorded operation to compute the gradients of a "recorded" computation using [reverse mode differentiation](https://en.wikipedia.org/wiki/Automatic_differentiation).
 
 For example:
+
+TensorFlow提供用于自动微分的 [tf.GradientTape](https://www.tensorflow.org/api_docs/python/tf/GradientTape) API。
+计算与其输入变量相关的计算梯度。Tensorflow将在tf.GradientTape上下文中执行的所有操作“记录”到“磁带”上。Tensorflow然后使用该磁带和与每个记录操作相关联的梯度来计算使用反向模式区分的“记录”计算的梯度。例如：
+TensorFlow提供用于自动区分的tf.GradientTape API计算与其输入变量相关的计算梯度。Tensorflow将在tf.GradientTape上下文中执行的所有操作“记录”到“磁带”上。Tensorflow然后使用该磁带和与每个记录操作相关联的梯度来计算使用反向模式区分的“记录”计算的梯度。例如：
 
 
 ```
