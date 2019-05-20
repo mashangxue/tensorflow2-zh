@@ -26,7 +26,7 @@ abbrlink: tensorflow/tf2-tutorials-eager-tf_function
 
 - 如果有疑问，`for x in y` 习语可能会有效。
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import tensorflow as tf
@@ -49,7 +49,7 @@ def assert_raises(error_class):
 
 你定义的 `tf.function` 就像一个核心TensorFlow操作：你可以急切地执行它，你可以在图中使用它，它有梯度等。
 
-```
+```python
 # A function is like an op
 
 @tf.function
@@ -64,7 +64,7 @@ add(tf.ones([2, 2]), tf.ones([2, 2]))  #  [[2., 2.], [2., 2.]]
 ```
 
 
-```
+```python
 # Functions have gradients
 
 @tf.function
@@ -82,7 +82,7 @@ tape.gradient(result, v)
 ```
 
 
-```
+```python
 # You can use functions inside functions
 
 @tf.function
@@ -104,7 +104,7 @@ Python的动态类型意味着您可以使用各种参数类型调用函数，Py
 
 您可以使用不同类型的参数调用函数来查看正在发生的事情。
 
-```
+```python
 # Functions are polymorphic
 
 @tf.function
@@ -136,7 +136,7 @@ print()
 - 调用`tf.function`时指定`input_signature`以确保只构建一个函数图
 
 
-```
+```python
 print("Obtaining concrete trace")
 double_strings = double.get_concrete_function(tf.TensorSpec(shape=None, dtype=tf.string))
 print("Executing traced function")
@@ -147,7 +147,7 @@ with assert_raises(tf.errors.InvalidArgumentError):
   double_strings(tf.constant(1))
 ```
 
-```
+```python
 @tf.function(input_signature=(tf.TensorSpec(shape=[None], dtype=tf.int32),))
 def next_collatz(x):
   print("Tracing with", x)
@@ -170,7 +170,7 @@ with assert_raises(ValueError):
 
 但是，Python参数可能不会用于控制图构造。在这些情况下，Python值的变化可能会触发不必要的回溯。举例来说，这个训练循环，AutoGraph将动态展开。尽管存在多个跟踪，但生成的图实际上是相同的，因此这有点低效。
 
-```
+```python
 def train_one_step():
   pass
 
@@ -191,7 +191,7 @@ train(num_steps=20)
 
 如果它们不影响生成的图的形状，简单的解决方法是将参数转换为Tensors。
 
-```
+```python
 train(num_steps=tf.constant(10))
 train(num_steps=tf.constant(20))
 ```
@@ -208,7 +208,7 @@ train(num_steps=tf.constant(20))
 
 一般的经验法则是仅使用Python副作用来调试跟踪。另外，TensorFlow操作如`tf.Variable.assign`，`tf.print`和`tf.summary`是确保TensorFlow运行时，在每次调用时，跟踪和执行代码的最佳方法。通常使用函数样式将产生最佳效果。
 
-```
+```python
 @tf.function
 def f(x):
   print("Traced with", x)
@@ -227,7 +227,7 @@ f(2)
 
 如果你想在每次调用 `tf.function` 期间执行Python代码，`tf.py_function`就是一个退出舱口。`tf.py_function`的缺点是它不可移植或特别高效，也不能在分布式（多GPU，TPU）设置中很好地工作。此外，由于必须将`tf.py_function`连接到图中，它会将所有输入/输出转换为张量。
 
-```
+```python
 external_list = []
 
 def side_effect(x):
@@ -253,7 +253,7 @@ assert external_list[0].numpy() == 1
 
 举一个例子，推进迭代器状态是一个Python副作用，因此只在跟踪期间发生。
 
-```
+```python
 external_var = tf.Variable(0)
 @tf.function
 def buggy_consume_next(iterator):
@@ -272,7 +272,7 @@ buggy_consume_next(iterator)
 
 如果你想迭代Python数据，最安全的方法是将它包装在tf.data.Dataset中并使用`for x in y`惯用法。当`y`是张量或tf.data.Dataset时，AutoGraph特别支持安全地转换`for`循环。
 
-```
+```python
 def measure_graph_size(f, *args):
   g = f.get_concrete_function(*args).graph
   print("{}({}) contains {} nodes in its graph".format(
@@ -309,7 +309,7 @@ measure_graph_size(train, tf.data.Dataset.from_generator(
 
 这意味着不需要添加手动控制依赖项;`tf.function`非常智能，可以为代码添加最小的必要和足够的控制依赖关系，以便正确运行。
 
-```
+```python
 # Automatic control dependencies
 
 a = tf.Variable(1.0)
@@ -335,7 +335,7 @@ f(1.0, 2.0)  # 10.0
 
 具体来说，每次调用创建一个新变量时都会发生这种情况。由于跟踪语义，`tf.function`将在每次调用时重用相同的变量，但是eager模式将在每次调用时创建一个新变量。为了防止这个错误，`tf.function`会在检测到危险变量创建行为时引发错误。
 
-```
+```python
 @tf.function
 def f(x):
   v = tf.Variable(1.0)
@@ -350,7 +350,7 @@ with assert_raises(ValueError):
       Caught expected exception <class 'ValueError'>: tf.function-decorated function tried to create variables on non-first call.
 ```
 
-```
+```python
 # Non-ambiguous code is ok though
 
 v = tf.Variable(1.0)
@@ -370,7 +370,7 @@ print(f(2.0))  # 4.0
 ```
 
 
-```
+```python
 # You can also create variables inside a tf.function as long as we can prove
 # that those variables are created only the first time the function is executed.
 
@@ -392,7 +392,7 @@ print(g(2.0))  # 4.0
       tf.Tensor(4.0, shape=(), dtype=float32)
 ```
 
-```
+```python
 # Variable initializers can depend on function arguments and on values of other
 # variables. We can figure out the right initialization order using the same
 # method we use to generate control dependencies.
@@ -417,12 +417,12 @@ print(fn(tf.constant(3.0)))
 
 # Using AutoGraph
 
-The [autograph](https://www.tensorflow.org/guide/autograph) library is fully integrated with `tf.function`, and it will rewrite conditionals and loops which depend on Tensors to run dynamically in the graph.
+[autograph](https://www.tensorflow.org/guide/autograph) 库与`tf.function`完全集成，它将重写依赖于Tensors的条件和循环，以便在图中动态运行。
 
-`tf.cond` and `tf.while_loop` continue to work with `tf.function`, but code with control flow is often easier to write and understand when written in imperative style.
+`tf.cond`和`tf.while_loop`继续使用`tf.function`，但是当以命令式方式编写时，具有控制流的代码通常更容易编写和理解。
 
 
-```
+```python
 # Simple loop
 
 @tf.function
@@ -436,7 +436,7 @@ f(tf.random.uniform([5]))
 ```
 
 
-```
+```python
 # If you're curious you can inspect the code autograph generates.
 # It feels like reading assembly language, though.
 
@@ -449,14 +449,12 @@ def f(x):
 print(tf.autograph.to_code(f))
 ```
 
-## AutoGraph: Conditionals
+## AutoGraph：条件
 
-AutoGraph will convert `if` statements into the equivalent `tf.cond` calls.
+AutoGraph会将`if`语句转换为等效的`tf.cond`调用。
+如果条件是Tensor，则进行此替换。否则，在跟踪期间执行条件。
 
-This substitution is made if the condition is a Tensor. Otherwise, the conditional is executed during tracing.
-
-
-```
+```python
 def test_tf_cond(f, *args):
   g = f.get_concrete_function(*args).graph
   if any(node.name == 'cond' for node in g.as_graph_def().node):
@@ -469,7 +467,7 @@ def test_tf_cond(f, *args):
 ```
 
 
-```
+```python
 @tf.function
 def hyperparam_cond(x, training=True):
   if training:
@@ -488,13 +486,13 @@ test_tf_cond(maybe_tensor_cond, -1)
 
 ```
 
-`tf.cond` has a number of subtleties.
-- it works by tracing both sides of the conditional, and then choosing the appropriate branch at runtime, depending on the condition. Tracing both sides can result in unexpected execution of Python code
-- it requires that if one branch creates a tensor used downstream, the other branch must also create that tensor.
+`tf.cond`有许多微妙之处。
 
+- 它的工作原理是跟踪条件的两边，然后根据条件在运行时选择适当的分支。跟踪双方可能导致意外执行Python代码
 
+- 它要求如果一个分支创建下游使用的张量，另一个分支也必须创建该张量。
 
-```
+```python
 @tf.function
 def f():
   x = tf.constant(0)
@@ -510,7 +508,7 @@ f()
 ```
 
 
-```
+```python
 @tf.function
 def f():
   if tf.constant(True):
@@ -522,19 +520,19 @@ with assert_raises(ValueError):
   f()
 ```
 
-## AutoGraph and loops
+## AutoGraph和循环
 
-AutoGraph has a few simple rules for converting loops.
+AutoGraph有一些简单的转换循环规则。
 
-- `for`: Convert if the iterable is a tensor
-- `while`: Convert if the while condition depends on a tensor
+- `for`: 如果iterable是张量，则转换
 
-If a loop is converted, it will be dynamically unrolled with `tf.while_loop`, or in the special case of a `for x in tf.data.Dataset`, transformed into `tf.data.Dataset.reduce`.
+- `while`: 如果while条件取决于张量，则转换
 
-If a loop is _not_ converted, it will be statically unrolled 
+如果转换了循环，它将使用`tf.while_loop`动态展开，或者在 `for x in tf.data.Dataset` 的特殊情况下，转换为 `tf.data.Dataset.reduce`。
 
+如果未转换循环，则将静态展开。
 
-```
+```python
 def test_dynamically_unrolled(f, *args):
   g = f.get_concrete_function(*args).graph
   if any(node.name == 'while' for node in g.as_graph_def().node):
@@ -550,7 +548,7 @@ def test_dynamically_unrolled(f, *args):
 ```
 
 
-```
+```python
 @tf.function
 def for_in_range():
   x = 0
@@ -578,8 +576,13 @@ test_dynamically_unrolled(for_in_tfdataset)
 
 ```
 
-
 ```
+      for_in_range() gets unrolled. 
+      for_in_tfrange() uses tf.while_loop. 
+      for_in_tfdataset() uses tf.data.Dataset.reduce.
+```
+
+```python
 @tf.function
 def while_py_cond():
   x = 5
@@ -598,10 +601,14 @@ test_dynamically_unrolled(while_py_cond)
 test_dynamically_unrolled(while_tf_cond)
 ```
 
- If you have a `break` or early `return` clause that depends on a tensor, the top-level condition or iterable should also be a tensor.
-
-
 ```
+      while_py_cond() gets unrolled. 
+      while_tf_cond() uses tf.while_loop.
+```
+
+如果你有一个取决于张量的`break`或早期`return`子句，那么顶级条件或者iterable也应该是一个张量。
+
+```python
 @tf.function
 def buggy_while_py_true_tf_break(x):
   while True:
@@ -648,11 +655,9 @@ test_dynamically_unrolled(tf_for_tf_break)
 
 ```
 
-In order to accumulate results from a dynamically unrolled loop, you'll want to use `tf.TensorArray`.
+为了累积动态展开循环的结果，你需要使用`tf.TensorArray`。
 
-
-
-```
+```python
 batch_size = 2
 seq_len = 3
 feature_size = 4
@@ -678,12 +683,13 @@ dynamic_rnn(rnn_step,
             tf.zeros([batch_size, feature_size]))
 ```
 
-As with `tf.cond`, `tf.while_loop` also comes with a number of subtleties.
-- Since a loop can execute 0 times, all tensors used downstream of the while_loop must be initialized above the loop
-- The shape/dtypes of all loop variables must stay consistent with each iteration
+与`tf.cond`一样，`tf.while_loop`也带有许多细微之处。
 
+- 由于循环可以执行0次，因此必须在循环上方初始化在while_loop下游使用的所有张量 
 
-```
+- 所有循环变量的shape/dtypes必须与每次迭代保持一致
+
+```python
 @tf.function
 def buggy_loop_var_uninitialized():
   for i in tf.range(3):
@@ -703,7 +709,7 @@ f()
 ```
 
 
-```
+```python
 @tf.function
 def buggy_loop_type_changes():
   x = tf.constant(0, dtype=tf.float32)
@@ -716,7 +722,7 @@ with assert_raises(tf.errors.InvalidArgumentError):
 ```
 
 
-```
+```python
 @tf.function
 def buggy_concat():
   x = tf.ones([0, 10])
@@ -739,6 +745,6 @@ concat_with_padding()
 
 ```
 
-## Next steps
+## 下一步
 
-Now revisit the earlier notebooks and try using `tf.function` to speed up your code!
+现在重新访问早期的教程并尝试使用 `tf.function` 加速代码！
