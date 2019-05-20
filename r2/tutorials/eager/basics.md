@@ -1,82 +1,75 @@
+---
+title: 张量极其操作 (tensorflow2官方教程翻译）
+categories: tensorflow2官方教程
+tags: tensorflow2.0
+top: 1999
+abbrlink: tensorflow/tf2-tutorials-eager-basics
+---
 
-##### Copyright 2018 The TensorFlow Authors.
+# 张量极其操作
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics)
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/basics](https://tensorflow.google.cn/alpha/tutorials/eager/basics)
 
-# Tensors and Operations
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/eager/basics"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/basics.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/basics.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+这是一个基础入门的TensorFlow教程，展示了如何：
 
-This is an introductory TensorFlow tutorial shows how to:
+* 导入所需的包
 
-* Import the required package
-* Create and use tensors
-* Use GPU acceleration
-* Demonstrate `tf.data.Dataset`
+* 创建和使用张量
 
+* 使用GPU加速
+
+* 演示 `tf.data.Dataset`
 
 ```
 from __future__ import absolute_import, division, print_function
 
-!pip install tensorflow-gpu==2.0.0-alpha0
 ```
 
-## Import TensorFlow
+## 导入TensorFlow
 
-To get started, import the `tensorflow` module. As of TensorFlow 2.0, eager execution is turned on by default. This enables a more interactive frontend to TensorFlow, the details of which we will discuss much later.
+要开始，请导入tensorflow模块。从TensorFlow 2.0开始，默认情况下用会启用Eager execution，这使得TensorFlow能够实现更加互动的前端，我们将在稍后讨论这些细节。
 
-
-```
+```python
 import tensorflow as tf
 ```
 
-## Tensors
+## 张量
 
-A Tensor is a multi-dimensional array. Similar to NumPy `ndarray` objects, `tf.Tensor` objects have a data type and a shape. Additionally, `tf.Tensor`s can reside in accelerator memory (like a GPU). TensorFlow offers a rich library of operations ([tf.add](https://www.tensorflow.org/api_docs/python/tf/add), [tf.matmul](https://www.tensorflow.org/api_docs/python/tf/matmul), [tf.linalg.inv](https://www.tensorflow.org/api_docs/python/tf/linalg/inv) etc.) that consume and produce `tf.Tensor`s. These operations automatically convert native Python types, for example:
+张量是一个多维数组，与NumPy的 `ndarray` 对象类似，`tf.Tensor` 对象具有数据类型和形状，此外，`tf.Tensor` 可以驻留在加速器内存中（如GPU）。TensorFlow提供了丰富的操作库（([tf.add](https://www.tensorflow.org/api_docs/python/tf/add), [tf.matmul](https://www.tensorflow.org/api_docs/python/tf/matmul), [tf.linalg.inv](https://www.tensorflow.org/api_docs/python/tf/linalg/inv) 等），它们使用和生成`tf.Tensor`。这些操作会自动转换本机Python类型，例如：
 
-
-
-```
+```python
 print(tf.add(1, 2))
 print(tf.add([1, 2], [3, 4]))
 print(tf.square(5))
 print(tf.reduce_sum([1, 2, 3]))
 
-# Operator overloading is also supported
+# 操作符重载也支持
 print(tf.square(2) + tf.square(3))
 ```
 
-Each `tf.Tensor` has a shape and a datatype:
-
-
 ```
+      tf.Tensor(3, shape=(), dtype=int32) 
+      tf.Tensor([4 6], shape=(2,), dtype=int32) 
+      tf.Tensor(25, shape=(), dtype=int32) 
+      tf.Tensor(6, shape=(), dtype=int32) 
+      tf.Tensor(13, shape=(), dtype=int32)
+```
+
+每个 `tf.Tensor` 有一个形状和数据类型：
+
+```python
 x = tf.matmul([[1]], [[2, 3]])
 print(x)
 print(x.shape)
 print(x.dtype)
+```
+
+```
+      tf.Tensor([[2 3]], shape=(1, 2), dtype=int32) (1, 2) <dtype: 'int32'>
 ```
 
 The most obvious differences between NumPy arrays and `tf.Tensor`s are:
@@ -84,17 +77,24 @@ The most obvious differences between NumPy arrays and `tf.Tensor`s are:
 1. Tensors can be backed by accelerator memory (like GPU, TPU).
 2. Tensors are immutable.
 
-### NumPy Compatibility
+NumPy数组和 `tf.Tensor` 之间最明显的区别是：
 
-Converting between a TensorFlow `tf.Tensor`s and a NumPy `ndarray` is easy:
+1. 张量可以有加速器内存（如GPU,TPU）支持。
 
-* TensorFlow operations automatically convert NumPy ndarrays to Tensors.
-* NumPy operations automatically convert Tensors to NumPy ndarrays.
-
-Tensors are explicitly converted to NumPy ndarrays using their `.numpy()` method. These conversions are typically cheap since the array and `tf.Tensor` share the underlying memory representation, if possible. However, sharing the underlying representation isn't always possible since the `tf.Tensor` may be hosted in GPU memory while NumPy arrays are always backed by host memory, and the conversion involves a copy from GPU to host memory.
+2. 张量是不可改变的。
 
 
-```
+### NumPy兼容性
+
+在TensorFlow的 `tf.Tensor` 和NumPy的 `ndarray` 之间转换很容易：
+
+* TensorFlow操作自动将NumPy ndarray转换为Tensor
+
+* NumPy操作自动将Tensor转换为NumPy ndarray
+
+使用`.numpy（）`方法将张量显式转换为NumPy `ndarrays`。这些转换通常很便宜，因为如果可能的话，数组和`tf.Tensor`共享底层的内存表示。但是，共享底层表示并不总是可行的，因为`tf.Tensor`可以托管在GPU内存中，而NumPy阵列总是由主机内存支持，并且转换涉及从GPU到主机内存的复制。
+
+```python
 import numpy as np
 
 ndarray = np.ones([3, 3])
@@ -111,12 +111,20 @@ print("The .numpy() method explicitly converts a Tensor to a numpy array")
 print(tensor.numpy())
 ```
 
-## GPU acceleration
-
-Many TensorFlow operations are accelerated using the GPU for computation. Without any annotations, TensorFlow automatically decides whether to use the GPU or CPU for an operation—copying the tensor between CPU and GPU memory, if necessary. Tensors produced by an operation are typically backed by the memory of the device on which the operation executed, for example:
-
-
 ```
+    TensorFlow operations convert numpy arrays to Tensors automatically
+      tf.Tensor( [[42. 42. 42.] [42. 42. 42.] [42. 42. 42.]], shape=(3, 3), dtype=float64) 
+    And NumPy operations convert Tensors to numpy arrays automatically
+      [[43. 43. 43.] [43. 43. 43.] [43. 43. 43.]] 
+    The .numpy() method explicitly converts a Tensor to a numpy array 
+      [[42. 42. 42.] [42. 42. 42.] [42. 42. 42.]]
+```
+
+## GPU加速
+
+使用GPU进行计算可以加速许多TensorFlow操作，如果没有任何注释，TensorFlow会自动决定是使用GPU还是CPU进行操作，如果有必要，可以复制CPU和GPU内存之间的张量，操作产生的张量通常由执行操作的设备的存储器支持，例如：
+
+```python
 x = tf.random.uniform([3, 3])
 
 print("Is there a GPU available: "),
@@ -126,18 +134,16 @@ print("Is the Tensor on GPU #0:  "),
 print(x.device.endswith('GPU:0'))
 ```
 
-### Device Names
-
-The `Tensor.device` property provides a fully qualified string name of the device hosting the contents of the tensor. This name encodes many details, such as an identifier of the network address of the host on which this program is executing and the device within that host. This is required for distributed execution of a TensorFlow program. The string ends with `GPU:<N>` if the tensor is placed on the `N`-th GPU on the host.
+### 设备名称
 
 
+`Tensor.device`属性提供托管张量内容的设备的完全限定字符串名称。此名称编码许多详细信息，例如正在执行此程序的主机的网络地址的标识符以及该主机中的设备。这是分布式执行TensorFlow程序所必需的。如果张量位于主机上的第N个GPU上，则字符串以 `GPU:<N>`  结尾。
+  
+### 显式设备放置
 
-### Explicit Device Placement
+在TensorFlow中，*placement* (放置)指的是如何分配（放置）设备以执行各个操作，如上所述，如果没有提供明确的指导，TensorFlow会自动决定执行操作的设备，并在需要时将张量复制到该设备。但是，可以使用 `tf.device` 上下文管理器将TensorFlow操作显式放置在特定设备上，例如：
 
-In TensorFlow, *placement* refers to how individual operations are assigned (placed on) a device for execution. As mentioned, when there is no explicit guidance provided, TensorFlow automatically decides which device to execute an operation and copies tensors to that device, if needed. However, TensorFlow operations can be explicitly placed on specific devices using the `tf.device` context manager, for example:
-
-
-```
+```python
 import time
 
 def time_matmul(x):
@@ -165,16 +171,20 @@ if tf.test.is_gpu_available():
     time_matmul(x)
 ```
 
-## Datasets
-
-This section uses the [`tf.data.Dataset` API](https://www.tensorflow.org/guide/datasets) to build a pipeline for feeding data to your model. The `tf.data.Dataset` API is used to build performant, complex input pipelines from simple, re-usable pieces that will feed your model's training or evaluation loops.
-
-### Create a source `Dataset`
-
-Create a *source* dataset using one of the factory functions like [`Dataset.from_tensors`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_tensors), [`Dataset.from_tensor_slices`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_tensor_slices), or using objects that read from files like [`TextLineDataset`](https://www.tensorflow.org/api_docs/python/tf/data/TextLineDataset) or [`TFRecordDataset`](https://www.tensorflow.org/api_docs/python/tf/data/TFRecordDataset). See the [TensorFlow Dataset guide](https://www.tensorflow.org/guide/datasets#reading_input_data) for more information.
-
-
 ```
+      On CPU: 10 loops: 88.60ms
+```
+
+## 数据集
+
+本节使用 [`tf.data.Dataset` API](https://www.tensorflow.org/guide/datasets) 构建管道，以便为模型提供数据。 `tf.data.Dataset`  API用于从简单，可重复使用的部分构建高性能，复杂的输入管道，这些部分将为模型的训练或评估循环提供支持。
+
+
+### 创建源数据集
+
+使用其中一个工厂函数（如 [`Dataset.from_tensors`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_tensors), [`Dataset.from_tensor_slices`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#from_tensor_slices)）或使用从[`TextLineDataset`](https://www.tensorflow.org/api_docs/python/tf/data/TextLineDataset) 或  [`TFRecordDataset`](https://www.tensorflow.org/api_docs/python/tf/data/TFRecordDataset) 等文件读取的对象创建源数据集。有关详细信息，请参阅[TensorFlow数据集指南](https://www.tensorflow.org/guide/datasets#reading_input_data)。
+
+```python
 ds_tensors = tf.data.Dataset.from_tensor_slices([1, 2, 3, 4, 5, 6])
 
 # Create a CSV file
@@ -190,23 +200,22 @@ Line 3
 ds_file = tf.data.TextLineDataset(filename)
 ```
 
-### Apply transformations
+### 应用转换
 
-Use the transformations functions like [`map`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#map), [`batch`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#batch), and [`shuffle`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#shuffle) to apply transformations to dataset records.
+使用 [`map`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#map), [`batch`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#batch), 和 [`shuffle`](https://www.tensorflow.org/api_docs/python/tf/data/Dataset#shuffle)等转换函数将转换应用于数据集记录。
 
-
-```
+```python
 ds_tensors = ds_tensors.map(tf.square).shuffle(2).batch(2)
 
 ds_file = ds_file.batch(2)
 ```
 
-### Iterate
+### 迭代（Iterate）
 
-`tf.data.Dataset` objects support iteration to loop over records:
+`tf.data.Dataset` 对象支持迭代循环：
 
 
-```
+```python
 print('Elements of ds_tensors:')
 for x in ds_tensors:
   print(x)
@@ -214,4 +223,14 @@ for x in ds_tensors:
 print('\nElements in ds_file:')
 for x in ds_file:
   print(x)
+```
+
+```
+      Elements of ds_tensors:
+        tf.Tensor([1 9], shape=(2,), dtype=int32) 
+        tf.Tensor([ 4 25], shape=(2,), dtype=int32) 
+        tf.Tensor([16 36], shape=(2,), dtype=int32) 
+      Elements in ds_file: 
+        tf.Tensor([b'Line 1' b'Line 2'], shape=(2,), dtype=string) 
+        tf.Tensor([b'Line 3' b' '], shape=(2,), dtype=string)
 ```
