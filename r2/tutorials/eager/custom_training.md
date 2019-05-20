@@ -1,57 +1,37 @@
+---
+title: 自定义训练：基础 (tensorflow2官方教程翻译）
+categories: tensorflow2官方教程
+tags: tensorflow2.0
+top: 1999
+abbrlink: tensorflow/tf2-tutorials-eager-custom_training
+---
 
-##### Copyright 2018 The TensorFlow Authors.
+# 自定义训练：基础 (tensorflow2官方教程翻译）
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training)
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training)
 
-# Custom training: basics
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/eager/custom_training"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/custom_training.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/custom_training.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+在上一个教程中，我们介绍了用于自动微分的TensorFlow API，这是机器学习的基本构建块。在本教程中，我们将使用先前教程中介绍的TensorFlow原语来进行一些简单的机器学习。
 
-In the previous tutorial we covered the TensorFlow APIs for automatic differentiation, a basic building block for machine learning.
-In this tutorial we will use the TensorFlow primitives introduced in the prior tutorials to do some simple machine learning.
+TensorFlow还包括一个更高级别的神经网络API(`tf.keras`) ，它提供了有用的抽象来减少引用。我们强烈建议使用神经网络的人使用更高级别的API。
+但是，在这个简短的教程中，我们从基本原理入手开始介绍神经网络训练，以建立坚实的基础。
 
-TensorFlow also includes a higher-level neural networks API (`tf.keras`) which provides useful abstractions to reduce boilerplate. We strongly recommend those higher level APIs for people working with neural networks. However, in this short tutorial we cover neural network training from first principles to establish a strong foundation.
+## 设置
 
-## Setup
-
-
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow==2.0.0-alpha0
 import tensorflow as tf
 ```
 
-## Variables
+## 变量
 
-Tensors in TensorFlow are immutable stateless objects. Machine learning models, however, need to have changing state: as your model trains, the same code to compute predictions should behave differently over time (hopefully with a lower loss!). To represent this state which needs to change over the course of your computation, you can choose to rely on the fact that Python is a stateful programming language:
+TensorFlow中的张量是不可变的无状态对象。然而，机器学习模型需要具有变化的状态：随着模型训练，计算预测的相同代码应该随着时间的推移而表现不同（希望具有较低的损失）。要表示需要在计算过程中进行更改的状态，您可以选择依赖Python是有状态编程语言的这一事实：
 
-
-
-```
+```python
 # Using python state
 x = tf.zeros([10, 10])
 x += 2  # This is equivalent to x = x + 2, which does not mutate the original
@@ -59,12 +39,11 @@ x += 2  # This is equivalent to x = x + 2, which does not mutate the original
 print(x)
 ```
 
-TensorFlow, however, has stateful operations built in, and these are often more pleasant to use than low-level Python representations of your state. To represent weights in a model, for example, it's often convenient and efficient to use TensorFlow variables.
+但是，TensorFlow内置了有状态操作，这些操作通常比您所在状态的低级Python表示更令人愉快。例如，为了表示模型中的权重，使用TensorFlow变量通常是方便有效的。
 
-A Variable is an object which stores a value and, when used in a TensorFlow computation, will implicitly read from this stored value. There are operations (`tf.assign_sub`, `tf.scatter_update`, etc) which manipulate the value stored in a TensorFlow variable.
+变量是一个存储值的对象，当在TensorFlow计算中使用时，它将隐式地从该存储值中读取。有一些操作（`tf.assign_sub`, `tf.scatter_update`等）可以操作存储在TensorFlow变量中的值。
 
-
-```
+```python
 v = tf.Variable(1.0)
 assert v.numpy() == 1.0
 
@@ -77,27 +56,30 @@ v.assign(tf.square(v))
 assert v.numpy() == 9.0
 ```
 
-Computations using Variables are automatically traced when computing gradients. For Variables representing embeddings TensorFlow will do sparse updates by default, which are more computation and memory efficient.
+计算梯度时会自动跟踪使用变量的计算。对于表示嵌入的变量，TensorFlow默认会进行稀疏更新，这样可以提高计算效率和内存效率。
 
-Using Variables is also a way to quickly let a reader of your code know that this piece of state is mutable.
-
-## Example: Fitting a linear model
-
-Let's use the concepts you have learned so far---`Tensor`, `Variable`, and `GradientTape`--- to build and train a simple model. This typically involves a few steps:
-
-1. Define the model.
-2. Define a loss function.
-3. Obtain training data.
-4. Run through the training data and use an "optimizer" to adjust the variables to fit the data.
-
-In this tutorial, we'll walk through a trivial example of a simple linear model: `f(x) = x * W + b`, which has two variables - `W` and `b`. Furthermore, we'll synthesize data such that a well trained model would have `W = 3.0` and `b = 2.0`.
-
-### Define the model
-
-Let's define a simple class to encapsulate the variables and the computation.
+使用变量也是一种快速让代码的读者知道这段状态是可变的方法。
 
 
-```
+## 示例：拟合一个线性模型
+
+现在让我们把我们迄今为止的几个概念：`Tensor`， `GradientTape`， `Variable`。构建并训练一个简单的模型。这通常涉及几个步骤：
+
+1. 定义模型
+
+2. 定义损失函数
+
+3. 获取训练数据
+
+4. 运行训练数据并使用“优化器”调整变量以拟合数据。
+
+在本教程中，我们将介绍简单线性模型的一个简单示例： `f(x) = x * W + b`，它有两个变量，`W` 和 `b`。此外，我们将合成数据，使训练有素的模型具有`W = 3.0` 和` b =2.0` 。
+
+### 定义模型
+
+让我们定义一个简单的类来封装变量和计算
+
+```python
 class Model(object):
   def __init__(self):
     # Initialize variable to (5.0, 0.0)
@@ -113,22 +95,20 @@ model = Model()
 assert model(3.0).numpy() == 15.0
 ```
 
-### Define a loss function
+### 定义损失函数
 
-A loss function measures how well the output of a model for a given input matches the desired output. Let's use the standard L2 loss.
+损失函数测量给定输入的模型输出与期望输出的匹配程度。让我们使用标准的L2损失：
 
-
-```
+```python
 def loss(predicted_y, desired_y):
   return tf.reduce_mean(tf.square(predicted_y - desired_y))
 ```
 
-### Obtain training data
+### 获取训练数据
 
-Let's synthesize the training data with some noise.
+让我们用一些噪音合成训练数据：
 
-
-```
+```python
 TRUE_W = 3.0
 TRUE_b = 2.0
 NUM_EXAMPLES = 1000
@@ -138,10 +118,9 @@ noise   = tf.random.normal(shape=[NUM_EXAMPLES])
 outputs = inputs * TRUE_W + TRUE_b + noise
 ```
 
-Before we train the model let's visualize where the model stands right now. We'll plot the model's predictions in red and the training data in blue.
+在我们训练模型之前，让我们可以看到模型现在所处的位置。我们将用红色绘制模型的预测，用蓝色绘制训练数据。
 
-
-```
+```python
 import matplotlib.pyplot as plt
 
 plt.scatter(inputs, outputs, c='b')
@@ -152,12 +131,11 @@ print('Current loss: '),
 print(loss(model(inputs), outputs).numpy())
 ```
 
-### Define a training loop
+### 定义训练循环
 
-We now have our network and our training data. Let's train it, i.e., use the training data to update the model's variables (`W` and `b`) so that the loss goes down using [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent). There are many variants of the gradient descent scheme that are captured in `tf.train.Optimizer` implementations. We'd highly recommend using those implementations, but in the spirit of building from first principles, in this particular example we will implement the basic math ourselves.
+我们现在拥有我们的网络和训练数据。让我们训练它，即使用训练数据来更新模型的变量（`W` 和 `b`），以便使用梯度下降来减少损失。在`tf.train.Optimizer`实现中拥有许多梯度下降方案的变体。我们强烈建议使用这些实现，但本着从基本原理构建的精神，在这个特定的例子中，我们将自己实现基本的数学。
 
-
-```
+```python
 def train(model, inputs, outputs, learning_rate):
   with tf.GradientTape() as t:
     current_loss = loss(model(inputs), outputs)
@@ -166,10 +144,9 @@ def train(model, inputs, outputs, learning_rate):
   model.b.assign_sub(learning_rate * db)
 ```
 
-Finally, let's repeatedly run through the training data and see how `W` and `b` evolve.
+最后，让我们反复浏览训练数据，看看W和b是如何演变的。
 
-
-```
+```python
 model = Model()
 
 # Collect the history of W-values and b-values to plot later
@@ -194,10 +171,20 @@ plt.show()
 
 ```
 
-## Next Steps
+```
+      Epoch 0: W=5.00 b=0.00, loss=9.34552 
+      ...
+      Epoch 9: W=3.22 b=1.74, loss=1.14022
+```
 
-In this tutorial we covered `Variable`s and built and trained a simple linear model using the TensorFlow primitives discussed so far.
+![png](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_files/output_22_1.png)
 
-In theory, this is pretty much all you need to use TensorFlow for your machine learning research.
-In practice, particularly for neural networks, the higher level APIs like `tf.keras` will be much more convenient since it provides higher level building blocks (called "layers"), utilities to save and restore state, a suite of loss functions, a suite of optimization strategies etc.
+
+## 下一步
+
+在本教程中，我们介绍了变量，并使用到目前为止讨论的TensorFlow原语构建并训练了一个简单的线性模型。
+
+从理论上讲，这几乎是您使用TensorFlow进行机器学习研究所需要的全部内容。在实践中，特别是对于神经网络，像 `tf.keras` 这样的高级API将更加方便，因为它提供了更高级别的构建块（称为“层”），用于保存和恢复状态的实用程序，一套损失函数，套件优化策略等。
+
+
 
