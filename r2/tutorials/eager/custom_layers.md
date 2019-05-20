@@ -1,104 +1,81 @@
+---
+title: 自定义层 (tensorflow2官方教程翻译）
+categories: tensorflow2官方教程
+tags: tensorflow2.0
+top: 1999
+abbrlink: tensorflow/tf2-tutorials-eager-custom_layers
+---
 
-##### Copyright 2018 The TensorFlow Authors.
+# 自定义层
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers)
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)
 
-# Custom layers
-
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/eager/custom_layers"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/custom_layers.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/custom_layers.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
-
-We recommend using `tf.keras` as a high-level API for building neural networks. That said, most TensorFlow APIs are usable with eager execution.
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md)
 
 
-
-```
+我们建议使用 `tf.keras` 作为构建神经网络的高级API，也就是说，大多数TensorFlow API都可用于Eager execution。
+ 
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
-```
 
-
-```
-!pip install tensorflow==2.0.0-alpha0
 import tensorflow as tf
 ```
 
-## Layers: common sets of useful operations
+## 层：常用的操作集
 
-Most of the time when writing code for machine learning models you want to operate at a higher level of abstraction than individual operations and manipulation of individual variables.
+在编写机器学习模型的代码时，大多数情况下，您希望以比单个操作和单个变量操作更高的抽象级别上进行操作。
 
-Many machine learning models are expressible as the composition and stacking of relatively simple layers, and TensorFlow provides both a set of many common layers as a well as easy ways for you to write your own application-specific layers either from scratch or as the composition of existing layers.
+许多机器学习模型都可以表示为相对简单的层的组合和叠加，TensorFlow提供了一组公共层和一种简单的方法，让您可以从头开始编写自己的特定于应用程序的层，也可以表示为现有层的组合。
 
-TensorFlow includes the full [Keras](https://keras.io) API in the tf.keras package, and the Keras layers are very useful when building your own models.
+TensorFlow在 `tf.keras` 中包含完整 [Keras](https://keras.io) API，而Keras层在构建自己的模型时非常有用。
 
 
-
-```
-# In the tf.keras.layers package, layers are objects. To construct a layer,
-# simply construct the object. Most layers take as a first argument the number
-# of output dimensions / channels.
+```python
+# 在tf.keras.layers包中，图层是对象。要构造一个图层，只需构造一个对象。 
+# 大多数层将输出维度/通道的数量作为第一个参数。 
 layer = tf.keras.layers.Dense(100)
-# The number of input dimensions is often unnecessary, as it can be inferred
-# the first time the layer is used, but it can be provided if you want to
-# specify it manually, which is useful in some complex models.
+
+# 输入维度的数量通常是不必要的，因为它可以在第一次使用层时推断出来， 
+# 但如果您想手动指定它，则可以提供它，这在某些复杂模型中很有用。 
 layer = tf.keras.layers.Dense(10, input_shape=(None, 5))
 ```
 
-The full list of pre-existing layers can be seen in [the documentation](https://www.tensorflow.org/api_docs/python/tf/keras/layers). It includes Dense (a fully-connected layer),
-Conv2D, LSTM, BatchNormalization, Dropout, and many others.
+可以在文档([链接](https://www.tensorflow.org/api_docs/python/tf/keras/layers))中看到预先存在的层的完整列表，它包括Dense（完全连接层），Conv2D，LSTM，BatchNormalization，Dropout等等。
 
-
-```
-# To use a layer, simply call it.
+```python
+# 要使用图层，只需调用它即可。 
 layer(tf.zeros([10, 5]))
 ```
 
 
-```
-# Layers have many useful methods. For example, you can inspect all variables
-# in a layer using `layer.variables` and trainable variables using
-# `layer.trainable_variables`. In this case a fully-connected layer
-# will have variables for weights and biases.
-layer.variables
-```
-
-
-```
-# The variables are also accessible through nice accessors
-layer.kernel, layer.bias
+```python
+# 层有许多有用的方法，例如，您可以使用 `layer.variables` 和可训练变量使用 
+# `layer.trainable_variables`检查图层中的所有变量，在这种情况下， 
+# 完全连接的层将具有权重和偏差的变量。 
+print(layer.variables) 
 ```
 
-## Implementing custom layers
-The best way to implement your own layer is extending the tf.keras.Layer class and implementing:
-  *  `__init__` , where you can do all input-independent initialization
-  * `build`, where you know the shapes of the input tensors and can do the rest of the initialization
-  * `call`, where you do the forward computation
-
-Note that you don't have to wait until `build` is called to create your variables, you can also create them in `__init__`. However, the advantage of creating them in `build` is that it enables late variable creation based on the shape of the inputs the layer will operate on. On the other hand, creating variables in `__init__` would mean that shapes required to create the variables will need to be explicitly specified.
-
-
+```python
+# 变量也可以通过nice accessors访问
+print(layer.kernel, layer.bias)
 ```
+
+## 实现自定义层
+
+实现自己的层的最佳方法是扩展`tf.keras.Layer` 类并实现：
+
+  *  `__init__` ，您可以在其中执行所有与输入无关的初始化
+
+  * `build`，您可以在其中了解输入张量的形状，并可以执行其余的初始化
+
+  * `call`，在那里进行正向计算。
+
+
+请注意，您不必等到调用 `build` 来创建变量，您也可以在 `__init__`中创建它们。但是，在 `build` 中创建它们的好处是，它支持根据将要操作的层的输入形状，创建后期变量。另一方面，在 `__init__` 中创建变量意味着需要明确指定创建变量所需的形状。
+
+```python
 class MyDenseLayer(tf.keras.layers.Layer):
   def __init__(self, num_outputs):
     super(MyDenseLayer, self).__init__()
@@ -117,16 +94,16 @@ print(layer(tf.zeros([10, 5])))
 print(layer.trainable_variables)
 ```
 
-Overall code is easier to read and maintain if it uses standard layers whenever possible, as other readers will be familiar with the behavior of standard layers. If you want to use a layer which is not present in `tf.keras.layers`, consider filing a [github issue](http://github.com/tensorflow/tensorflow/issues/new) or, even better, sending us a pull request!
-
-## Models: composing layers
-
-Many interesting layer-like things in machine learning models are implemented by composing existing layers. For example, each residual block in a resnet is a composition of convolutions, batch normalizations, and a shortcut.
-
-The main class used when creating a layer-like thing which contains other layers is tf.keras.Model. Implementing one is done by inheriting from tf.keras.Model.
+如果尽可能使用标准层，则整体代码更易于阅读和维护，因为其他读者将熟悉标准层的行为。如果你想使用 `tf.keras.layers` 中不存在的图层，请考虑提交[github问题](http://github.com/tensorflow/tensorflow/issues/new)，或者最好向我们发送pull request！
 
 
-```
+## 模型：组合层
+
+在机器学习模型中，许多有趣的类似层的事物都是通过组合现有层来实现的。例如，resnet中的每个残差块都是convolutions、 batch normalizations和shortcut的组合。
+
+创建包含其他层的类似层的事物时使用的主类是 `tf.keras.Model`，实现一个是通过继承自 `tf.keras.Model` 完成的。
+
+```python
 class ResnetIdentityBlock(tf.keras.Model):
   def __init__(self, kernel_size, filters):
     super(ResnetIdentityBlock, self).__init__(name='')
@@ -162,10 +139,19 @@ print(block(tf.zeros([1, 2, 3, 3])))
 print([x.name for x in block.trainable_variables])
 ```
 
-Much of the time, however, models which compose many layers simply call one layer after the other. This can be done in very little code using tf.keras.Sequential
-
-
 ```
+      tf.Tensor( [[[[0. 0. 0.] [0. 0. 0.] [0. 0. 0.]] [[0. 0. 0.] [0. 0. 0.] [0. 0. 0.]]]], shape=(1, 2, 3, 3), dtype=float32)
+      ['resnet_identity_block/conv2d/kernel:0', 'resnet_identity_block/conv2d/bias:0',
+      'resnet_identity_block/batch_normalization_v2/gamma:0', 'resnet_identity_block/batch_normalization_v2/beta:0',
+      'resnet_identity_block/conv2d_1/kernel:0', 'resnet_identity_block/conv2d_1/bias:0',
+      'resnet_identity_block/batch_normalization_v2_1/gamma:0', 'resnet_identity_block/batch_normalization_v2_1/beta:0',
+      'resnet_identity_block/conv2d_2/kernel:0', 'resnet_identity_block/conv2d_2/bias:0',
+      'resnet_identity_block/batch_normalization_v2_2/gamma:0', 'resnet_identity_block/batch_normalization_v2_2/beta:0']
+```
+
+然而，在大多数情况下，组成许多层的模型只是简单地调用一个又一个层。这可以通过使用 `tf.keras.Sequential`在很少的代码中完成
+
+```python
 my_seq = tf.keras.Sequential([tf.keras.layers.Conv2D(1, (1, 1),
                                                     input_shape=(
                                                         None, None, 3)),
@@ -178,6 +164,6 @@ my_seq = tf.keras.Sequential([tf.keras.layers.Conv2D(1, (1, 1),
 my_seq(tf.zeros([1, 2, 3, 3]))
 ```
 
-# Next steps
+# 下一步
 
-Now you can go back to the previous notebook and adapt the linear regression example to use layers and models to be better structured.
+现在，您可以返回到之前的教程，并调整线性回归示例，以使用更好的结构化层和模型。
