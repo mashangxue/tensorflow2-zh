@@ -16,9 +16,7 @@ TensorFlow2.0 官方文档中文版
 
 #### Effective TensorFlow 2.0（高效的tensorflow 2.0）
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner)
-
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner](https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner)
-
 > 翻译建议：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md)
 
 #### Migrate from TF 1 to TF 2
@@ -27,16 +25,12 @@ TensorFlow2.0 官方文档中文版
 
 #### Get started for beginners (初学者入门 TensorFlow 2.0)
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner)
-
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner](https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner)
-
 > 翻译建议：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md)
 
 #### Get started for experts  (专家入门TensorFlow 2.0)
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced)
-
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced](https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced)
-
 > 翻译建议：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/advanced.md)
 
 ## Beginner tutorials
@@ -44,8 +38,19 @@ TensorFlow2.0 官方文档中文版
 ### ML basics
 
 #### Overview
-#### Classify images
-#### Classify text
+
+#### Classify images (训练您的第一个神经网络：基本分类)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md)
+
+#### Classify text (文本分类项目实战：电影评论)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)
+
 #### Classify structured data
 #### Regression
 #### Overfitting and underfitting

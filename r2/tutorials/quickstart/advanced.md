@@ -9,9 +9,7 @@ abbrlink: tensorflow/tf2-tutorials-quickstart-advanced
 # 专家入门TensorFlow 2.0 (tensorflow2官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced)
-
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced](https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced)
-
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/advanced.md)
 
 安装命令 `pip install tensorflow-gpu==2.0.0-alpha0`

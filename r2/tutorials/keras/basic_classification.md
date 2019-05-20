@@ -1,5 +1,5 @@
 ---
-title: 训练您的第一个神经网络：基本分类
+title: 训练您的第一个神经网络：基本分类Fashion MNIST(tensorflow2官方教程翻译)
 categories: 
     - tensorflow2官方教程
 tags: 
@@ -8,34 +8,25 @@ top: 1911
 abbrlink: tensorflow/tf2-tutorials-keras-basic_classification
 ---
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification"><img src="https://tensorflow.google.cn/images/tf_logo_32px.png" />官方版本</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_classification.ipynb"><img src="https://tensorflow.google.cn/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md"><img src="https://tensorflow.google.cn/images/GitHub-Mark-32px.png" />改进建议PR</a>
-  </td>
-</table>
+# 训练您的第一个神经网络：基本分类Fashion MNIST(tensorflow2官方教程翻译)
 
-# 训练您的第一个神经网络：基本分类
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md)
 
 本指南会训练一个对服饰（例如运动鞋和衬衫）图像进行分类的神经网络模型。即使您不了解所有细节也没关系，本教程只是简要介绍了一个完整的 TensorFlow 程序，而且后续我们会详细介绍。
 
 本指南使用的是[tf.keras](https://tensorflow.google.cn/guide/keras)，它是一种用于在 TensorFlow 中构建和训练模型的高阶 API。
 
-
 安装
 
-```
+```python
 pip install tensorflow==2.0.0-alpha0
 ```
 
 导入相关库
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 # TensorFlow and tf.keras
@@ -59,7 +50,7 @@ print(tf.__version__)
          alt="Fashion MNIST sprite"  width="600">
   </td></tr>
   <tr><td align="center">
-    <b>Figure 1.</b> <a href="https://github.com/zalandoresearch/fashion-mnist">Fashion-MNIST 样本</a> (by Zalando, MIT License).<br/>&nbsp;
+    <b>Figure 1.</b> <a href="https://github.com/zalandoresearch/fashion-mnist">Fashion-MNIST 样本</a>
   </td></tr>
 </table>
 
@@ -69,7 +60,7 @@ Fashion MNIST 的作用是成为经典 MNIST 数据集的简易替换，后者�
 
 我们将使用 60000 张图像训练网络，并使用 10000 张图像评估经过学习的网络分类图像的准确率。您可以从 TensorFlow 直接访问 Fashion MNIST，只需导入和加载数据即可：
 
-```
+```python
 fashion_mnist = keras.datasets.fashion_mnist
 
 (train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
@@ -81,7 +72,6 @@ fashion_mnist = keras.datasets.fashion_mnist
 * 测试集 `test_images` 和 `test_labels` 数组用于测试模型。
 
 图像为28x28的NumPy数组，像素值介于0到255之间。标签是整数数组，介于0到9之间。这些标签对应于图像代表的服饰所属的类别：
-
 
 <table>
   <tr>
@@ -141,7 +131,6 @@ class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
 
 我们先探索数据集的格式，然后再训练模型。以下内容显示训练集中有 60000 张图像，每张图像都表示为 28x28 像素：
 
-
 ```python
 train_images.shape
 ```
@@ -177,6 +166,7 @@ test_images.shape
 ```python
 len(test_labels)
 ```
+
 `10000`
 
 ## 3. 预处理数据
@@ -190,6 +180,7 @@ plt.colorbar()
 plt.grid(False)
 plt.show()
 ```
+
 ![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_21_0.png)
 
 我们将这些值缩小到 0 到 1 之间，然后将其馈送到神经网络模型。为此，将图像组件的数据类型从整数转换为浮点数，然后除以 255。以下是预处理图像的函数：
@@ -216,7 +207,7 @@ for i in range(25):
 plt.show()
 ```
 
-![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_25_0.png)
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_25_0.png)
 
 ## 4. 构建模型
 
@@ -244,7 +235,6 @@ model = keras.Sequential([
 
 模型还需要再进行几项设置才可以开始训练。这些设置会添加到模型的编译步骤：
 
-
 * 损失函数：衡量模型在训练期间的准确率。我们希望尽可能缩小该函数，以“引导”模型朝着正确的方向优化。
 * 优化器：根据模型看到的数据及其损失函数更新模型的方式。
 * 度量标准：用于监控训练和测试步骤。以下示例使用准确率，即图像被正确分类的比例。
@@ -265,7 +255,6 @@ model.compile(optimizer='adam',
 
 要开始训练，请调用 `model.fit` 方法，使模型与训练数据“拟合”：
 
-
 ```python
 model.fit(train_images, train_labels, epochs=5)
 ```
@@ -280,7 +269,6 @@ Epoch 5/5
 
 在模型训练期间，系统会显示损失和准确率指标。该模型在训练数据上的准确率达到 0.88（即 88%）。
 
-
 ## 6. 评估精度
 
 接下来，比较模型在测试数据集上的表现情况：
@@ -292,13 +280,13 @@ print('\nTest accuracy:', test_acc)
 ```
 
 输出：
-```shell
+
+```output
 10000/10000 [==============================] - 1s 50us/step
 Test accuracy: 0.8734
 ```
 
 结果表明，模型在测试数据集上的准确率略低于在训练数据集上的准确率。训练准确率和测试准确率之间的这种差异表示出现过拟合(*overfitting*)。如果机器学习模型在新数据上的表现不如在训练数据上的表现，也就是泛化性不好，就表示出现过拟合。
-
 
 ## 7. 预测
 
@@ -315,11 +303,12 @@ predictions[0]
 ```
 
 输出：
-```shell
+
+```output
 array([6.2482708e-05, 2.4860196e-08, 9.7165821e-07, 4.7436039e-08,
        2.0804382e-06, 1.3316551e-02, 9.8731316e-06, 3.4591161e-02,
        1.2390658e-04, 9.5189297e-01], dtype=float32)
-```       
+```
 
 预测结果是一个具有 10 个数字的数组，这些数字说明模型对于图像对应于 10 种不同服饰中每一个服饰的“confidence（置信度）”。我们可以看到哪个标签的置信度值最大：
 
@@ -331,9 +320,10 @@ np.argmax(predictions[0])
 
 因此，模型非常确信这张图像是踝靴或属于 class_names[9]。我们可以检查测试标签以查看该预测是否正确：
 
-```
+```python
 test_labels[0]
 ```
+
 `9`
 
 我们可以将该预测绘制成图来查看全部 10 个通道
@@ -383,7 +373,7 @@ plot_value_array(i, predictions,  test_labels)
 plt.show()
 ```
 
-![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_48_0.png)
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_48_0.png)
 
 ```python
 i = 12
@@ -395,7 +385,7 @@ plot_value_array(i, predictions,  test_labels)
 plt.show()
 ```
 
-![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_49_0.png)
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_49_0.png)
 
 我们用它们的预测绘制几张图像。正确的预测标签为蓝色，错误的预测标签为红色。数字表示预测标签的百分比（总计为 100）。请注意，即使置信度非常高，也有可能预测错误。
 
@@ -414,7 +404,7 @@ for i in range(num_images):
 plt.show()
 ```
 
-![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_51_0.png)
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_51_0.png)
 
 最后，使用训练的模型对单个图像进行预测。
 
@@ -444,14 +434,12 @@ predictions_single = model.predict(img)
 print(predictions_single)
 ```
 
-
 ```python
 plot_value_array(0, predictions_single, test_labels)
 _ = plt.xticks(range(10), class_names, rotation=45)
 ```
 
-![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_58_0.png)
-
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_58_0.png)
 
 `model.predict`返回一组列表，每个列表对应批次数据中的每张图像。（仅）获取批次数据中相应图像的预测结果：
 

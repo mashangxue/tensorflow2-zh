@@ -1,36 +1,26 @@
 ---
-title: 电影评论的文字分类
+title: 文本分类项目实战：电影评论 (tensorflow2官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-keras-basic_text_classification
 ---
 
-# 电影评论的文字分类
+# 文本分类项目实战：电影评论 (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/keras/basic_text_classification"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_text_classification.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_text_classification.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)
 
-
-本章节本会将文本形式的影评分为“正面”或“负面”影评。这是一个二元分类（又称为两类分类）的示例，也是一种重要且广泛适用的机器学习问题。
+本文会将文本形式的影评分为“正面”或“负面”影评。这是一个二元分类（又称为两类分类）的示例，也是一种重要且广泛适用的机器学习问题。
 
 我们将使用包含来自[网络电影数据库](https://www.imdb.com/)的50,000条电影评论文本的[IMDB数据集](https://tensorflow.google.cn/api_docs/python/tf/keras/datasets/imdb)，这些被分为25,000条训练评论和25,000条评估评论，训练和测试集是平衡的，这意味着它们包含相同数量的正面和负面评论。
 
 本章节使用tf.keras，这是一个高级API，用于在TensorFlow中构建和训练模型，有关使用tf.keras的更高级文本分类教程，请参阅[MLCC文本分类指南](https://developers.google.cn/machine-learning/guides/text-classification/)。
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tf-nightly-2.0-preview
 import tensorflow as tf
 from tensorflow import keras
 
@@ -38,20 +28,20 @@ import numpy as np
 
 print(tf.__version__)
 ```
-`2.0.0-alpha0`                                                        
+
+`2.0.0-alpha0`
+
 ## 1. 下载IMDB数据集
 
 IMDB数据集与TensorFlow一起打包，它已经被预处理，使得评论（单词序列）已被转换为整数序列，其中每个整数表示字典中的特定单词。
 
 以下代码将IMDB数据集下载到您的计算机（如果您已经下载了它，则使用缓存副本）：
 
-```
+```python
 imdb = keras.datasets.imdb
 
 (train_data, train_labels), (test_data, test_labels) = imdb.load_data(num_words=10000)
 ```  
-
-`Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/imdb.npz 17465344/17464789 [==============================] - 0s 0us/step`
 
 参数 `num_words=10000` 保留训练数据中最常出现的10,000个单词，丢弃罕见的单词以保持数据的大小可管理。
 
@@ -59,7 +49,7 @@ imdb = keras.datasets.imdb
 
 我们花一点时间来理解数据的格式，数据集经过预处理：每个示例都是一个整数数组，表示电影评论的单词。每个标签都是0或1的整数值，其中0表示负面评论，1表示正面评论。
 
-```
+```python
 print("Training entries: {}, labels: {}".format(len(train_data), len(train_labels)))
 ```
 
@@ -67,28 +57,30 @@ print("Training entries: {}, labels: {}".format(len(train_data), len(train_label
 
 评论文本已转换为整数，其中每个整数表示字典中的特定单词。以下是第一篇评论的内容：
 
-```
+```python
 print(train_data[0])
 ```
-`[1, 14, 22, 16, 43, 530, 973, 1622, 1385, 65, 458, 4468, 66, 3941, 4, 173, 36, 256, 5, 25, 100, 43, 838, 112, 50, 670, 2, 9, 35, 480, 284, 5, 150, 4, 172, 112, 167, 2, 336, 385, 39, 4, 172, 4536, 1111, 17, 546, 38, 13, 447, 4, 192, 50, 16, 6, 147, 2025, 19, 14, 22, 4, 1920, 4613, 469, 4, 22, 71, 87, 12, 16, 43, 530, 38, 76, 15, 13, 1247, 4, 22, 17, 515, 17, 12, 16, 626, 18, 2, 5, 62, 386, 12, 8, 316, 8, 106, 5, 4, 2223, 5244, 16, 480, 66, 3785, 33, 4, 130, 12, 16, 38, 619, 5, 25, 124, 51, 36, 135, 48, 25, 1415, 33, 6, 22, 12, 215, 28, 77, 52, 5, 14, 407, 16, 82, 2, 8, 4, 107, 117, 5952, 15, 256, 4, 2, 7, 3766, 5, 723, 36, 71, 43, 530, 476, 26, 400, 317, 46, 7, 4, 2, 1029, 13, 104, 88, 4, 381, 15, 297, 98, 32, 2071, 56, 26, 141, 6, 194, 7486, 18, 4, 226, 22, 21, 134, 476, 26, 480, 5, 144, 30, 5535, 18, 51, 36, 28, 224, 92, 25, 104, 4, 226, 65, 16, 38, 1334, 88, 12, 16, 283, 5, 16, 4472, 113, 103, 32, 15, 16, 5345, 19, 178, 32]`
+
+`[1, 14, 22, 16, 43, 530, 973, ...., 32, 15, 16, 5345, 19, 178, 32]`
 
 电影评论的长度可能不同，以下代码显示了第一次和第二次评论中的字数。由于对神经网络的输入必须是相同的长度，我们稍后需要解决此问题。
 
-```
+```python
 len(train_data[0]), len(train_data[1])
 ```
-*(218, 189)*
+
+`(218, 189)`
 
 ### 2.1. 将整数转换成文本
 
 了解如何将整数转换回文本可能很有用。
 在这里，我们将创建一个辅助函数来查询包含整数到字符串映射的字典对象：
 
-```
-# 将单词映射到整数索引的字典 
+```python
+# 将单词映射到整数索引的字典
 word_index = imdb.get_word_index()
 
-# 第一个指数是保留的 
+# 第一个指数是保留的
 word_index = {k:(v+3) for k,v in word_index.items()}
 word_index["<PAD>"] = 0
 word_index["<START>"] = 1
@@ -101,15 +93,13 @@ def decode_review(text):
     return ' '.join([reverse_word_index.get(i, '?') for i in text])
 ```
 
-`Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/imdb_word_index.json
-1646592/1641221 [==============================] - 0s 0us/step`                          
 现在我们可以使用`decode_review`函数显示第一次检查的文本：
 
-```
+```python
 decode_review(train_data[0])
 ```
 
-*"<START> this film was just brilliant casting location scenery story direction everyone's really suited the part they played and you could just imagine being there robert <UNK> is an amazing actor and now the same being director <UNK> father came from the same scottish island as myself so i loved the fact there was a real connection with this film the witty remarks throughout the film were great it was just brilliant so much that i bought the film as soon as it was released for <UNK> and would recommend it to everyone to watch and the fly fishing was amazing really cried at the end it was so sad and you know what they say if you cry at a film it must have been good and this definitely was also <UNK> to the two little boy's that played the <UNK> of norman and paul they were just brilliant children are often left out of the <UNK> list i think because the stars that play them all grown up are such a big profile for the whole film but these children are amazing and should be praised for what they have done don't you think the whole story was so lovely because it was true and was someone's life after all that was shared with us all"*
+*"<START> this film was just brilliant casting location scenery story direction .....that was shared with us all"*
 
 ## 3. 预处理数据
 
@@ -123,7 +113,7 @@ decode_review(train_data[0])
 
 由于电影评论的长度必须相同，我们将使用[pad_sequences](https://tensorflow.google.cn/api_docs/python/tf/keras/preprocessing/sequence/pad_sequences)函数来标准化长度：
 
-```
+```python
 train_data = keras.preprocessing.sequence.pad_sequences(train_data,
                                                         value=word_index["<PAD>"],
                                                         padding='post',
@@ -137,18 +127,19 @@ test_data = keras.preprocessing.sequence.pad_sequences(test_data,
 
 我们再看一下数据的长度：
 
-```
+```python
 len(train_data[0]), len(train_data[1])
 ```
-*(256, 256)*
+
+`(256, 256)`
 
 并查看数据：
 
-```
+```python
 print(train_data[0])
 ```
 
-```
+```output
 [   1   14   22   16   43  530  973 1622 1385   65  458 4468   66 3941
     4  173   36  256    5   25  100   43  838  112   50  670    2    9
   ...
@@ -165,7 +156,7 @@ print(train_data[0])
 
 在本示例中，输入数据由字词-索引数组构成。要预测的标签是 0 或 1。接下来，我们为此问题构建一个模型：
 
-```
+```python
 # 输入形状是用于电影评论的词汇计数（10,000字）
 vocab_size = 10000
 
@@ -176,8 +167,8 @@ model.add(keras.layers.Dense(16, activation='relu'))
 model.add(keras.layers.Dense(1, activation='sigmoid'))
 
 model.summary()
-```                                                       
-输出
+```
+
 ```
 Model: "sequential"
 _________________________________________________________________
@@ -223,7 +214,7 @@ _________________________________________________________________
 
 现在，配置模型以使用优化器和损失函数：
 
-```
+```python
 model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
@@ -233,7 +224,7 @@ model.compile(optimizer='adam',
 
 在训练时，我们想要检查模型在以前没有见过的数据上的准确性。通过从原始训练数据中分离10,000个示例来创建验证集。（为什么不立即使用测试集？我们的目标是仅使用训练数据开发和调整我们的模型，然后仅使用测试数据来评估我们的准确性）。
 
-```
+```python
 x_val = train_data[:10000]
 partial_x_train = train_data[10000:]
 
@@ -245,7 +236,7 @@ partial_y_train = train_labels[10000:]
 
 以512个样本的小批量训练模型40个周期，这是`x_train`和`y_train`张量中所有样本的40次迭代。在训练期间，监控模型在验证集中的10,000个样本的损失和准确性：
 
-```
+```python
 history = model.fit(partial_x_train,
                     partial_y_train,
                     epochs=40,
@@ -276,16 +267,18 @@ print(results)
 
 `model.fit()`返回一个`History`对象，其中包含一个字典，其中包含训练期间发生的所有事情：
 
-```
+```python
 history_dict = history.history
 history_dict.keys()
 ```
 
-*dict_keys(['loss', 'val_loss', 'accuracy', 'val_accuracy'])*
+```output
+      dict_keys(['loss', 'val_loss', 'accuracy', 'val_accuracy'])
+```
 
 有四个条目：在训练和验证期间，每个条目对应一个监控指标，我们可以使用这些来绘制训练和验证损失以进行比较，以及训练和验证准确性：
 
-```
+```python
 import matplotlib.pyplot as plt
 
 acc = history_dict['accuracy']
@@ -322,11 +315,11 @@ plt.legend()
 plt.show()
 ```
 
-![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_files/output_40_0.png)
+![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_files/output_40_0.png)
 
 在该图中，点表示训练损失和准确度，实线表示验证损失和准确度。
 
-可以注意到，训练损失随着周期数的增加而降低，训练准确率随着周期数的增加而提高。在使用梯度下降法优化模型时，这属于正常现象 - 该方法应在每次迭代时尽可能降低目标值。
+可以注意到，训练损失随着周期数的增加而降低，训练准确率随着周期数的增加而提高。在使用梯度下降法优化模型时，这属于正常现象(该方法应在每次迭代时尽可能降低目标值)。
 
 验证损失和准确率的变化情况并非如此，它们似乎在大约 20 个周期后达到峰值。这是一种过拟合现象：模型在训练数据上的表现要优于在从未见过的数据上的表现。在此之后，模型会过度优化和学习特定于训练数据的表示法，而无法泛化到测试数据。
 
