@@ -1,62 +1,36 @@
+---
+title: tf.function和AutoGraph (tensorflow2官方教程翻译）
+categories: tensorflow2官方教程
+tags: tensorflow2.0
+top: 1999
+abbrlink: tensorflow/tf2-tutorials-eager-tf_function
+---
 
-##### Copyright 2019 The TensorFlow Authors.
+# tf.function和 AutoGraph (tensorflow2官方教程翻译）
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function)
 
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/tf_function](https://tensorflow.google.cn/alpha/tutorials/eager/tf_function)
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md)
 
-# tf.function
+在TensorFlow 2.0中，默认情况下会打开eager execution，这为您提供了一个非常直观和灵活的用户界面（运行一次性操作更容易，更快）但这可能会牺牲性能和可部署性。
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/eager/tf_function"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/tf_function.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/tf_function.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+为了获得最佳性能并使您的模型可以在任何地方部署，我们提供了 `tf.function` 作为您可以用来从程序中生成图的工具。多亏了AutoGraph，大量的Python代码可以与tf.function一起工作。但仍有一些陷阱需要警惕。
 
+主要的要点和建议是：
 
-In TensorFlow 2.0 eager execution is turned on by default. This gets you a very
-intuitive and flexible user interface (running one-off operations is much easier
-and faster) but this can come at the expense of performance and deployability.
+- 不要依赖Python副作用，如对象变异或列表追加。
 
-To get peak performance and to make your model deployable anywhere, we provide
-`tf.function` as the tool you can use to make graphs out of your programs.
-Thanks to AutoGraph, a surprising amount of Python code just works with
-tf.function, but there are still pitfalls to be wary of.
+- tf.function最适合TF操作，而不是NumPy操作或Python原语。
 
-The main takeaways and recommendations are:
-
-- Don't rely on Python side effects like object mutation or list appends.
-- tf.function works best with TF ops, rather than NumPy ops or Python primitives.
-- When in doubt, the `for x in y` idiom will probably work.
-
+- 如果有疑问，`for x in y` 习语可能会有效。
 
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow==2.0.0-alpha0
 import tensorflow as tf
-```
 
-
-```
 import contextlib
 
 # Some helper code to demonstrate the kinds of errors you might encounter.
@@ -73,8 +47,7 @@ def assert_raises(error_class):
         error_class))
 ```
 
-A `tf.function` you define is just like a core TensorFlow operation: you can execute it eagerly, you can use it in a graph, it has gradients, etc.
-
+你定义的 `tf.function` 就像一个核心TensorFlow操作：你可以急切地执行它，你可以在图中使用它，它有梯度等。
 
 ```
 # A function is like an op
@@ -84,6 +57,10 @@ def add(a, b):
   return a + b
 
 add(tf.ones([2, 2]), tf.ones([2, 2]))  #  [[2., 2.], [2., 2.]]
+```
+
+```
+      <tf.Tensor: id=14, shape=(2, 2), dtype=float32, numpy= array([[2., 2.], [2., 2.]], dtype=float32)>
 ```
 
 
@@ -100,6 +77,10 @@ with tf.GradientTape() as tape:
 tape.gradient(result, v)
 ```
 
+```
+      <tf.Tensor: id=40, shape=(), dtype=float32, numpy=1.0>
+```
+
 
 ```
 # You can use functions inside functions
@@ -111,14 +92,17 @@ def dense_layer(x, w, b):
 dense_layer(tf.ones([3, 2]), tf.ones([2, 2]), tf.ones([2]))
 ```
 
-## Tracing and Polymorphism
+```
+  <tf.Tensor: id=67, shape=(3, 2), dtype=float32, numpy= array([[3., 3.], [3., 3.], [3., 3.]], dtype=float32)>
+```
 
-Python's dynamic typing means that you can call functions with a variety of argument types, and Python will do something different in each scenario.
 
-On the other hand, TensorFlow graphs require static dtypes and shape dimensions. `tf.function` bridges this gap by retracing the function when necessary to generate the correct graphs. Most of the subtlety of `tf.function` usage stems from this retracing behavior.
+## 追踪和多态性
 
-You can call a function with arguments of different types to see what is happening.
+Python的动态类型意味着您可以使用各种参数类型调用函数，Python将在每个场景中执行不同的操作。
+另一方面，TensorFlow图需要静态dtypes和形状尺寸。`tf.function` 通过在必要时回溯函数生成正确的图来弥补这一差距。`tf.function` 使用的大多数微妙之处源于这种回溯行为。
 
+您可以使用不同类型的参数调用函数来查看正在发生的事情。
 
 ```
 # Functions are polymorphic
@@ -137,12 +121,19 @@ print()
 
 ```
 
-To control the tracing behavior, use the following techniques:
+```
+      Tracing with Tensor("a:0", shape=(), dtype=int32) tf.Tensor(2, shape=(), dtype=int32) 
+      Tracing with Tensor("a:0", shape=(), dtype=float32) tf.Tensor(2.2, shape=(), dtype=float32) 
+      Tracing with Tensor("a:0", shape=(), dtype=string) tf.Tensor(b'aa', shape=(), dtype=string)
+```
 
-- Create a new `tf.function`: separate `tf.function` objects are guaranteed not to share traces. 
-- Use the `get_concrete_function` method to get a specific trace
-- Specify `input_signature` when calling `tf.function` to ensure only one function graph will be built.
+要控制跟踪行为，请使用以下技术：
 
+- 创建一个新的`tf.function`：保证单独的`tf.function`对象不共享跟踪。
+
+- 使用`get_concrete_function`方法获取特定的跟踪 
+
+- 调用`tf.function`时指定`input_signature`以确保只构建一个函数图
 
 
 ```
@@ -155,7 +146,6 @@ print("Using a concrete trace with incompatible types will throw an error")
 with assert_raises(tf.errors.InvalidArgumentError):
   double_strings(tf.constant(1))
 ```
-
 
 ```
 @tf.function(input_signature=(tf.TensorSpec(shape=[None], dtype=tf.int32),))
@@ -170,16 +160,15 @@ with assert_raises(ValueError):
 
 ```
 
-## When to retrace?
+## 什么时候回溯？
 
-A polymorphic `tf.function` keeps a cache of concrete functions generated by tracing. The cache keys are effectively tuples of keys generated from the function args and kwargs. The key generated for a `tf.Tensor` argument is its shape and type. The key generated for a Python primitive is its value. For all other Python types, the keys are based on the object `id()` so that methods are traced independently for each instance of a class. In the future, TensorFlow may add more sophisticated caching for Python objects that can be safely converted to tensors.
+多态 `tf.function` 保持跟踪生成的具体函数的缓存。缓存键实际上是从函数args和kwargs生成的键的元组。为`tf.Tensor`参数生成的关键是它的形状和类型。为Python原语生成的密钥是它的值。对于所有其他Python类型，键基于对象`id（）`，以便为每个类的实例独立跟踪方法。将来，TensorFlow可以为Python对象添加更复杂的缓存，可以安全地转换为张量。
 
-## Python or Tensor args?
+## Python还是Tensor args？
 
-Often, Python arguments are used to control hyperparameters and graph constructions - for example, `num_layers=10` or `training=True` or `nonlinearity='relu'`. So if the Python argument changes, it makes sense that you'd have to retrace the graph.
+通常，Python参数用于控制超参数和图构造。例如，`num_layers = 10 `或 `training = True` 或`nonlinearity ='relu'`。因此，如果Python参数发生变化，那么您必须回溯图形是有道理的。
 
-However, it's possible that a Python argument is not being used to control graph construction. In these cases, a change in the Python value can trigger needless retracing. Take, for example, this training loop, which AutoGraph will dynamically unroll. Despite the multiple traces, the generated graph is actually identical, so this is a bit inefficient.
-
+但是，Python参数可能不会用于控制图构造。在这些情况下，Python值的变化可能会触发不必要的回溯。举例来说，这个训练循环，AutoGraph将动态展开。尽管存在多个跟踪，但生成的图实际上是相同的，因此这有点低效。
 
 ```
 def train_one_step():
@@ -195,21 +184,29 @@ train(num_steps=10)
 train(num_steps=20)
 
 ```
+      Tracing with num_steps = 10 Tracing with num_steps = 20
+```
 
-The simple workaround here is to cast your arguments to Tensors if they do not affect the shape of the generated graph.
+```
 
+如果它们不影响生成的图的形状，简单的解决方法是将参数转换为Tensors。
 
 ```
 train(num_steps=tf.constant(10))
 train(num_steps=tf.constant(20))
 ```
 
-## Side effects in `tf.function`
+```
+      Tracing with num_steps = Tensor("num_steps:0", shape=(), dtype=int32)
+```
 
-In general, Python side effects (like printing or mutating objects) only happen during tracing. So how can you reliably trigger side effects from `tf.function`?
+## `tf.function`中的附作用
 
-The general rule of thumb is to only use Python side effects to debug your traces. Otherwise, TensorFlow ops like `tf.Variable.assign`, `tf.print`, and `tf.summary` are the best way to ensure your code will be traced and executed by the TensorFlow runtime with each call. In general using a functional style will yield the best results. 
+> “副作用” 指“在满足主要功能（主作用？）的同时，顺便完成了一些其他的副要功能”，也可翻译为“附作用”
 
+通常，Python附作用（如打印或变异对象）仅在跟踪期间发生。那你如何可靠地触发`tf.function`的附作用呢？
+
+一般的经验法则是仅使用Python副作用来调试跟踪。另外，TensorFlow操作如`tf.Variable.assign`，`tf.print`和`tf.summary`是确保TensorFlow运行时，在每次调用时，跟踪和执行代码的最佳方法。通常使用函数样式将产生最佳效果。
 
 ```
 @tf.function
@@ -223,8 +220,12 @@ f(2)
 
 ```
 
-If you would like to execute Python code during each invocation of a `tf.function`, `tf.py_function` is an exit hatch. The drawback of `tf.py_function` is that it's not portable or particularly performant, nor does it work well in distributed (multi-GPU, TPU) setups. Also, since `tf.py_function` has to be wired into the graph, it casts all inputs/outputs to tensors.
+```
+  Traced with 1 Executed with 1 Executed with 1 
+  Traced with 2 Executed with 2
+```
 
+如果你想在每次调用 `tf.function` 期间执行Python代码，`tf.py_function`就是一个退出舱口。`tf.py_function`的缺点是它不可移植或特别高效，也不能在分布式（多GPU，TPU）设置中很好地工作。此外，由于必须将`tf.py_function`连接到图中，它会将所有输入/输出转换为张量。
 
 ```
 external_list = []
@@ -246,12 +247,11 @@ assert external_list[0].numpy() == 1
 
 ```
 
-## Beware of Python state
+## 谨防Python状态
 
-Many Python features, such as generators and iterators, rely on the Python runtime to keep track of state. In general, while these constructs work as expected in Eager mode, many unexpected things can happen inside a `tf.function` due to tracing behavior.
+许多Python功能（如生成器和迭代器）依赖于Python运行时来跟踪状态。通常，虽然这些构造在Eager模式下按预期工作，但由于跟踪行为，在`tf.function`中会发生许多意外情况。
 
-To give one example, advancing iterator state is a Python side effect and therefore only happens during tracing.
-
+举一个例子，推进迭代器状态是一个Python副作用，因此只在跟踪期间发生。
 
 ```
 external_var = tf.Variable(0)
@@ -268,11 +268,9 @@ buggy_consume_next(iterator)
 
 ```
 
-If an iterator is generated and consumed entirely within the tf.function, then it should work correctly. However, the entire iterator is probably being traced, which can lead to a giant graph. This may be what you want. But if you're training on an large in-memory dataset represented as a Python list, then this can generate a very large graph, and `tf.function` is unlikely to yield a speedup.
+如果在tf.function中生成并完全使用了迭代器，那么它应该可以正常工作。但是，整个迭代器可能正在被跟踪，这可能导致一个巨大的图。这可能就是你想要的。但是如果你正在训练一个表示为Python列表的大型内存数据集，那么这可以生成一个非常大的图，并且`tf.function`不太可能产生加速。
 
-If you want to iterate over Python data, the safest way is to wrap it in a tf.data.Dataset and use the `for x in y` idiom. AutoGraph has special support for safely converting `for` loops when `y` is a tensor or tf.data.Dataset.
-
-
+如果你想迭代Python数据，最安全的方法是将它包装在tf.data.Dataset中并使用`for x in y`惯用法。当`y`是张量或tf.data.Dataset时，AutoGraph特别支持安全地转换`for`循环。
 
 ```
 def measure_graph_size(f, *args):
@@ -299,18 +297,17 @@ measure_graph_size(train, tf.data.Dataset.from_generator(
 ```
 
 
-When wrapping Python/Numpy data in a Dataset, be mindful of `tf.data.Dataset.from_generator` versus ` tf.data.Dataset.from_tensors`. The former will keep the data in Python and fetch it via `tf.py_function` which can have performance implications, whereas the latter will bundle a copy of the data as one large `tf.constant()` node in the graph, which can have memory implications.
+在数据集中包装Python / Numpy数据时，请注意 `tf.data.Dataset.from_generator` 与 `tf.data.Dataset.from_tensors`。前者将数据保存在Python中并通过 `tf.py_function` 获取，这可能会影响性能，而后者会将数据的副本捆绑为图中的一个大的 `tf.constant()` 节点，这可以有记忆含义。
 
-Reading data from files via TFRecordDataset/CsvDataset/etc. is the most effective way to consume data, as then TensorFlow itself can manage the asynchronous loading and prefetching of data, without having to involve Python.
+通过 TFRecordDataset/CsvDataset等从文件中读取数据，是最有效的数据消费方式，因为TensorFlow本身可以管理数据的异步加载和预取，而不必涉及Python。
 
-## Automatic Control Dependencies
+## 自动控制依赖项
 
-A very appealing property of functions as the programming model, over a general dataflow graph, is that functions can give the runtime more information about what was the intended behavior of the code.
+在一般数据流图上，作为编程模型的函数，一个非常吸引人的特性是函数可以为运行时提供有关代码预期行为的更多信息。
 
-For example, when writing code which has multiple reads and writes to the same variables, a dataflow graph might not naturally encode the originally intended order of operations. In `tf.function`, we resolve ambiguities in execution order by referring to the execution order of statements in the original Python code. This way, ordering of stateful operations in a `tf.function` replicates the semantics of Eager mode.
+例如，当编写具有多个读取和写入相同变量的代码时，数据流图可能不会自然地编码最初预期的操作顺序。在`tf.function`中，我们通过引用原始Python代码中语句的执行顺序来解决执行顺序中的歧义。这样，`tf.function` 中的有状态操作的排序复制了Eager模式的语义。
 
-This means there's no need to add manual control dependencies; `tf.function` is smart enough to add the minimal set of necessary and sufficient control dependencies for your code to run correctly.
-
+这意味着不需要添加手动控制依赖项;`tf.function`非常智能，可以为代码添加最小的必要和足够的控制依赖关系，以便正确运行。
 
 ```
 # Automatic control dependencies
@@ -328,12 +325,15 @@ f(1.0, 2.0)  # 10.0
 
 ```
 
-## Variables
+```
+      <tf.Tensor: id=466, shape=(), dtype=float32, numpy=10.0>
+```
 
-We can use the same idea of leveraging the intended execution order of the code to make variable creation and utilization very easy in `tf.function`. There is one very important caveat, though, which is that with variables it's possible to write code which behaves differently in eager mode and graph mode.
+## 变量
 
-Specifically, this will happen when you create a new Variable with each call. Due to tracing semantics, `tf.function` will reuse the same variable each call, but eager mode will create a new variable with each call. To guard against this mistake, `tf.function` will raise an error if it detects dangerous variable creation behavior.
+我们可以使用相同的想法来利用代码的预期执行顺序，以便在`tf.function`中非常容易地创建和使用变量。但是有一个非常重要的警告，即使用变量，可以编写在急切模式和图形模式下表现不同的代码。
 
+具体来说，每次调用创建一个新变量时都会发生这种情况。由于跟踪语义，`tf.function`将在每次调用时重用相同的变量，但是eager模式将在每次调用时创建一个新变量。为了防止这个错误，`tf.function`会在检测到危险变量创建行为时引发错误。
 
 ```
 @tf.function
@@ -346,6 +346,9 @@ with assert_raises(ValueError):
   f(1.0)
 ```
 
+```
+      Caught expected exception <class 'ValueError'>: tf.function-decorated function tried to create variables on non-first call.
+```
 
 ```
 # Non-ambiguous code is ok though
@@ -359,6 +362,11 @@ def f(x):
 print(f(1.0))  # 2.0
 print(f(2.0))  # 4.0
 
+```
+
+```
+      tf.Tensor(2.0, shape=(), dtype=float32) 
+      tf.Tensor(4.0, shape=(), dtype=float32)
 ```
 
 
@@ -379,6 +387,10 @@ print(g(1.0))  # 2.0
 print(g(2.0))  # 4.0
 ```
 
+```
+      tf.Tensor(2.0, shape=(), dtype=float32) 
+      tf.Tensor(4.0, shape=(), dtype=float32)
+```
 
 ```
 # Variable initializers can depend on function arguments and on values of other
@@ -396,6 +408,11 @@ def fn(x):
 print(fn(tf.constant(1.0)))
 print(fn(tf.constant(3.0)))
 
+```
+
+```
+      tf.Tensor(12.0, shape=(), dtype=float32) 
+      tf.Tensor(36.0, shape=(), dtype=float32)
 ```
 
 # Using AutoGraph
