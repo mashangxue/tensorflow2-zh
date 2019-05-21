@@ -8,7 +8,7 @@ abbrlink: tensorflow/tf2-tutorials-quickstart-beginner
 
 # 初学者入门 TensorFlow 2.0（tensorflow2官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner)
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner](https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md)
 
