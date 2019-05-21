@@ -1,25 +1,16 @@
 ---
-title: 预测燃油效率：回归
+title: 回归项目实战：预测燃油效率 (tensorflow2官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1914
 abbrlink: tensorflow/tf2-tutorials-keras-basic_regression
 ---
 
-# 预测燃油效率：回归
+# 回归项目实战：预测燃油效率 (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/keras/basic_regression"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_regression.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_regression.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
-
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md)
 
 在*回归*问题中，我们的目标是预测连续值的输出，如价格或概率。
 将此与*分类*问题进行对比，分类的目标是从类列表中选择一个类（例如，图片包含苹果或橙色，识别图片中的哪个水果）。
@@ -28,13 +19,12 @@ abbrlink: tensorflow/tf2-tutorials-keras-basic_regression
 
 此实例使用tf.keras API，有关信息信息，请参阅[Keras指南](https://tensorflow.google.cn/guide/keras)。
 
-```
+```python
 # 使用seaborn进行pairplot数据可视化，安装命令
 pip install seaborn
 ```
 
-
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import pathlib
@@ -56,19 +46,18 @@ print(tf.__version__)
 
 该数据集可从[UCI机器学习库](https://archive.ics.uci.edu/ml/)获得。
 
-
 ### 1.1. 获取数据
 
 首先下载数据集：
 
-```
+```python
 dataset_path = keras.utils.get_file("auto-mpg.data", "http://archive.ics.uci.edu/ml/machine-learning-databases/auto-mpg/auto-mpg.data")
 dataset_path
 ```
 
 用pandas导入数据
 
-```
+```python
 column_names = ['MPG','Cylinders','Displacement','Horsepower','Weight',
                 'Acceleration', 'Model Year', 'Origin']
 raw_dataset = pd.read_csv(dataset_path, names=column_names,
@@ -87,16 +76,15 @@ dataset.tail()
 | 396 | 28.0 | 4         | 120.0        | 79.0       | 2625.0 | 18.6         | 82         | 1      |
 | 397 | 31.0 | 4         | 119.0        | 82.0       | 2720.0 | 19.4         | 82         | 1      |
 
-
 ### 1.2. 清理数据
 
 数据集包含一些未知值
 
-```
+```python
 dataset.isna().sum()
 ```
 
-```
+```output
 MPG             0
 Cylinders       0
 Displacement    0
@@ -110,23 +98,22 @@ dtype: int64
 
 这是一个入门教程，所以我们就简单地删除这些行。
 
-```
+```python
 dataset = dataset.dropna()
 ```
 
 “Origin”这一列实际上是分类，而不是数字。 所以把它转换为独热编码：
 
-```
+```python
 origin = dataset.pop('Origin')
 ```
 
-```
+```python
 dataset['USA'] = (origin == 1)*1.0
 dataset['Europe'] = (origin == 2)*1.0
 dataset['Japan'] = (origin == 3)*1.0
 dataset.tail()
 ```
-
 
 |     | MPG  | Cylinders | Displacement | Horsepower | Weight | Acceleration | Model Year | USA | Europe | Japan |
 |-----|------|-----------|--------------|------------|--------|--------------|------------|-----|--------|-------|
@@ -136,14 +123,11 @@ dataset.tail()
 | 396 | 28.0 | 4         | 120.0        | 79.0       | 2625.0 | 18.6         | 82         | 1.0 | 0.0    | 0.0   |
 | 397 | 31.0 | 4         | 119.0        | 82.0       | 2720.0 | 19.4         | 82         | 1.0 | 0.0    | 0.0   |
 
-
-
-
 ### 1.3. 将数据分为训练集和测试集
 
 现在将数据集拆分为训练集和测试集，我们将在模型的最终评估中使用测试集。
 
-```
+```python
 train_dataset = dataset.sample(frac=0.8,random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
 ```
@@ -152,7 +136,7 @@ test_dataset = dataset.drop(train_dataset.index)
 
 快速浏览训练集中几对列的联合分布：
 
-```
+```python
 sns.pairplot(train_dataset[["MPG", "Cylinders", "Displacement", "Weight"]], diag_kind="kde")
 ```
 
@@ -160,13 +144,12 @@ sns.pairplot(train_dataset[["MPG", "Cylinders", "Displacement", "Weight"]], diag
 
 另外查看整体统计数据：
 
-```
+```python
 train_stats = train_dataset.describe()
 train_stats.pop("MPG")
 train_stats = train_stats.transpose()
 train_stats
 ```
-
 
 |              | count | mean        | std        | min    | 25%     | 50%    | 75%     | max    |
 |--------------|-------|-------------|------------|--------|---------|--------|---------|--------|
@@ -180,12 +163,11 @@ train_stats
 | Europe       | 314.0 | 0.178344    | 0.383413   | 0.0    | 0.00    | 0.0    | 0.00    | 1.0    |
 | Japan        | 314.0 | 0.197452    | 0.398712   | 0.0    | 0.00    | 0.0    | 0.00    | 1.0    |
 
-
 ### 1.5. 从标签中分割特征
 
 将目标值或“标签”与特征分开，此标签是您训练的模型进行预测的值：
 
-```
+```python
 train_labels = train_dataset.pop('MPG')
 test_labels = test_dataset.pop('MPG')
 ```
@@ -198,7 +180,7 @@ test_labels = test_dataset.pop('MPG')
 
 注意：尽管我们仅从训练数据集中有意生成这些统计信息，但这些统计信息也将用于标准化测试数据集。我们需要这样做，将测试数据集投影到模型已经训练过的相同分布中。
 
-```
+```python
 def norm(x):
   return (x - train_stats['mean']) / train_stats['std']
 normed_train_data = norm(train_dataset)
@@ -215,7 +197,7 @@ normed_test_data = norm(test_dataset)
 
 让我们建立我们的模型。在这里，我们将使用具有两个密集连接隐藏层的`Sequential`模型，以及返回单个连续值的输出层。模型构建步骤包含在函数`build_model`中，因为我们稍后将创建第二个模型。
 
-```
+```python
 def build_model():
   model = keras.Sequential([
     layers.Dense(64, activation='relu', input_shape=[len(train_dataset.keys())]),
@@ -231,8 +213,7 @@ def build_model():
   return model
 ```
 
-
-```
+```python
 model = build_model()
 ```
 
@@ -240,11 +221,11 @@ model = build_model()
 
 使用`.summary`方法打印模型的简单描述
 
-```
+```python
 model.summary()
 ```
 
-```
+```output
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -263,23 +244,23 @@ _________________________________________________________________
 
 现在试试这个模型。从训练数据中取出一批10个样本数据并在调用`model.predict`函数。
 
-```
+```python
 example_batch = normed_train_data[:10]
 example_result = model.predict(example_batch)
 example_result
 ```
 
-```
-array([[ 0.3297699 ],
-       [ 0.25655937],
-       [-0.12460149],
-       [ 0.32495883],
-       [ 0.50459725],
-       [ 0.10887371],
-       [ 0.57305855],
-       [ 0.57637435],
-       [ 0.12094647],
-       [ 0.6864784 ]], dtype=float32)
+```output
+      array([[ 0.3297699 ],
+            [ 0.25655937],
+            [-0.12460149],
+            [ 0.32495883],
+            [ 0.50459725],
+            [ 0.10887371],
+            [ 0.57305855],
+            [ 0.57637435],
+            [ 0.12094647],
+            [ 0.6864784 ]], dtype=float32)
 ```
 
 这似乎可以工作，它产生预期的shape和类型的结果。
@@ -288,7 +269,7 @@ array([[ 0.3297699 ],
 
 训练模型1000个周期，并在`history`对象中记录训练和验证准确性：
 
-```
+```python
 # 通过为每个完成的周期打印单个点来显示训练进度 
 class PrintDot(keras.callbacks.Callback):
   def on_epoch_end(self, epoch, logs):
@@ -305,7 +286,7 @@ history = model.fit(
 
 使用存储在`history`对象中的统计数据可视化模型的训练进度。300
 
-```
+```python
 hist = pd.DataFrame(history.history)
 hist['epoch'] = history.epoch
 hist.tail()
@@ -319,7 +300,7 @@ hist.tail()
 | 998 | 2.634858 | 1.001898 | 2.634858 | 10.906935 | 2.373279 | 10.906935 | 998   |
 | 999 | 2.741717 | 1.035889 | 2.741717 | 10.698320 | 2.342703 | 10.698319 | 999   |
 
-```
+```python
 def plot_history(history):
   hist = pd.DataFrame(history.history)
   hist['epoch'] = history.epoch
@@ -353,13 +334,11 @@ plot_history(history)
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_42_1.png?dcb_=0.09774210050560783)
 
-
 该图表显示在约100个周期之后，验证误差几乎没有改进，甚至降低。让我们更新`model.fit`调用，以便在验证分数没有提高时自动停止训练。我们将使用`EarlyStopping`回调来测试每个周期的训练状态。如果经过一定数量的周期而没有显示出改进，则自动停止训练。
-
 
 您可以了解此回调的更多信息 [连接](https://tensorflow.google.cn/versions/master/api_docs/python/tf/keras/callbacks/EarlyStopping).
 
-```
+```python
 model = build_model()
 
 # “patience”参数是检查改进的周期量 
@@ -375,14 +354,11 @@ plot_history(history)
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_44_2.png?dcb_=0.8788778722328034)
 
-The graph shows that on the validation set, the average error is usually around +/- 2 MPG. Is this good? We'll leave that decision up to you.
-
-Let's see how well the model generalizes by using the **test** set, which we did not use when training the model.  This tells us how well we can expect the model to predict when we use it in the real world.
 上图显示在验证集上平均误差通常约为+/-2MPG，这个好吗？我们会把这个决定留给你。
 
 让我们看一下使用测试集来看一下泛化模型效果，我们在训练模型时没有使用测试集，这告诉我们，当我们在现实世界中使用模型时，我们可以期待模型预测。
 
-```
+```python
 loss, mae, mse = model.evaluate(normed_test_data, test_labels, verbose=0)
 
 print("Testing set Mean Abs Error: {:5.2f} MPG".format(mae))
@@ -394,7 +370,7 @@ print("Testing set Mean Abs Error: {:5.2f} MPG".format(mae))
 
 最后，使用测试集中的数据预测MPG值：
 
-```
+```python
 test_predictions = model.predict(normed_test_data).flatten()
 
 plt.scatter(test_labels, test_predictions)
@@ -412,7 +388,7 @@ _ = plt.plot([-100, 100], [-100, 100])
 
 看起来我们的模型预测得相当好，我们来看看错误分布：
 
-```
+```python
 error = test_predictions - test_labels
 plt.hist(error, bins = 25)
 plt.xlabel("Prediction Error [MPG]")

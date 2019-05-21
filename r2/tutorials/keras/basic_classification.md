@@ -10,7 +10,7 @@ abbrlink: tensorflow/tf2-tutorials-keras-basic_classification
 
 # 训练您的第一个神经网络：基本分类Fashion MNIST(tensorflow2官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification)
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md)
 
