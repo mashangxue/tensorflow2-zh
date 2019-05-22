@@ -47,8 +47,18 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)
 
-#### Classify structured data
-#### Regression
+#### Classify structured data (结构化数据分类实战：心脏病预测)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns](https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md)
+
+#### Regression  (回归项目实战：预测燃油效率 )
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md)
+
 #### Overfitting and underfitting
 #### Save and restore models
 
@@ -62,7 +72,6 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 
 #### Intro to word embeddings
 #### Classify text with a RNN
-
 
 ### Estimators
 
