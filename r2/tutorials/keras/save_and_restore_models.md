@@ -1,24 +1,16 @@
 ---
-title: 保存和加载模型
+title: tensorflow2保存和加载模型 (tensorflow2官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1916
 abbrlink: tensorflow/tf2-tutorials-keras-save_and_restore_models
 ---
 
-# 保存和加载模型
+# tensorflow2保存和加载模型 (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/keras/save_and_restore_models"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/save_and_restore_models.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/save_and_restore_models.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md)
 
 Caution: Be careful with untrusted code—TensorFlow models are code. See [Using TensorFlow Securely](https://github.com/tensorflow/tensorflow/blob/master/SECURITY.md) for details.
 
