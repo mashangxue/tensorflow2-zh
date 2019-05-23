@@ -1,26 +1,18 @@
 ---
-title: 探索过拟合和欠拟合
+title: 探索过拟合和欠拟合 (tensorflow2官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1915
 abbrlink: tensorflow/tf2-tutorials-keras-overfit_and_underfit
 ---
 
-# 探索过拟合和欠拟合
+# 探索过拟合和欠拟合 (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/keras/overfit_and_underfit"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/overfit_and_underfit.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/overfit_and_underfit.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md)
 
-在前面的两个例子中（电影影评分类和预测燃油效率），我们看到我们的模型对验证数据的准确性在训练许多周期之后会到达峰值，然后开始下降。
+在前面的两个例子中（电影影评分类和预测燃油效率），我们看到，在训练许多周期之后，我们的模型对验证数据的准确性会到达峰值，然后开始下降。
 
 换句话说，我们的模型会过度拟合训练数据，学习如果处理过拟合很重要，尽管通常可以在训练集上实现高精度，但我们真正想要的是开发能够很好泛化测试数据（或之前未见过的数据）的模型。
 
@@ -32,7 +24,7 @@ abbrlink: tensorflow/tf2-tutorials-keras-overfit_and_underfit
 
 在本章节中，我们将探索两种常见的正则化技术：权重正则化和dropout丢弃正则化，并使用它们来改进我们的IMDB电影评论分类。
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import tensorflow as tf 
@@ -50,7 +42,7 @@ print(tf.__version__)
 
 对我们的列表进行多热编码意味着将它们转换为0和1的向量，具体地说，这将意味着例如将序列[3,5]转换为10000维向量，除了索引3和5的值是1之外，其他全零。
 
-```
+```python
 NUM_WORDS = 10000
 
 (train_data, train_labels), (test_data, test_labels) = keras.datasets.imdb.load_data(num_words=NUM_WORDS)
@@ -69,12 +61,11 @@ test_data = multi_hot_sequences(test_data, dimension=NUM_WORDS)
 
 让我们看一下生成的多热矢量，单词索引按频率排序，因此预计索引零附近有更多的1值，我们可以在下图中看到：
 
-```
+```python
 plt.plot(train_data[0])
 ```
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_7_1.png)
-
 
 ## 2. 演示过度拟合
 
@@ -92,8 +83,7 @@ plt.plot(train_data[0])
 
 ### 2.1. 创建一个基线模型
 
-
-```
+```python
 baseline_model = keras.Sequential([
     # `input_shape` is only required here so that `.summary` works.
     keras.layers.Dense(16, activation='relu', input_shape=(NUM_WORDS,)),
@@ -108,7 +98,7 @@ baseline_model.compile(optimizer='adam',
 baseline_model.summary()
 ```
 
-```
+```output
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -125,7 +115,7 @@ Non-trainable params: 0
 _________________________________________________________________
 ```
 
-```
+```python
 baseline_history = baseline_model.fit(train_data,
                                       train_labels,
                                       epochs=20,
@@ -134,7 +124,7 @@ baseline_history = baseline_model.fit(train_data,
                                       verbose=2)
 ```
 
-```
+```output
 Train on 25000 samples, validate on 25000 samples
 Epoch 1/20
 25000/25000 - 3s - loss: 0.4664 - accuracy: 0.8135 - binary_crossentropy: 0.4664 - val_loss: 0.3257 - val_accuracy: 0.8808 - val_binary_crossentropy: 0.3257
@@ -147,8 +137,7 @@ Epoch 20/20
 
 让我们创建一个隐藏单元较少的模型，与我们刚刚创建的基线模型进行比较：
 
-
-```
+```python
 smaller_model = keras.Sequential([
     keras.layers.Dense(4, activation='relu', input_shape=(NUM_WORDS,)),
     keras.layers.Dense(4, activation='relu'),
@@ -161,8 +150,8 @@ smaller_model.compile(optimizer='adam',
 
 smaller_model.summary()
 ```
-输出：
-```
+
+```output
 Model: "sequential_1"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -181,7 +170,7 @@ _________________________________________________________________
 
 用相同的数据训练模型：
 
-```
+```python
 smaller_history = smaller_model.fit(train_data,
                                     train_labels,
                                     epochs=20,
@@ -189,8 +178,8 @@ smaller_history = smaller_model.fit(train_data,
                                     validation_data=(test_data, test_labels),
                                     verbose=2)
 ```
-输出
-```
+
+```output
 Train on 25000 samples, validate on 25000 samples
 Epoch 1/20
 25000/25000 - 3s - loss: 0.6189 - accuracy: 0.6439 - binary_crossentropy: 0.6189 - val_loss: 0.5482 - val_accuracy: 0.7987 - val_binary_crossentropy: 0.5482
@@ -204,7 +193,7 @@ Epoch 20/20
 作为练习，您可以创建一个更大的模型，并查看它开始过拟合的速度。
 接下来，让我们在这个基准测试中添加一个容量更大的网络，远远超出问题的范围：
 
-```
+```python
 bigger_model = keras.models.Sequential([
     keras.layers.Dense(512, activation='relu', input_shape=(NUM_WORDS,)),
     keras.layers.Dense(512, activation='relu'),
@@ -217,8 +206,8 @@ bigger_model.compile(optimizer='adam',
 
 bigger_model.summary()
 ```
-输出
-```
+
+```output
 Model: "sequential_2"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -237,7 +226,7 @@ _________________________________________________________________
 
 并且，再次使用相同的数据训练模型：
 
-```
+```python
 bigger_history = bigger_model.fit(train_data, train_labels,
                                   epochs=20,
                                   batch_size=512,
@@ -260,7 +249,7 @@ Epoch 20/20
 
 实线表示训练损失，虚线表示验证损失（记住：较低的验证损失表示更好的模型）。在这里，较小的网络开始过拟合晚于基线模型（在6个周期之后而不是4个周期），并且一旦开始过拟合，其性能下降得慢得多。
 
-```
+```python
 def plot_history(histories, key='binary_crossentropy'):
   plt.figure(figsize=(16,10))
 
@@ -302,7 +291,7 @@ L2正则化引入了稀疏性，使一些权重参数为零。L2正则化将惩�
 
 在`tf.keras`中，通过将权重正则化实例作为关键字参数传递给层来添加权重正则化。我们现在添加L2权重正则化。
 
-```
+```python
 l2_model = keras.models.Sequential([
     keras.layers.Dense(16, kernel_regularizer=keras.regularizers.l2(0.001),
                        activation='relu', input_shape=(NUM_WORDS,)),
@@ -331,12 +320,11 @@ Epoch 20/20
 25000/25000 - 2s - loss: 0.1567 - accuracy: 0.9718 - binary_crossentropy: 0.0868 - val_loss: 0.5327 - val_accuracy: 0.8561 - val_binary_crossentropy: 0.4631
 ```
 
-
 ```l2（0.001）```表示该层的权重矩阵中的每个系数都会将```0.001 * weight_coefficient_value**2```添加到网络的总损失中。请注意，由于此惩罚仅在训练时添加，因此在训练时该网络的损失将远高于测试时。
 
 这是我们的L2正则化惩罚的影响：
 
-```
+```python
 plot_history([('baseline', baseline_history),
               ('l2', l2_model_history)])
 ```
@@ -345,7 +333,7 @@ plot_history([('baseline', baseline_history),
 
 正如你所看到的，L2正则化模型比基线模型更能抵抗过拟合，即使两个模型具有相同数量的参数。
 
-### 添加Dropout(丢弃正则化)
+### 3.2. 添加Dropout(丢弃正则化)
 
 Dropout是由Hinton和他在多伦多大学的学生开发的最有效和最常用的神经网络正则化技术之一。Dropout应用于层主要就是在训练期间随机“丢弃”（即设置为零）该层的多个输出特征。假设一个给定的层通常会在训练期间为给定的输入样本返回一个向量[0.2,0.5,1.3,0.8,1.1]，在应用了Dropout之后，该向量将具有随机分布的几个零条目，例如，[0,0.5,1.3,0,1.1]。“丢弃率”是被归零的特征的一部分，它通常设置在0.2和0.5之间，
 在测试时，没有单元被剔除，而是将层的输出值按与丢弃率相等的因子缩小，以平衡实际活动的单元多余训练时的单元。
@@ -354,7 +342,7 @@ Dropout是由Hinton和他在多伦多大学的学生开发的最有效和最常�
 
 让我们在IMDB网络中添加两个`Dropout`层，看看它们在减少过度拟合方面做得如何：
 
-```
+```python
 dpt_model = keras.models.Sequential([
     keras.layers.Dense(16, activation='relu', input_shape=(NUM_WORDS,)),
     keras.layers.Dropout(0.5),

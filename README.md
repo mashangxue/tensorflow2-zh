@@ -59,7 +59,11 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md)
 
-#### Overfitting and underfitting
+#### Overfitting and underfitting (探索过拟合和欠拟合)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md)
 #### Save and restore models
 
 ### Images
