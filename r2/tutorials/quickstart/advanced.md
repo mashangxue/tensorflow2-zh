@@ -138,3 +138,8 @@ for epoch in range(EPOCHS):
 ```
 
 现在，图像分类器在该数据集上的准确度达到约98％。要了解更多信息，请阅读 [TensorFlow教程](https://tensorflow.google.cn/alpha/tutorials/keras).。
+
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced](https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/advanced.md)

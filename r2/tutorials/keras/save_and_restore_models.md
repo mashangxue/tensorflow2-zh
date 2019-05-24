@@ -12,8 +12,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-save_and_restore_models
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md)
 
-Caution: Be careful with untrusted code—TensorFlow models are code. See [Using TensorFlow Securely](https://github.com/tensorflow/tensorflow/blob/master/SECURITY.md) for details.
-
 模型进度可以在训练期间和训练后保存。这意味着模型可以在它停止的地方继续，并避免长时间的训练。保存还意味着您可以共享您的模型，其他人可以重新创建您的工作。当发布研究模型和技术时，大多数机器学习实践者共享:
 * 用于创建模型的代码
 * 以及模型的训练权重或参数
@@ -32,7 +30,7 @@ Caution: Be careful with untrusted code—TensorFlow models are code. See [Using
 
 需要安装和导入TensorFlow和依赖项
 
-```
+```python
 pip install h5py pyyaml
 ```
 
@@ -40,7 +38,7 @@ pip install h5py pyyaml
 
 我们将使用[MNIST数据集](http://yann.lecun.com/exdb/mnist/)来训练我们的模型以演示保存权重，要加速这些演示运行，请只使用前1000个样本数据：
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
@@ -52,8 +50,7 @@ from tensorflow import keras
 tf.__version__
 ```
 
-
-```
+```python
 (train_images, train_labels), (test_images, test_labels) = tf.keras.datasets.mnist.load_data()
 
 train_labels = train_labels[:1000]
@@ -67,7 +64,7 @@ test_images = test_images[:1000].reshape(-1, 28 * 28) / 255.0
 
 让我们构建一个简单的模型，我们将用它来演示保存和加载权重。
 
-```
+```python
 # 返回一个简短的序列模型 
 def create_model():
   model = tf.keras.models.Sequential([
@@ -88,7 +85,7 @@ model = create_model()
 model.summary()
 ```
 
-```
+```python
 Model: "sequential"
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
@@ -106,10 +103,6 @@ _________________________________________________________________
 ```
 
 ## 2. 在训练期间保存检查点
-
-The primary use case is to automatically save checkpoints *during* and at *the end* of training. This way you can use a trained model without having to retrain it, or pick-up training where you left of—in case the training process was interrupted.
-
-`tf.keras.callbacks.ModelCheckpoint` is a callback that performs this task. The callback takes a couple of arguments to configure checkpointing.
 
 主要用例是在训练期间和训练结束时自动保存检查点，通过这种方式，您可以使用训练有素的模型，而无需重新训练，或者在您离开的地方继续训练，以防止训练过程中断。
 
@@ -138,15 +131,15 @@ model.fit(train_images, train_labels,  epochs = 10,
 # 这些警告（以及整个笔记本中的类似警告）是为了阻止过时使用的，可以忽略。
 ```
 
-```
-Train on 1000 samples, validate on 1000 samples
-......
-Epoch 10/10
- 960/1000 [===========================>..] - ETA: 0s - loss: 0.0392 - accuracy: 1.0000
-Epoch 00010: saving model to training_1/cp.ckpt
-1000/1000 [==============================] - 0s 207us/sample - loss: 0.0393 - accuracy: 1.0000 - val_loss: 0.3976 - val_accuracy: 0.8750
+```output
+  Train on 1000 samples, validate on 1000 samples
+  ......
+  Epoch 10/10
+  960/1000 [===========================>..] - ETA: 0s - loss: 0.0392 - accuracy: 1.0000
+  Epoch 00010: saving model to training_1/cp.ckpt
+  1000/1000 [==============================] - 0s 207us/sample - loss: 0.0393 - accuracy: 1.0000 - val_loss: 0.3976 - val_accuracy: 0.8750
 
-<tensorflow.python.keras.callbacks.History at 0x7efc3eba7358>
+  <tensorflow.python.keras.callbacks.History at 0x7efc3eba7358>
 ```
 
 这将创建一个TensorFlow检查点文件集合，这些文件在每个周期结束时更新。
@@ -159,21 +152,21 @@ checkpoint  cp.ckpt.data-00000-of-00001  cp.ckpt.index
 
 现在重建一个新的，未经训练的模型，并在测试集中评估它。未经训练的模型将在随机水平(约10%的准确率):
 
-```
+```python
 model = create_model()
 
 loss, acc = model.evaluate(test_images, test_labels)
 print("Untrained model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
-```
+```output
 1000/1000 [==============================] - 0s 107us/sample - loss: 2.3224 - accuracy: 0.1230
 Untrained model, accuracy: 12.30%
 ```
 
 然后从检查点加载权重，并重新评估：
 
-```
+```python
 model.load_weights(checkpoint_path)
 loss,acc = model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
@@ -190,7 +183,7 @@ Restored model, accuracy: 87.50%
 
 训练一个新模型，每5个周期保存一次唯一命名的检查点：
 
-```
+```python
 # 在文件名中包含周期数. (使用 `str.format`)
 checkpoint_path = "training_2/cp-{epoch:04d}.ckpt"
 checkpoint_dir = os.path.dirname(checkpoint_path)
@@ -218,14 +211,14 @@ Epoch 00050: saving model to training_2/cp-0050.ckpt
 
 现在，查看生成的检查点并选择最新的检查点：
 
-```
+```python
 latest = tf.train.latest_checkpoint(checkpoint_dir)
 latest
 ```
 
-'''
-'training_2/cp-0050.ckpt'
-'''
+```
+      'training_2/cp-0050.ckpt'
+```
 
 注意：默认的tensorflow格式仅保存最近的5个检查点。
 
@@ -239,8 +232,8 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
 ```
-1000/1000 [==============================] - 0s 84us/sample - loss: 0.4695 - accuracy: 0.8810
-Restored model, accuracy: 88.10%
+      1000/1000 [==============================] - 0s 84us/sample - loss: 0.4695 - accuracy: 0.8810
+      Restored model, accuracy: 88.10%
 ```
 
 ## 3. 这些文件是什么？
@@ -252,12 +245,11 @@ Restored model, accuracy: 88.10%
 
 如果您只在一台机器上训练模型，那么您将有一个带有后缀的分片：`.data-00000-of-00001`
 
-
 ## 4. 手动保存权重
 
 上面你看到了如何将权重加载到模型中。手动保存权重同样简单，使用`Model.save_weights`方法。
 
-```
+```python
 # 保存权重
 model.save_weights('./checkpoints/my_checkpoint')
 
@@ -279,8 +271,7 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 
 Keras使用[HDF5](https://en.wikipedia.org/wiki/Hierarchical_Data_Format)标准提供基本保存格式，出于我们的目的，可以将保存的模型视为单个二进制blob。
 
-
-```
+```python
 model = create_model()
 
 model.fit(train_images, train_labels, epochs=5)
@@ -291,7 +282,7 @@ model.save('my_model.h5')
 
 现在从该文件重新创建模型：
 
-```
+```python
 # 重新创建完全相同的模型，包括权重和优化器
 new_model = keras.models.load_model('my_model.h5')
 new_model.summary()
@@ -316,8 +307,7 @@ _________________________________________________________________
 
 检查模型的准确率:
 
-
-```
+```python
 loss, acc = new_model.evaluate(test_images, test_labels)
 print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
@@ -334,7 +324,6 @@ Restored model, accuracy: 85.40%
 
 Keras通过检查架构来保存模型，目前它无法保存TensorFlow优化器（来自`tf.train`）。使用这些时，您需要在加载后重新编译模型，否则您将失去优化程序的状态。
 
-
 ### 5.2. 作为 `saved_model`
 
 注意：这种保存`tf.keras`模型的方法是实验性的，在将来的版本中可能会有所改变。
@@ -349,7 +338,7 @@ model.fit(train_images, train_labels, epochs=5)
 
 创建`saved_model`，并将其放在带时间戳的目录中：
 
-```
+```python
 import time
 saved_model_path = "./saved_models/{}".format(int(time.time()))
 
@@ -358,8 +347,7 @@ saved_model_path
 ```
 
 ```
-...
-'./saved_models/1555630614'
+    './saved_models/1555630614'
 ```
 
 从保存的模型重新加载新的keras模型：
@@ -388,7 +376,7 @@ _________________________________________________________________
 
 运行加载的模型进行预测：
 
-```
+```python
 model.predict(test_images).shape
 ```
 
@@ -396,8 +384,7 @@ model.predict(test_images).shape
 (1000, 10)
 ```
 
-
-```
+```python
 # 必须要在评估之前编译模型
 # 如果仅部署已保存的模型，则不需要此步骤 
 
@@ -411,8 +398,8 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 ```
 
 ```
-1000/1000 [==============================] - 0s 102us/sample - loss: 0.4367 - accuracy: 0.8570
-Restored model, accuracy: 85.70%
+      1000/1000 [==============================] - 0s 102us/sample - loss: 0.4367 - accuracy: 0.8570
+      Restored model, accuracy: 85.70%
 ```
 
 ## 6. 下一步是什么
@@ -425,3 +412,6 @@ Restored model, accuracy: 85.70%
 
 * [保存和还原指南](https://tensorflow.google.cn/guide/saved_model)包含有关TensorFlow保存的低阶详细信息。
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md)
