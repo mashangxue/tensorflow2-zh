@@ -12,13 +12,16 @@ abbrlink: tensorflow/tf2-tutorials-quickstart-advanced
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced](https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/advanced.md)
 
-安装命令 `pip install tensorflow-gpu==2.0.0-alpha0`
-要开始，请将TensorFlow库导入您的程序：
+初学者入门教程中，使用tf.keras.Sequential模型，只是简单的堆叠模型。
+本文专家级入门，会使用更底层一点的的函数接口，自定义模型、损失、评估和梯度下降控制等，流程清晰。
+
+
+开始，请将TensorFlow库导入您的程序：
 
 ```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-import tensorflow as tf
+import tensorflow as tf  # 安装命令 `pip install tensorflow-gpu==2.0.0-alpha0`
 
 from tensorflow.keras.layers import Dense, Flatten, Conv2D
 from tensorflow.keras import Model
