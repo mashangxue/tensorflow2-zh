@@ -74,6 +74,12 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 ### Images
 
 #### Convolutional Neural Networks
+(使用TensorFlow2.0实现卷积神经网络CNN对MNIST数字分类)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/images/intro_to_cnns)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md)
+
 #### Transfer learning with TFHub
 #### Transfer learning with pretrained CNNs
 

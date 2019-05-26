@@ -1,30 +1,16 @@
 ---
-title: 卷积神经网络
+title: 使用TensorFlow2.0实现卷积神经网络CNN对MNIST数字分类 (tensorflow2官方教程翻译)
 tags: tensorflow2.0
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-images-intro_to_cnns
 ---
 
-# Convolutional Neural Networks
+# 使用TensorFlow2.0实现卷积神经网络CNN对MNIST数字分类 (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/images/intro_to_cnns">
-    <img src="https://www.tensorflow.org/images/tf_logo_32px.png" />
-    View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/images/intro_to_cnns.ipynb">
-    <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />
-    Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/images/intro_to_cnns.ipynb">
-    <img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />
-    View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/images/intro_to_cnns)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md)
 
 本教程演示了如何训练简单的[卷积神经网络](https://developers.google.com/machine-learning/glossary/#convolutional_neural_network)（CNN）来对MNIST数字进行分类。这个简单的网络将在MNIST测试集上实现99％以上的准确率。因为本教程使用[Keras Sequential API](https://www.tensorflow.org/guide/keras)，所以创建和训练我们的模型只需几行代码。
 
@@ -42,7 +28,6 @@ from tensorflow.keras import datasets, layers, models
 ```
 
 ## 2. 下载预处理MNIST数据集
-
 
 ```python
 (train_images, train_labels), (test_images, test_labels) = datasets.mnist.load_data()
@@ -100,6 +85,7 @@ model.add(layers.Dense(64, activation='relu'))
 model.add(layers.Dense(10, activation='softmax'))
 model.summary() # 显示模型的架构
 ```
+
 ```
 Model: "sequential"
 _________________________________________________________________
@@ -161,3 +147,7 @@ print(test_acc)
 ```
 
 如你所见，我们简单的CNN已经达到了超过99%的测试精度，这几行代码还不错。另一种编写CNN的方式[here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/advanced.ipynb)（使用Keras Subclassing API和GradientTape）。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/images/intro_to_cnns)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md)
