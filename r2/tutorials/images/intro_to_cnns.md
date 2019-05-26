@@ -9,7 +9,7 @@ abbrlink: tensorflow/tf2-tutorials-images-intro_to_cnns
 # 使用TensorFlow2.0实现卷积神经网络CNN对MNIST数字分类 (tensorflow2官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/images/intro_to_cnns)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/intro_to_cnns](https://tensorflow.google.cn/alpha/tutorials/images/intro_to_cnns)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md)
 
 本教程演示了如何训练简单的[卷积神经网络](https://developers.google.com/machine-learning/glossary/#convolutional_neural_network)（CNN）来对MNIST数字进行分类。这个简单的网络将在MNIST测试集上实现99％以上的准确率。因为本教程使用[Keras Sequential API](https://www.tensorflow.org/guide/keras)，所以创建和训练我们的模型只需几行代码。
