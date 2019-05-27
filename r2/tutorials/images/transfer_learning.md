@@ -1,26 +1,18 @@
 ---
-title: 使用预训练的CNN模型进行迁移学习
+title: 使用预训练的卷积神经网络进行迁移学习 (tensorflow2官方教程翻译)
 tags: tensorflow2.0
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-images-transfer_learning
 ---
 
-# 使用预训练的CNN模型进行迁移学习
+# 使用预训练的卷积神经网络进行迁移学习 (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/images/transfer_learning"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/images/transfer_learning.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/images/transfer_learning.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md)
 
-在本章节中，您将学习如何使用预训练网络中的迁移学习对猫与狗图像进行分类。
+在本教程中，您将学习如何使用预训练网络进行转移学习对猫与狗图像分类。主要内容：使用预训练的模型进行特征提取，微调与训练的模型。
 
 预训练模型是一个保存的网路，以前在大型数据集上训练的，通常是在大规模图像分类任务上，您可以按原样使用预训练模型，也可以使用转移学习将此模型自定义为给定的任务。
 
@@ -42,7 +34,7 @@ abbrlink: tensorflow/tf2-tutorials-images-transfer_learning
 5. 评估模型
 
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import os
@@ -63,7 +55,7 @@ keras = tf.keras
 使用 [TensorFlow Datasets](http://tensorflow.google.cn/datasets)加载猫狗数据集。`tfds` 包是加载预定义数据的最简单方法，如果您有自己的数据，并且有兴趣使用TensorFlow进行导入，请参阅[加载图像数据](https://tensorflow.google.cn/alpha/tutorials/load_data/images)。
 
 
-```
+```python
 import tensorflow_datasets as tfds
 ```
 
@@ -71,7 +63,7 @@ import tensorflow_datasets as tfds
 
 由于`"cats_vs_dog"` 没有定义标准分割，因此使用subsplit功能将其分为训练80%、验证10%、测试10%的数据。
 
-```
+```python
 SPLIT_WEIGHTS = (8, 1, 1)
 splits = tfds.Split.TRAIN.subsplit(weighted=SPLIT_WEIGHTS)
 
@@ -82,7 +74,7 @@ splits = tfds.Split.TRAIN.subsplit(weighted=SPLIT_WEIGHTS)
 
 生成的`tf.data.Dataset`对象包含（图像，标签）对。图像具有可变形状和3个通道，标签是标量。
 
-```
+```python
 print(raw_train)
 print(raw_validation)
 print(raw_test)
@@ -96,7 +88,7 @@ print(raw_test)
 
 显示训练集中的前两个图像和标签：
 
-```
+```python
 get_label_name = metadata.features['label'].int2str
 
 for image, label in raw_train.take(2):
@@ -117,7 +109,7 @@ for image, label in raw_train.take(2):
 
 <!-- TODO(markdaoust): fix the keras_applications preprocessing functions to work in tf2 -->
 
-```
+```python
 IMG_SIZE = 160 # 所有图像将被调整为160x160
 
 def format_example(image, label):
@@ -129,7 +121,7 @@ def format_example(image, label):
 
 使用map方法将此函数应用于数据集中的每一个项：
 
-```
+```python
 train = raw_train.map(format_example)
 validation = raw_validation.map(format_example)
 test = raw_test.map(format_example)
@@ -137,7 +129,7 @@ test = raw_test.map(format_example)
 
 打乱和批处理数据：
 
-```
+```python
 BATCH_SIZE = 32
 SHUFFLE_BUFFER_SIZE = 1000
 
@@ -148,7 +140,7 @@ test_batches = test.batch(BATCH_SIZE)
 
 检查一批数据：
 
-```
+```python
 for image_batch, label_batch in train_batches.take(1):
   pass
 
@@ -167,7 +159,7 @@ image_batch.shape
 
 然后，实例化预装了ImageNet上训练的MobileNet V2模型权重，通过制定include_top=False参数，可以加载不包含顶部分类层的网络，这是特征提取的理想选择。
 
-```
+```python
 IMG_SHAPE = (IMG_SIZE, IMG_SIZE, 3)
 
 # 从预先训练的模型MobileNet V2创建基础模型 
@@ -178,7 +170,7 @@ base_model = tf.keras.applications.MobileNetV2(input_shape=IMG_SHAPE,
 
 此特征提取器将每个160x160x3图像转换为5x5x1280的特征块，看看它对示例批量图像的作用：
 
-```
+```python
 feature_batch = base_model(image_batch)
 print(feature_batch.shape)
 ```
@@ -197,7 +189,7 @@ print(feature_batch.shape)
 在编译和训练模型之前，冻结卷积基是很重要的，通过冻结（或设置`layer.trainable = False`），可以防止在训练期间更新给定图层中的权重。MobileNet V2有很多层，因此将整个模型的可训练标志设置为`False`将冻结所有层。
 
 
-```
+```python
 base_model.trainable = False
 base_model.summary() # 看看基础模型架构  
 ```
@@ -227,7 +219,7 @@ base_model.summary() # 看看基础模型架构
 
 要从特征块生成预测，请用5x5在空间位置上进行平均，使用`tf.keras.layers.GlobalAveragePooling2D`层将特征转换为每个图像对应一个1280元素向量。
 
-```
+```python
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
 feature_batch_average = global_average_layer(feature_batch)
 print(feature_batch_average.shape)
@@ -238,7 +230,7 @@ print(feature_batch_average.shape)
 
 应用`tf.keras.layers.Dense`层将这些特征转换为每个图像的单个预测。您不需要激活函数，因为此预测将被视为`logit`或原始预测值。正数预测第1类，负数预测第0类。
 
-```
+```python
 prediction_layer = keras.layers.Dense(1)
 prediction_batch = prediction_layer(feature_batch_average)
 print(prediction_batch.shape)
@@ -251,7 +243,7 @@ print(prediction_batch.shape)
 
 现在使用`tf.keras.Sequential`堆叠特征提取器和这两个层：
 
-```
+```python
 model = tf.keras.Sequential([
   base_model,
   global_average_layer,
@@ -263,7 +255,7 @@ model = tf.keras.Sequential([
 
 你必须在训练之前编译模型，由于有两个类，因此使用二进制交叉熵损失：
 
-```
+```python
 base_learning_rate = 0.0001
 model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=base_learning_rate),
               loss='binary_crossentropy',
@@ -271,6 +263,7 @@ model.compile(optimizer=tf.keras.optimizers.RMSprop(lr=base_learning_rate),
               
 model.summary()
 ```
+
 ```
     Model: "sequential"
     _________________________________________________________________
@@ -291,9 +284,10 @@ model.summary()
 MobileNet中的2.5M参数被冻结，但Dense层中有1.2K可训练参数，它们分为两个`tf.Variable`对象：权重和偏差。
 
 
-```
+```python
 len(model.trainable_variables)
 ```
+
 `2`
 
 
@@ -305,7 +299,7 @@ len(model.trainable_variables)
 <!-- TODO(markdaoust): delete steps_per_epoch in TensorFlow r1.14/r2.0 -->
 
 
-```
+```python
 num_train, num_val, num_test = (
   metadata.splits['train'].num_examples*weight/10
   for weight in SPLIT_WEIGHTS
@@ -324,7 +318,7 @@ loss0,accuracy0 = model.evaluate(validation_batches, steps = validation_steps)
 
 
 
-```
+```python
 print("initial loss: {:.2f}".format(loss0))
 print("initial accuracy: {:.2f}".format(accuracy0))
 ```
@@ -336,7 +330,7 @@ print("initial accuracy: {:.2f}".format(accuracy0))
 
 
 
-```
+```python
 history = model.fit(train_batches,
                     epochs=initial_epochs,
                     validation_data=validation_batches)
@@ -354,7 +348,7 @@ history = model.fit(train_batches,
 
 让我们来看一下使用MobileNet V2基础模型作为固定特征提取器时，训练和验证准确性/损失的学习曲线。
 
-```
+```python
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 
@@ -405,7 +399,7 @@ plt.show()
 您需要做的就是解冻`base_model`并将底层设置为无法训练，然后重新编译模型（这些更改生效所必须的），并恢复训练。
 
 
-```
+```python
 base_model.trainable = True
 
 # 看看基础模型有多少层 
@@ -426,13 +420,14 @@ for layer in base_model.layers[:fine_tune_at]:
 
 使用低得多的训练率（学习率）编译模型：
 
-```
+```python
 model.compile(loss='binary_crossentropy',
               optimizer = tf.keras.optimizers.RMSprop(lr=base_learning_rate/10),
               metrics=['accuracy'])
               
 model.summary()
 ```
+
 ```
     Model: "sequential"
     _________________________________________________________________
@@ -450,8 +445,7 @@ model.summary()
     _________________________________________________________________
 ```
 
-
-```
+```python
 len(model.trainable_variables)
 ```
 
@@ -465,7 +459,7 @@ len(model.trainable_variables)
 
 如果你训练得更早收敛，这将使你的准确率提高几个百分点。
 
-```
+```python
 fine_tune_epochs = 10
 total_epochs =  initial_epochs + fine_tune_epochs
 
@@ -484,7 +478,7 @@ history_fine = model.fit(train_batches,
 
 经过微调后，模型精度几乎达到98%。
 
-```
+```python
 acc += history_fine.history['accuracy']
 val_acc += history_fine.history['val_accuracy']
 
@@ -524,3 +518,6 @@ plt.show()
 * **微调与训练的模型：** 
 为了进一步提高性能，可以通过微调将预训练模型的顶层重新调整为新数据集。在这种情况下，您调整了权重，以便模型学习特定于数据集的高级特征，当训练数据集很大并且非常类似于预训练模型训练的原始数据集时，通常建议使用此技术。
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md)
