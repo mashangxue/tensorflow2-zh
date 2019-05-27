@@ -1,5 +1,18 @@
+---
+title: 使用Keras和TensorFlow Hub对电影评论进行文本分类 (tensorflow2官方教程翻译)
+categories: tensorflow2官方教程
+tags: tensorflow2.0
+top: 1918
+abbrlink: tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub
+---
 
 # 使用Keras和TensorFlow Hub对电影评论进行文本分类
+
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md)
+
 
 此教程本会将文本形式的影评分为“正面”或“负面”影评。这是一个二元分类（又称为两类分类）的示例，也是一种重要且广泛适用的机器学习问题。
 
@@ -33,7 +46,7 @@ print("GPU is", "available" if tf.test.is_gpu_available() else "NOT AVAILABLE")
 
 [TensorFlow数据集](https://github.com/tensorflow/datasets)上提供了IMDB数据集。以下代码将IMDB数据集下载到您的机器：
 
-```
+```python
 # 将训练集分成60％和40％，因此我们最终会得到15,000个训练样本，10,000个验证样本和25,000个测试样本。
 train_validation_split = tfds.Split.TRAIN.subsplit([6, 4])
 
@@ -49,14 +62,14 @@ train_validation_split = tfds.Split.TRAIN.subsplit([6, 4])
 
 我们先打印10个样本。
 
-```
+```python
 train_examples_batch, train_labels_batch = next(iter(train_data.batch(10)))
 train_examples_batch
 ```
 
 我们还打印前10个标签。
 
-```
+```python
 train_labels_batch
 ```
 
@@ -85,7 +98,7 @@ train_labels_batch
 
 让我们首先创建一个使用TensorFlow Hub模型嵌入句子的Keras层，并在几个输入示例上进行尝试。请注意，无论输入文本的长度如何，嵌入的输出形状为：`(num_examples, embedding_dimension)`。
 
-```
+```python
 embedding = "https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1"
 hub_layer = hub.KerasLayer(embedding, input_shape=[], 
                            dtype=tf.string, trainable=True)
@@ -94,7 +107,7 @@ hub_layer(train_examples_batch[:3])
 
 现在让我们构建完整的模型：
 
-```
+```python
 model = tf.keras.Sequential()
 model.add(hub_layer)
 model.add(tf.keras.layers.Dense(16, activation='relu'))
@@ -121,7 +134,7 @@ model.summary()
 
 现在，配置模型以使用优化器和损失函数：
 
-```
+```python
 model.compile(optimizer='adam',
               loss='binary_crossentropy',
               metrics=['accuracy'])
@@ -131,7 +144,7 @@ model.compile(optimizer='adam',
 
 用有 512 个样本的小批次训练模型 40 个周期。这将对 x_train 和 y_train 张量中的所有样本进行 40 次迭代。在训练期间，监控模型在验证集的 10000 个样本上的损失和准确率：
 
-```
+```python
 history = model.fit(train_data.shuffle(10000).batch(512),
                     epochs=20,
                     validation_data=validation_data.batch(512),
@@ -142,7 +155,7 @@ history = model.fit(train_data.shuffle(10000).batch(512),
 
 我们来看看模型的表现如何。模型会返回两个值：损失（表示误差的数字，越低越好）和准确率。
 
-```
+```python
 results = model.evaluate(test_data.batch(512), verbose=0)
 for name, value in zip(model.metrics_names, results):
   print("%s: %.3f" % (name, value))
