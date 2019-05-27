@@ -1,76 +1,23 @@
 
-##### Copyright 2019 The TensorFlow Authors.
+# 使用Keras和TensorFlow Hub对电影评论进行文本分类
 
+此教程本会将文本形式的影评分为“正面”或“负面”影评。这是一个二元分类（又称为两类分类）的示例，也是一种重要且广泛适用的机器学习问题。
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+本教程演示了使用TensorFlow Hub和Keras进行迁移学习的基本应用。
 
+数据集使用 [IMDB 数据集](https://tensorflow.google.cn/api_docs/python/tf/keras/datasets/imdb)，其中包含来自互联网电影数据库https://www.imdb.com/的 50000 条影评文本。我们将这些影评拆分为训练集（25000 条影评）和测试集（25000 条影评）。训练集和测试集之间达成了平衡，意味着它们包含相同数量的正面和负面影评。
 
-```
-#@title MIT License
-#
-# Copyright (c) 2017 François Chollet
-#
-# Permission is hereby granted, free of charge, to any person obtaining a
-# copy of this software and associated documentation files (the "Software"),
-# to deal in the Software without restriction, including without limitation
-# the rights to use, copy, modify, merge, publish, distribute, sublicense,
-# and/or sell copies of the Software, and to permit persons to whom the
-# Software is furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-# FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-# DEALINGS IN THE SOFTWARE.
-```
+此教程使用[tf.keras](https://www.tensorflow.org/guide/keras)，一种用于在 TensorFlow 中构建和训练模型的高阶 API，以及[TensorFlow Hub](https://www.tensorflow.org/hub)，一个用于迁移学习的库和平台。
 
-# Text classification of movie reviews with Keras and TensorFlow Hub
+有关使用 tf.keras 的更高级文本分类教程，请参阅 [MLCC 文本分类指南](https://developers.google.cn/machine-learning/guides/text-classification/)。
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/keras/basic_text_classification_with_tfhub"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_text_classification_with_tfhub.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/keras/basic_text_classification_with_tfhub.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+导入库：
 
-
-This notebook classifies movie reviews as *positive* or *negative* using the text of the review. This is an example of *binary*—or two-class—classification, an important and widely applicable kind of machine learning problem.
-
-The tutorial demonstrates the basic application of transfer learning with TensorFlow Hub and Keras.
-
-We'll use the [IMDB dataset](https://www.tensorflow.org/api_docs/python/tf/keras/datasets/imdb) that contains the text of 50,000 movie reviews from the [Internet Movie Database](https://www.imdb.com/). These are split into 25,000 reviews for training and 25,000 reviews for testing. The training and testing sets are *balanced*, meaning they contain an equal number of positive and negative reviews. 
-
-This notebook uses [tf.keras](https://www.tensorflow.org/guide/keras), a high-level API to build and train models in TensorFlow, and [TensorFlow Hub](https://www.tensorflow.org/hub), a library and platform for transfer learning. For a more advanced text classification tutorial using `tf.keras`, see the [MLCC Text Classification Guide](https://developers.google.com/machine-learning/guides/text-classification/).
-
-
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import numpy as np
 
-!pip install tf-nightly-2.0-preview
 import tensorflow as tf
 
 import tensorflow_hub as hub
@@ -82,14 +29,12 @@ print("Hub version: ", hub.__version__)
 print("GPU is", "available" if tf.test.is_gpu_available() else "NOT AVAILABLE")
 ```
 
-## Download the IMDB dataset
+## 下载 IMDB 数据集
 
-The IMDB dataset is available on [TensorFlow datasets](https://github.com/tensorflow/datasets). The following code downloads the IMDB dataset to your machine (or the colab runtime):
-
+[TensorFlow数据集](https://github.com/tensorflow/datasets)上提供了IMDB数据集。以下代码将IMDB数据集下载到您的机器：
 
 ```
-# Split the training set into 60% and 40%, so we'll end up with 15,000 examples
-# for training, 10,000 examples for validation and 25,000 examples for testing.
+# 将训练集分成60％和40％，因此我们最终会得到15,000个训练样本，10,000个验证样本和25,000个测试样本。
 train_validation_split = tfds.Split.TRAIN.subsplit([6, 4])
 
 (train_data, validation_data), test_data = tfds.load(
@@ -98,50 +43,47 @@ train_validation_split = tfds.Split.TRAIN.subsplit([6, 4])
     as_supervised=True)
 ```
 
-## Explore the data 
+## 探索数据 
 
-Let's take a moment to understand the format of the data. Each example is a sentence representing the movie review and a corresponding label. The sentence is not preprocessed in any way. The label is an integer value of either 0 or 1, where 0 is a negative review, and 1 is a positive review.
+我们花点时间来了解一下数据的格式，每个样本表示电影评论和相应标签的句子，该句子不以任何方式进行预处理。每个标签都是整数值 0 或 1，其中 0 表示负面影评，1 表示正面影评。
 
-Let's print first 10 examples.
-
+我们先打印10个样本。
 
 ```
 train_examples_batch, train_labels_batch = next(iter(train_data.batch(10)))
 train_examples_batch
 ```
 
-Let's also print the first 10 labels.
-
+我们还打印前10个标签。
 
 ```
 train_labels_batch
 ```
 
-## Build the model
+## 构建模
 
-The neural network is created by stacking layers—this requires three main architectural decisions:
+神经网络通过堆叠层创建而成，这需要做出三个架构方面的主要决策：
 
-* How to represent the text?
-* How many layers to use in the model?
-* How many *hidden units* to use for each layer?
+* 如何表示文字？
+* 要在模型中使用多少个层？
+* 要针对每个层使用多少个隐藏单元？
 
-In this example, the input data consists of sentences. The labels to predict are either 0 or 1.
+在此示例中，输入数据由句子组成。要预测的标签是0或1。
 
-One way to represent the text is to convert sentences into embeddings vectors. We can use a pre-trained text embedding as the first layer, which will have two advantages:
-*   we don't have to worry anout text preprocessing,
-*   we can benefit from transfer learning,
-*   the embedding has a fixed size, so it's simpler to process.
+表示文本的一种方法是将句子转换为嵌入向量。我们可以使用预先训练的文本嵌入作为第一层，这将具有两个优点：
+*  我们不必担心文本预处理，
+*  我们可以从迁移学习中受益
+*  嵌入具有固定的大小，因此处理起来更简单。
 
-For this example we will use a **pre-trained text embedding model** from [TensorFlow Hub](https://www.tensorflow.org/hub) called [google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1).
+对于此示例，我们将使用来自[TensorFlow Hub](https://www.tensorflow.org/hub) 的预训练文本嵌入模型，名为[google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1).
 
-There are three other pre-trained models to test for the sake of this tutorial:
+要达到本教程的目的，还有其他三种预训练模型可供测试：
+* [google/tf2-preview/gnews-swivel-20dim-with-oov/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim-with-oov/1) 与 [google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1)相同，但2.5％的词汇量转换为OOV桶。如果模型的任务和词汇表的词汇不完全重叠，这可以提供帮助。
 
-* [google/tf2-preview/gnews-swivel-20dim-with-oov/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim-with-oov/1) - same as [google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1), but with 2.5% vocabulary converted to OOV buckets. This can help if vocabulary of the task and vocabulary of the model don't fully overlap.
-* [google/tf2-preview/nnlm-en-dim50/1](https://tfhub.dev/google/tf2-preview/nnlm-en-dim50/1) - A much larger model with ~1M vocabulary size and 50 dimensions.
-* [google/tf2-preview/nnlm-en-dim128/1](https://tfhub.dev/google/tf2-preview/nnlm-en-dim128/1) - Even larger model with ~1M vocabulary size and 128 dimensions.
+* [google/tf2-preview/nnlm-en-dim50/1](https://tfhub.dev/google/tf2-preview/nnlm-en-dim50/1) 一个更大的模型，具有约1M的词汇量和50个维度。
+* [google/tf2-preview/nnlm-en-dim128/1](https://tfhub.dev/google/tf2-preview/nnlm-en-dim128/1) 甚至更大的模型，具有约1M的词汇量和128个维度。
 
-Let's first create a Keras layer that uses a TensorFlow Hub model to embed the sentences, and try it out on a couple of input examples. Note that no matter the length of the input text, the output shape of the embeddings is: `(num_examples, embedding_dimension)`.
-
+让我们首先创建一个使用TensorFlow Hub模型嵌入句子的Keras层，并在几个输入示例上进行尝试。请注意，无论输入文本的长度如何，嵌入的输出形状为：`(num_examples, embedding_dimension)`。
 
 ```
 embedding = "https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1"
@@ -150,8 +92,7 @@ hub_layer = hub.KerasLayer(embedding, input_shape=[],
 hub_layer(train_examples_batch[:3])
 ```
 
-Let's now build the full model:
-
+现在让我们构建完整的模型：
 
 ```
 model = tf.keras.Sequential()
@@ -162,24 +103,23 @@ model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
 model.summary()
 ```
 
-The layers are stacked sequentially to build the classifier:
+这些图层按顺序堆叠以构建分类器：
+1. 第一层是TensorFlow Hub层。该层使用预先训练的保存模型将句子映射到其嵌入向量。我们正在使用的预训练文本嵌入模型([google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1))将句子拆分为标记，嵌入每个标记然后组合嵌入。生成的维度为：`(num_examples, embedding_dimension)`。
 
-1. The first layer is a TensorFlow Hub layer. This layer uses a pre-trained Saved Model to map a sentence into its embedding vector. The pre-trained text embedding model that we are using ([google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1)) splits the sentence into tokens, embeds each token and then combines the embedding. The resulting dimensions are: `(num_examples, embedding_dimension)`.
-2. This fixed-length output vector is piped through a fully-connected (`Dense`) layer with 16 hidden units.
-3. The last layer is densely connected with a single output node. Using the `sigmoid` activation function, this value is a float between 0 and 1, representing a probability, or confidence level.
+2. 这个固定长度的输出矢量通过一个带有16个隐藏单元的完全连接（“密集”）层传输。
+3. 最后一层与单个输出节点密集连接。使用`sigmoid`激活函数，该值是0到1之间的浮点数，表示概率或置信度。
 
-Let's compile the model.
+让我们编译模型。
 
-### Loss function and optimizer
+### 损失函数和优化器
 
-A model needs a loss function and an optimizer for training. Since this is a binary classification problem and the model outputs a probability (a single-unit layer with a sigmoid activation), we'll use the `binary_crossentropy` loss function. 
+模型在训练时需要一个损失函数和一个优化器。由于这是一个二元分类问题且模型会输出一个概率（应用 S 型激活函数的单个单元层），因此我们将使用 binary_crossentropy 损失函数。
 
-This isn't the only choice for a loss function, you could, for instance, choose `mean_squared_error`. But, generally, `binary_crossentropy` is better for dealing with probabilities—it measures the "distance" between probability distributions, or in our case, between the ground-truth distribution and the predictions.
+该函数并不是唯一的损失函数，例如，您可以选择 mean_squared_error。但一般来说，binary_crossentropy 更适合处理概率问题，它可测量概率分布之间的“差距”，在本例中则为实际分布和预测之间的“差距”。
 
-Later, when we are exploring regression problems (say, to predict the price of a house), we will see how to use another loss function called mean squared error.
+稍后，在探索回归问题（比如预测房价）时，我们将了解如何使用另一个称为均方误差的损失函数。
 
-Now, configure the model to use an optimizer and a loss function:
-
+现在，配置模型以使用优化器和损失函数：
 
 ```
 model.compile(optimizer='adam',
@@ -187,10 +127,9 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 ```
 
-## Train the model
+## 训练模型
 
-Train the model for 40 epochs in mini-batches of 512 samples. This is 40 iterations over all samples in the `x_train` and `y_train` tensors. While training, monitor the model's loss and accuracy on the 10,000 samples from the validation set:
-
+用有 512 个样本的小批次训练模型 40 个周期。这将对 x_train 和 y_train 张量中的所有样本进行 40 次迭代。在训练期间，监控模型在验证集的 10000 个样本上的损失和准确率：
 
 ```
 history = model.fit(train_data.shuffle(10000).batch(512),
@@ -199,10 +138,9 @@ history = model.fit(train_data.shuffle(10000).batch(512),
                     verbose=1)
 ```
 
-## Evaluate the model
+## 评估模型
 
-And let's see how the model performs. Two values will be returned. Loss (a number which represents our error, lower values are better), and accuracy.
-
+我们来看看模型的表现如何。模型会返回两个值：损失（表示误差的数字，越低越好）和准确率。
 
 ```
 results = model.evaluate(test_data.batch(512), verbose=0)
@@ -210,8 +148,9 @@ for name, value in zip(model.metrics_names, results):
   print("%s: %.3f" % (name, value))
 ```
 
-This fairly naive approach achieves an accuracy of about 87%. With more advanced approaches, the model should get closer to 95%.
+使用这种相当简单的方法可实现约 87% 的准确率。如果采用更高级的方法，模型的准确率应该会接近 95%。
 
-## Further reading
+## 进一步阅读
 
-For a more general way to work with string inputs and for a more detailed analysis of the progress of accuracy and loss during training, take a look [here](https://www.tensorflow.org/tutorials/keras/basic_text_classification).
+要了解处理字符串输入的更一般方法，以及更详细地分析训练过程中的准确性和损失，请查看 https://www.tensorflow.org/tutorials/keras/basic_text_classification
+
