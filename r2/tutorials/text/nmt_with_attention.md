@@ -64,10 +64,12 @@ path_to_zip = tf.keras.utils.get_file(
 path_to_file = os.path.dirname(path_to_zip)+"/spa-eng/spa.txt"
 ```
 
+```output
     Downloading data from http://storage.googleapis.com/download.tensorflow.org/data/spa-eng.zip
     2646016/2638744 [==============================] - 0s 0us/step
     2654208/2638744 [==============================] - 0s 0us/step
-    
+```
+
 ```python
 # Converts the unicode file to ascii
 def unicode_to_ascii(s):
@@ -103,9 +105,10 @@ print(preprocess_sentence(en_sentence))
 print(preprocess_sentence(sp_sentence).encode('utf-8'))
 ```
 
+```output
     <start> may i borrow this book ? <end>
     <start> ¿ puedo tomar prestado este libro ? <end>
-
+```
 
 ```python
 # 1. Remove the accents
@@ -126,9 +129,10 @@ print(en[-1])
 print(sp[-1])
 ```
 
+```output
     <start> if you want to sound like a native speaker , you must be willing to practice saying the same sentence over and over in the same way that banjo players practice the same phrase over and over until they can play it correctly and at the desired tempo . <end>
     <start> si quieres sonar como un hablante nativo , debes estar dispuesto a practicar diciendo la misma frase una y otra vez de la misma manera en que un musico de banjo practica el mismo fraseo una y otra vez hasta que lo puedan tocar correctamente y en el tiempo esperado . <end>
-
+```
 
 
 ```python
@@ -185,11 +189,9 @@ input_tensor_train, input_tensor_val, target_tensor_train, target_tensor_val = t
 len(input_tensor_train), len(target_tensor_train), len(input_tensor_val), len(target_tensor_val)
 ```
 
-
-
-
+```output
     (24000, 24000, 6000, 6000)
-
+```
 
 
 
@@ -209,6 +211,7 @@ print ("Target Language; index to word mapping")
 convert(targ_lang, target_tensor_train[0])
 ```
 
+```output
     Input Language; index to word mapping
     1 ----> <start>
     8 ----> no
@@ -228,7 +231,7 @@ convert(targ_lang, target_tensor_train[0])
     6 ----> you
     3 ----> .
     2 ----> <end>
-
+```
 
 ### 创建 `tf.data` 数据集
 
@@ -252,11 +255,9 @@ example_input_batch, example_target_batch = next(iter(dataset))
 example_input_batch.shape, example_target_batch.shape
 ```
 
-
-
-
+```output
     (TensorShape([64, 16]), TensorShape([64, 11]))
-
+```
 
 
 ## 编写编码器和解码器模型
@@ -329,9 +330,10 @@ print ('Encoder output shape: (batch size, sequence length, units) {}'.format(sa
 print ('Encoder Hidden state shape: (batch size, units) {}'.format(sample_hidden.shape))
 ```
 
+```output
     Encoder output shape: (batch size, sequence length, units) (64, 16, 1024)
     Encoder Hidden state shape: (batch size, units) (64, 1024)
-
+```
 
 
 ```python
@@ -372,9 +374,10 @@ print("Attention result shape: (batch size, units) {}".format(attention_result.s
 print("Attention weights shape: (batch_size, sequence_length, 1) {}".format(attention_weights.shape))
 ```
 
+```output
     Attention result shape: (batch size, units) (64, 1024)
     Attention weights shape: (batch_size, sequence_length, 1) (64, 16, 1)
-
+```
 
 
 ```
@@ -425,8 +428,9 @@ sample_decoder_output, _, _ = decoder(tf.random.uniform((64, 1)),
 print ('Decoder output shape: (batch_size, vocab size) {}'.format(sample_decoder_output.shape))
 ```
 
+```output
     Decoder output shape: (batch_size, vocab size) (64, 4935)
-
+```
 
 ## 定义优化器和损失函数
 
@@ -528,6 +532,7 @@ for epoch in range(EPOCHS):
   print('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
 ```
 
+```output
     ......    
     Epoch 10 Batch 0 Loss 0.1219
     Epoch 10 Batch 100 Loss 0.1374
@@ -535,7 +540,7 @@ for epoch in range(EPOCHS):
     Epoch 10 Batch 300 Loss 0.0994
     Epoch 10 Loss 0.1088
     Time taken for 1 epoch 29.2324090004 sec
-    
+```   
 
 
 ## 翻译
@@ -623,17 +628,14 @@ def translate(sentence):
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 ```
 
-
-    <tensorflow.python.training.tracking.util.CheckpointLoadStatus at 0x7f747825b850>
-
-
 ```python
 translate(u'hace mucho frio aqui.')
 ```
 
+```output
     Input: <start> hace mucho frio aqui . <end>
     Predicted translation: it s very cold here . <end>
-
+```
 
 
 ![png](nmt_with_attention_43_1.png)
@@ -644,9 +646,10 @@ translate(u'hace mucho frio aqui.')
 translate(u'esta es mi vida.')
 ```
 
+```output
     Input: <start> esta es mi vida . <end>
     Predicted translation: this is my life . <end>
-
+```
 
 
 ![png](nmt_with_attention_44_1.png)
@@ -657,13 +660,12 @@ translate(u'esta es mi vida.')
 translate(u'¿todavia estan en casa?')
 ```
 
+```output
     Input: <start> ¿ todavia estan en casa ? <end>
     Predicted translation: are you still at home ? <end>
+```
 
-
-
-![png](nmt_with_attention_files/nmt_with_attention_45_1.png)
-
+![png](nmt_with_attention_45_1.png)
 
 
 ```python
@@ -671,10 +673,10 @@ translate(u'¿todavia estan en casa?')
 translate(u'trata de averiguarlo.')
 ```
 
+```output
     Input: <start> trata de averiguarlo . <end>
     Predicted translation: try to figure it out . <end>
-
-
+```
 
 ![png](nmt_with_attention_46_1.png)
 
