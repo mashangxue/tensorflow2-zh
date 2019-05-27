@@ -1,63 +1,28 @@
 ---
-title: Neural Machine Translation with Attention
+title: 采用注意力机制的神经机器翻译(tensorflow2官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-text-nmt_with_attention
 ---
 
+# 采用注意力机制的神经机器翻译(tensorflow2官方教程翻译)
 
-##### Copyright 2019 The TensorFlow Authors.
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md)
 
-Licensed under the Apache License, Version 2.0 (the "License");
+本教程训练一个序列到序列 (seq2seq)模型，实现西班牙语到英语的翻译。这是一个高级示例，要求您对序列到序列模型有一定的了解。
 
+训练模型后，输入一个西班牙语句子将返回对应英文翻译，例如 *"¿todavia estan en casa?"* ，返回 *"are you still at home?"*
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+对于一个玩具例子来说，翻译质量是合理的，但是生成的注意情节可能更有趣。这说明在翻译过程中，模型注意到了输入句子的哪些部分:
 
-# Neural Machine Translation with Attention
+<img src="https://tensorflow.google.cn/images/spanish-english.png" alt="spanish-english attention plot">
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/text/nmt_with_attention">
-    <img src="https://www.tensorflow.org/images/tf_logo_32px.png" />
-    View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/text/nmt_with_attention.ipynb">
-    <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />
-    Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/nmt_with_attention.ipynb">
-    <img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />
-    View source on GitHub</a>
-  </td>
-</table>
+注意：此示例在单个P100 GPU上运行大约需要10分钟。
 
-This notebook trains a sequence to sequence (seq2seq) model for Spanish to English translation. This is an advanced example that assumes some knowledge of sequence to sequence models.
-
-After training the model in this notebook, you will be able to input a Spanish sentence, such as *"¿todavia estan en casa?"*, and return the English translation: *"are you still at home?"*
-
-The translation quality is reasonable for a toy example, but the generated attention plot is perhaps more interesting. This shows which parts of the input sentence has the model's attention while translating:
-
-<img src="https://tensorflow.org/images/spanish-english.png" alt="spanish-english attention plot">
-
-Note: This example takes approximately 10 mintues to run on a single P100 GPU.
-
-
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 !pip install tensorflow-gpu==2.0.0-alpha0
@@ -74,23 +39,23 @@ import io
 import time
 ```
 
-## Download and prepare the dataset
+## 下载并准备数据集
 
-We'll use a language dataset provided by http://www.manythings.org/anki/. This dataset contains language translation pairs in the format:
+我们将使用 http://www.manythings.org/anki/  提供的语言数据集。此数据集包含以下格式的语言翻译对：
 
 ```
 May I borrow this book?	¿Puedo tomar prestado este libro?
 ```
 
-There are a variety of languages available, but we'll use the English-Spanish dataset. For convenience, we've hosted a copy of this dataset on Google Cloud, but you can also download your own copy. After downloading the dataset, here are the steps we'll take to prepare the data:
+有多种语言可供选择，但我们将使用英语 - 西班牙语数据集。为方便起见，我们在Google Cloud上托管了此数据集的副本，但您也可以下载自己的副本。下载数据集后，以下是我们准备数据的步骤：
 
-1. Add a *start* and *end* token to each sentence.
-2. Clean the sentences by removing special characters.
-3. Create a word index and reverse word index (dictionaries mapping from word → id and id → word).
-4. Pad each sentence to a maximum length.
+1. 为每个句子添加开始和结束标记。
+2. 删除特殊字符来清除句子。
+3. 创建一个单词索引和反向单词索引（从单词→id和id→单词映射的字典）。
+4. 将每个句子填充到最大长度。
 
 
-```
+```python
 # Download the file
 path_to_zip = tf.keras.utils.get_file(
     'spa-eng.zip', origin='http://storage.googleapis.com/download.tensorflow.org/data/spa-eng.zip',
@@ -102,10 +67,8 @@ path_to_file = os.path.dirname(path_to_zip)+"/spa-eng/spa.txt"
     Downloading data from http://storage.googleapis.com/download.tensorflow.org/data/spa-eng.zip
     2646016/2638744 [==============================] - 0s 0us/step
     2654208/2638744 [==============================] - 0s 0us/step
-
-
-
-```
+    
+```python
 # Converts the unicode file to ascii
 def unicode_to_ascii(s):
     return ''.join(c for c in unicodedata.normalize('NFD', s)
@@ -133,7 +96,7 @@ def preprocess_sentence(w):
 ```
 
 
-```
+```python
 en_sentence = u"May I borrow this book?"
 sp_sentence = u"¿Puedo tomar prestado este libro?"
 print(preprocess_sentence(en_sentence))
@@ -144,8 +107,7 @@ print(preprocess_sentence(sp_sentence).encode('utf-8'))
     <start> ¿ puedo tomar prestado este libro ? <end>
 
 
-
-```
+```python
 # 1. Remove the accents
 # 2. Clean the sentences
 # 3. Return word pairs in the format: [ENGLISH, SPANISH]
@@ -158,7 +120,7 @@ def create_dataset(path, num_examples):
 ```
 
 
-```
+```python
 en, sp = create_dataset(path_to_file, None)
 print(en[-1])
 print(sp[-1])
@@ -169,13 +131,13 @@ print(sp[-1])
 
 
 
-```
+```python
 def max_length(tensor):
     return max(len(t) for t in tensor)
 ```
 
 
-```
+```python
 def tokenize(lang):
   lang_tokenizer = tf.keras.preprocessing.text.Tokenizer(
       filters='')
@@ -190,7 +152,7 @@ def tokenize(lang):
 ```
 
 
-```
+```python
 def load_dataset(path, num_examples=None):
     # creating cleaned input, output pairs
     targ_lang, inp_lang = create_dataset(path, num_examples)
@@ -201,12 +163,11 @@ def load_dataset(path, num_examples=None):
     return input_tensor, target_tensor, inp_lang_tokenizer, targ_lang_tokenizer
 ```
 
-### Limit the size of the dataset to experiment faster (optional)
+### 限制数据集的大小以更快地进行实验（可选）
 
-Training on the complete dataset of >100,000 sentences will take a long time. To train faster, we can limit the size of the dataset to 30,000 sentences (of course, translation quality degrades with less data):
+对 > 100,000个句子的完整数据集进行训练需要很长时间。为了更快地训练，我们可以将数据集的大小限制为30,000个句子（当然，翻译质量会随着数据的减少而降低）：
 
-
-```
+```python
 # Try experimenting with the size of that dataset
 num_examples = 30000
 input_tensor, target_tensor, inp_lang, targ_lang = load_dataset(path_to_file, num_examples)
@@ -216,7 +177,7 @@ max_length_targ, max_length_inp = max_length(target_tensor), max_length(input_te
 ```
 
 
-```
+```python
 # Creating training and validation sets using an 80-20 split
 input_tensor_train, input_tensor_val, target_tensor_train, target_tensor_val = train_test_split(input_tensor, target_tensor, test_size=0.2)
 
@@ -232,7 +193,7 @@ len(input_tensor_train), len(target_tensor_train), len(input_tensor_val), len(ta
 
 
 
-```
+```python
 def convert(lang, tensor):
   for t in tensor:
     if t!=0:
@@ -240,7 +201,7 @@ def convert(lang, tensor):
 ```
 
 
-```
+```python
 print ("Input Language; index to word mapping")
 convert(inp_lang, input_tensor_train[0])
 print ()
@@ -269,10 +230,10 @@ convert(targ_lang, target_tensor_train[0])
     2 ----> <end>
 
 
-### Create a tf.data dataset
+### 创建 `tf.data` 数据集
 
 
-```
+```python
 BUFFER_SIZE = len(input_tensor_train)
 BATCH_SIZE = 64
 steps_per_epoch = len(input_tensor_train)//BATCH_SIZE
@@ -286,7 +247,7 @@ dataset = dataset.batch(BATCH_SIZE, drop_remainder=True)
 ```
 
 
-```
+```python
 example_input_batch, example_target_batch = next(iter(dataset))
 example_input_batch.shape, example_target_batch.shape
 ```
@@ -298,39 +259,45 @@ example_input_batch.shape, example_target_batch.shape
 
 
 
-## Write the encoder and decoder model
+## 编写编码器和解码器模型
 
-Here, we'll implement an encoder-decoder model with attention which you can read about in the TensorFlow [Neural Machine Translation (seq2seq) tutorial](https://www.tensorflow.org/tutorials/seq2seq). This example uses a more recent set of APIs. This notebook implements the [attention equations](https://www.tensorflow.org/tutorials/seq2seq#background_on_the_attention_mechanism) from the seq2seq tutorial. The following diagram shows that each input words is assigned a weight by the attention mechanism which is then used by the decoder to predict the next word in the sentence.
+我们将实现一个使用注意力机制的编码器-解码器模型，您可以在TensorFlow [神经机器翻译（seq2seq）教程](https://www.tensorflow.org/tutorials/seq2seq)中阅读。此示例使用更新的API集，实现了seq2seq教程中的注意方程式。下图显示了每个输入单词由注意机制分配权重，然后解码器使用该权重来预测句子中的下一个单词。
 
-<img src="https://www.tensorflow.org/images/seq2seq/attention_mechanism.jpg" width="500" alt="attention mechanism">
+<img src="https://tensorflow.google.cn/images/seq2seq/attention_mechanism.jpg" width="500" alt="attention mechanism">
 
-The input is put through an encoder model which gives us the encoder output of shape *(batch_size, max_length, hidden_size)* and the encoder hidden state of shape *(batch_size, hidden_size)*.
 
-Here are the equations that are implemented:
+通过编码器模型输入，该模型给出了形状 *(batch_size, max_length, hidden_size)* 的编码器输出和形状 *(batch_size, hidden_size)* 的编码器隐藏状态。
 
-<img src="https://www.tensorflow.org/images/seq2seq/attention_equation_0.jpg" alt="attention equation 0" width="800">
-<img src="https://www.tensorflow.org/images/seq2seq/attention_equation_1.jpg" alt="attention equation 1" width="800">
+下面是实现的方程:
 
-We're using *Bahdanau attention*. Lets decide on notation before writing the simplified form:
+<img src="https://tensorflow.google.cn/images/seq2seq/attention_equation_0.jpg" alt="attention equation 0" width="800">
 
-* FC = Fully connected (dense) layer
-* EO = Encoder output
-* H = hidden state
-* X = input to the decoder
+<img src="https://tensorflow.google.cn/images/seq2seq/attention_equation_1.jpg" alt="attention equation 1" width="800">
 
-And the pseudo-code:
+我们用的是 *Bahdanau attention* 。在写出简化形式之前，我们先来定义符号:
+
+* FC = Fully connected (dense) layer 完全连接（密集）层
+* EO = Encoder output 编码器输出
+* H = hidden state 隐藏的状态
+* X = input to the decoder 输入到解码器
+
+定义伪代码：
 
 * `score = FC(tanh(FC(EO) + FC(H)))`
-* `attention weights = softmax(score, axis = 1)`. Softmax by default is applied on the last axis but here we want to apply it on the *1st axis*, since the shape of score is *(batch_size, max_length, hidden_size)*. `Max_length` is the length of our input. Since we are trying to assign a weight to each input, softmax should be applied on that axis.
-* `context vector = sum(attention weights * EO, axis = 1)`. Same reason as above for choosing axis as 1.
-* `embedding output` = The input to the decoder X is passed through an embedding layer.
+
+* `attention weights = softmax(score, axis = 1)`. 默认情况下Softmax应用于最后一个轴，但是我们要在 *第一轴* 上应用它，因为得分的形状是 *(batch_size, max_length, hidden_size)* 。`Max_length` 是我们输入的长度。由于我们尝试为每个输入分配权重，因此应在该轴上应用softmax。
+
+* `context vector = sum(attention weights * EO, axis = 1)`. 选择轴为1的原因与上述相同。
+
+* `embedding output` = 译码器X的输入通过嵌入层传递
+
 * `merged vector = concat(embedding output, context vector)`
-* This merged vector is then given to the GRU
 
-The shapes of all the vectors at each step have been specified in the comments in the code:
+* 将该合并的矢量提供给GRU
 
+每个步骤中所有向量的形状都已在代码中的注释中指定：
 
-```
+```python
 class Encoder(tf.keras.Model):
   def __init__(self, vocab_size, embedding_dim, enc_units, batch_sz):
     super(Encoder, self).__init__()
@@ -352,7 +319,7 @@ class Encoder(tf.keras.Model):
 ```
 
 
-```
+```python
 encoder = Encoder(vocab_inp_size, embedding_dim, units, BATCH_SIZE)
 
 # sample input
@@ -367,7 +334,7 @@ print ('Encoder Hidden state shape: (batch size, units) {}'.format(sample_hidden
 
 
 
-```
+```python
 class BahdanauAttention(tf.keras.Model):
   def __init__(self, units):
     super(BahdanauAttention, self).__init__()
@@ -397,7 +364,7 @@ class BahdanauAttention(tf.keras.Model):
 ```
 
 
-```
+```python
 attention_layer = BahdanauAttention(10)
 attention_result, attention_weights = attention_layer(sample_hidden, sample_output)
 
@@ -449,7 +416,7 @@ class Decoder(tf.keras.Model):
 ```
 
 
-```
+```python
 decoder = Decoder(vocab_tar_size, embedding_dim, units, BATCH_SIZE)
 
 sample_decoder_output, _, _ = decoder(tf.random.uniform((64, 1)),
@@ -461,10 +428,10 @@ print ('Decoder output shape: (batch_size, vocab size) {}'.format(sample_decoder
     Decoder output shape: (batch_size, vocab size) (64, 4935)
 
 
-## Define the optimizer and the loss function
+## 定义优化器和损失函数
 
 
-```
+```python
 optimizer = tf.keras.optimizers.Adam()
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(
     from_logits=True, reduction='none')
@@ -479,10 +446,10 @@ def loss_function(real, pred):
   return tf.reduce_mean(loss_)
 ```
 
-## Checkpoints (Object-based saving)
+## Checkpoints检查点（基于对象的保存）
 
 
-```
+```python
 checkpoint_dir = './training_checkpoints'
 checkpoint_prefix = os.path.join(checkpoint_dir, "ckpt")
 checkpoint = tf.train.Checkpoint(optimizer=optimizer,
@@ -490,18 +457,18 @@ checkpoint = tf.train.Checkpoint(optimizer=optimizer,
                                  decoder=decoder)
 ```
 
-## Training
+## 训练
 
-1. Pass the *input* through the *encoder* which return *encoder output* and the *encoder hidden state*.
-2. The encoder output, encoder hidden state and the decoder input (which is the *start token*) is passed to the decoder.
-3. The decoder returns the *predictions* and the *decoder hidden state*.
-4. The decoder hidden state is then passed back into the model and the predictions are used to calculate the loss.
-5. Use *teacher forcing* to decide the next input to the decoder.
-6. *Teacher forcing* is the technique where the *target word* is passed as the *next input* to the decoder.
-7. The final step is to calculate the gradients and apply it to the optimizer and backpropagate.
+1. 通过编码器传递输入，编码器返回编码器输出和编码器隐藏状态。
+2. 编码器输出，编码器隐藏状态和解码器输入（它是开始标记）被传递给解码器。
+3. 解码器返回预测和解码器隐藏状态。
+4. 然后将解码器隐藏状态传递回模型，并使用预测来计算损失。
+5. 使用 *teacher forcing* 决定解码器的下一个输入。
+6. *Teacher forcing* 是将目标字作为下一个输入传递给解码器的技术。
+7. 最后一步是计算梯度并将其应用于优化器并反向传播。
 
 
-```
+```python
 @tf.function
 def train_step(inp, targ, enc_hidden):
   loss = 0
@@ -535,7 +502,7 @@ def train_step(inp, targ, enc_hidden):
 ```
 
 
-```
+```python
 EPOCHS = 10
 
 for epoch in range(EPOCHS):
@@ -561,69 +528,7 @@ for epoch in range(EPOCHS):
   print('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
 ```
 
-    Epoch 1 Batch 0 Loss 4.5296
-    Epoch 1 Batch 100 Loss 2.2811
-    Epoch 1 Batch 200 Loss 1.7985
-    Epoch 1 Batch 300 Loss 1.6724
-    Epoch 1 Loss 2.0235
-    Time taken for 1 epoch 49.1062328815 sec
-    
-    Epoch 2 Batch 0 Loss 1.5293
-    Epoch 2 Batch 100 Loss 1.5437
-    Epoch 2 Batch 200 Loss 1.3491
-    Epoch 2 Batch 300 Loss 1.2889
-    Epoch 2 Loss 1.4265
-    Time taken for 1 epoch 29.4873349667 sec
-    
-    Epoch 3 Batch 0 Loss 1.2018
-    Epoch 3 Batch 100 Loss 1.1040
-    Epoch 3 Batch 200 Loss 0.9250
-    Epoch 3 Batch 300 Loss 0.9125
-    Epoch 3 Loss 1.0436
-    Time taken for 1 epoch 28.699944973 sec
-    
-    Epoch 4 Batch 0 Loss 0.8126
-    Epoch 4 Batch 100 Loss 0.7823
-    Epoch 4 Batch 200 Loss 0.5725
-    Epoch 4 Batch 300 Loss 0.6476
-    Epoch 4 Loss 0.7258
-    Time taken for 1 epoch 29.6418788433 sec
-    
-    Epoch 5 Batch 0 Loss 0.5145
-    Epoch 5 Batch 100 Loss 0.5257
-    Epoch 5 Batch 200 Loss 0.3696
-    Epoch 5 Batch 300 Loss 0.5020
-    Epoch 5 Loss 0.5033
-    Time taken for 1 epoch 28.412322998 sec
-    
-    Epoch 6 Batch 0 Loss 0.3592
-    Epoch 6 Batch 100 Loss 0.3347
-    Epoch 6 Batch 200 Loss 0.2913
-    Epoch 6 Batch 300 Loss 0.3263
-    Epoch 6 Loss 0.3518
-    Time taken for 1 epoch 29.493874073 sec
-    
-    Epoch 7 Batch 0 Loss 0.2680
-    Epoch 7 Batch 100 Loss 0.2309
-    Epoch 7 Batch 200 Loss 0.2119
-    Epoch 7 Batch 300 Loss 0.2523
-    Epoch 7 Loss 0.2533
-    Time taken for 1 epoch 28.5080609322 sec
-    
-    Epoch 8 Batch 0 Loss 0.1936
-    Epoch 8 Batch 100 Loss 0.1904
-    Epoch 8 Batch 200 Loss 0.1448
-    Epoch 8 Batch 300 Loss 0.1672
-    Epoch 8 Loss 0.1865
-    Time taken for 1 epoch 29.7650489807 sec
-    
-    Epoch 9 Batch 0 Loss 0.1671
-    Epoch 9 Batch 100 Loss 0.1587
-    Epoch 9 Batch 200 Loss 0.1289
-    Epoch 9 Batch 300 Loss 0.1193
-    Epoch 9 Loss 0.1414
-    Time taken for 1 epoch 29.6284649372 sec
-    
+    ......    
     Epoch 10 Batch 0 Loss 0.1219
     Epoch 10 Batch 100 Loss 0.1374
     Epoch 10 Batch 200 Loss 0.1084
@@ -633,16 +538,15 @@ for epoch in range(EPOCHS):
     
 
 
-## Translate
+## 翻译
 
-* The evaluate function is similar to the training loop, except we don't use *teacher forcing* here. The input to the decoder at each time step is its previous predictions along with the hidden state and the encoder output.
-* Stop predicting when the model predicts the *end token*.
-* And store the *attention weights for every time step*.
+* 评估函数类似于训练循环，除了我们在这里不使用 *teacher forcing* 。解码器在每个时间步长的输入是其先前的预测，以及隐藏状态和编码器的输出。
+* 停止预测模型何时预测结束标记。
+* 并存储每个时间步的注意力。
 
-Note: The encoder output is calculated only once for one input.
+注意：编码器输出仅针对一个输入计算一次。
 
-
-```
+```python
 def evaluate(sentence):
     attention_plot = np.zeros((max_length_targ, max_length_inp))
 
@@ -685,7 +589,7 @@ def evaluate(sentence):
 ```
 
 
-```
+```python
 # function for plotting the attention weights
 def plot_attention(attention, sentence, predicted_sentence):
     fig = plt.figure(figsize=(10,10))
@@ -701,7 +605,7 @@ def plot_attention(attention, sentence, predicted_sentence):
 ```
 
 
-```
+```python
 def translate(sentence):
     result, sentence, attention_plot = evaluate(sentence)
 
@@ -712,23 +616,18 @@ def translate(sentence):
     plot_attention(attention_plot, sentence.split(' '), result.split(' '))
 ```
 
-## Restore the latest checkpoint and test
+## 恢复最新的检查点并进行测试
 
-
-```
+```python
 # restoring the latest checkpoint in checkpoint_dir
 checkpoint.restore(tf.train.latest_checkpoint(checkpoint_dir))
 ```
 
 
-
-
     <tensorflow.python.training.tracking.util.CheckpointLoadStatus at 0x7f747825b850>
 
 
-
-
-```
+```python
 translate(u'hace mucho frio aqui.')
 ```
 
@@ -737,11 +636,11 @@ translate(u'hace mucho frio aqui.')
 
 
 
-![png](nmt_with_attention_files/nmt_with_attention_43_1.png)
+![png](nmt_with_attention_43_1.png)
 
 
 
-```
+```python
 translate(u'esta es mi vida.')
 ```
 
@@ -750,11 +649,11 @@ translate(u'esta es mi vida.')
 
 
 
-![png](nmt_with_attention_files/nmt_with_attention_44_1.png)
+![png](nmt_with_attention_44_1.png)
 
 
 
-```
+```python
 translate(u'¿todavia estan en casa?')
 ```
 
@@ -767,7 +666,7 @@ translate(u'¿todavia estan en casa?')
 
 
 
-```
+```python
 # wrong translation
 translate(u'trata de averiguarlo.')
 ```
@@ -777,11 +676,11 @@ translate(u'trata de averiguarlo.')
 
 
 
-![png](nmt_with_attention_files/nmt_with_attention_46_1.png)
+![png](nmt_with_attention_46_1.png)
 
 
-## Next steps
+## 下一步
 
-* [Download a different dataset](http://www.manythings.org/anki/) to experiment with translations, for example, English to German, or English to French.
-* Experiment with training on a larger dataset, or using more epochs
+* 下载[不同的数据集](http://www.manythings.org/anki/)以试验翻译，例如，英语到德语，或英语到法语。
+* 尝试对更大的数据集进行训练，或使用更多的迭代周期
 
