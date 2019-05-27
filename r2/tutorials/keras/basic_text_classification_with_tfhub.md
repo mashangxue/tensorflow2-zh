@@ -18,7 +18,7 @@ abbrlink: tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub
 
 本教程演示了使用TensorFlow Hub和Keras进行迁移学习的基本应用。
 
-数据集使用 [IMDB 数据集](https://tensorflow.google.cn/api_docs/python/tf/keras/datasets/imdb)，其中包含来自互联网电影数据库https://www.imdb.com/的 50000 条影评文本。我们将这些影评拆分为训练集（25000 条影评）和测试集（25000 条影评）。训练集和测试集之间达成了平衡，意味着它们包含相同数量的正面和负面影评。
+数据集使用 [IMDB 数据集](https://tensorflow.google.cn/api_docs/python/tf/keras/datasets/imdb)，其中包含来自互联网电影数据库  https://www.imdb.com/ 的50000 条影评文本。我们将这些影评拆分为训练集（25000 条影评）和测试集（25000 条影评）。训练集和测试集之间达成了平衡，意味着它们包含相同数量的正面和负面影评。
 
 此教程使用[tf.keras](https://www.tensorflow.org/guide/keras)，一种用于在 TensorFlow 中构建和训练模型的高阶 API，以及[TensorFlow Hub](https://www.tensorflow.org/hub)，一个用于迁移学习的库和平台。
 
@@ -116,6 +116,21 @@ model.add(tf.keras.layers.Dense(1, activation='sigmoid'))
 model.summary()
 ```
 
+```output
+            Model: "sequential" 
+            _________________________________________________________________ 
+            Layer (type) Output Shape Param # 
+            =================================================================
+            keras_layer (KerasLayer) (None, 20) 400020 
+            _________________________________________________________________ 
+            dense (Dense) (None, 16) 336
+            _________________________________________________________________ 
+            dense_1 (Dense) (None, 1) 17 
+            ================================================================= 
+            Total params: 400,373 Trainable params: 400,373 Non-trainable params: 0 
+            _________________________________________________________________
+```
+
 这些图层按顺序堆叠以构建分类器：
 1. 第一层是TensorFlow Hub层。该层使用预先训练的保存模型将句子映射到其嵌入向量。我们正在使用的预训练文本嵌入模型([google/tf2-preview/gnews-swivel-20dim/1](https://tfhub.dev/google/tf2-preview/gnews-swivel-20dim/1))将句子拆分为标记，嵌入每个标记然后组合嵌入。生成的维度为：`(num_examples, embedding_dimension)`。
 
@@ -151,6 +166,12 @@ history = model.fit(train_data.shuffle(10000).batch(512),
                     verbose=1)
 ```
 
+```
+...output
+            Epoch 20/20
+            30/30 [==============================] - 4s 144ms/step - loss: 0.2027 - accuracy: 0.9264 - val_loss: 0.3079 - val_accuracy: 0.8697
+```
+
 ## 评估模型
 
 我们来看看模型的表现如何。模型会返回两个值：损失（表示误差的数字，越低越好）和准确率。
@@ -159,6 +180,10 @@ history = model.fit(train_data.shuffle(10000).batch(512),
 results = model.evaluate(test_data.batch(512), verbose=0)
 for name, value in zip(model.metrics_names, results):
   print("%s: %.3f" % (name, value))
+```
+
+```
+            loss: 0.324 accuracy: 0.860
 ```
 
 使用这种相当简单的方法可实现约 87% 的准确率。如果采用更高级的方法，模型的准确率应该会接近 95%。
