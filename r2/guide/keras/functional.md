@@ -1,22 +1,17 @@
+---
+title: The Keras Functional API in TensorFlow(tensorflow2官方教程翻译)
+tags: tensorflow2.0
+categories: tensorflow2官方教程
+top: 1999
+abbrlink: tensorflow/tf2-guide-keras-functional
+---
 
-##### Copyright 2019 The TensorFlow Authors.
+# The Keras Functional API in TensorFlow(tensorflow2官方教程翻译)
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns](https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md)
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# The Keras Functional API in TensorFlow
 
 <table class="tfo-notebook-buttons" align="left">
   <td>
