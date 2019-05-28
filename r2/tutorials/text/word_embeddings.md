@@ -6,29 +6,17 @@ top: 1999
 abbrlink: tensorflow/tf2-tutorials-text-word_embeddings
 ---
 
-# 使用词嵌入
+# 词嵌入 Word embedding (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/text/word_embeddings.ipynb">
-    <img src="https://www.tensorflow.org/images/tf_logo_32px.png" />
-    View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/text/word_embeddings.ipynb">
-    <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />
-    Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/word_embeddings.ipynb">
-    <img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />
-    View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings](https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md)
 
-本章节介绍了词嵌入，它包含完整的代码，可以在小型数据集上从零开始训练词嵌入，并使用[Embedding Projector](http://projector.tensorflow.org) 可视化这些嵌入，如下图所示：
+本文介绍词嵌入向量 Word embedding，包含完整的代码，可以在小型数据集上从零开始训练词嵌入，并使用[Embedding Projector](http://projector.tensorflow.org) 可视化这些嵌入，如下图所示：
 
 <img src="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding.jpg?raw=1" alt="Screenshot of the embedding projector" width="400"/>
+
+> 词嵌入向量(Word Embedding)是NLP里面一个重要的概念，我们可以利用 WordEmbedding 将一个单词转换成固定长度的向量表示，从而便于进行数学处理。
 
 ## 1. 将文本表示为数字
 
@@ -63,9 +51,9 @@ abbrlink: tensorflow/tf2-tutorials-text-word_embeddings
 
 上面是词嵌入的图表，每个单词表示为浮点值的4维向量，另一种考虑嵌入的方法是“查找表”，在学习了这些权重之后，我们可以通过查找表中对应的密集向量来编码每个单词。
 
-## 2. 利用Embedding 层学习词嵌入
+## 2. 利用 Embedding 层学习词嵌入
 
-Keras可以轻松使用词嵌入。我们来看看[Embedding](https://www.tensorflow.org/api_docs/python/tf/keras/layers/Embedding)层。
+Keras可以轻松使用词嵌入。我们来看看 [Embedding](https://tensorflow.goolge.cn/api_docs/python/tf/keras/layers/Embedding) 层。
 
 ```python
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -93,7 +81,7 @@ Embedding层可以理解为一个查询表，它从整数索引（表示特定�
 
 ## 3. 从头开始学习嵌入
 
-我们将在IMDB影评上训练一个情感分类器，在这个过程中，我们将从头开始学习嵌入，通过下载和预处理数据集的代码快速开始(请参阅本教程[tutorial](https://www.tensorflow.org/tutorials/keras/basic_text_classification)了解更多细节)。
+我们将在 IMDB 影评上训练一个情感分类器，在这个过程中，我们将从头开始学习嵌入，通过下载和预处理数据集的代码快速开始(请参阅本教程[tutorial](https://tensorflow.goolge.cn/tutorials/keras/basic_text_classification)了解更多细节)。
 
 
 ```python
@@ -105,7 +93,7 @@ print(train_data[0])
 ```
 
 ```
-[1, 14, 22, 16, 43, 530, 973, 1622, 1385, 65, 458, 4468, 66, 3941, 4, 173, 36, 256, 5, 25, 100, 43, 838, 112, 50, 670, 2, 9, 35, 480, ...]
+      [1, 14, 22, 16, 43, 530, 973, 1622, 1385, 65, 458, 4468, 66, 3941, 4, 173, 36, 256, 5, 25, 100, 43, 838, 112, 50, 670, 2, 9, 35, 480, ...]
 ```
 
 导入时，评论文本是整数编码的（每个整数代表字典中的特定单词）。
@@ -164,10 +152,10 @@ print(train_data[0])
 检查填充数据的第一个元素：
 
 ```
-[   1   14   22   16   43  530  973 1622 1385   65  458 4468   66 3941
-    4  173   36  256    5   25  100   43  838  112   50  670    2    9
-   ...
-    0    0    0    0    0    0    0    0    0    0]
+    [   1   14   22   16   43  530  973 1622 1385   65  458 4468   66 3941
+        4  173   36  256    5   25  100   43  838  112   50  670    2    9
+       ...
+        0    0    0    0    0    0    0    0    0    0]
 ```
 
 ### 3.2. 创建一个简单的模型
@@ -231,10 +219,10 @@ history = model.fit(
 ```
 
 ```
-Train on 20000 samples, validate on 5000 samples
-...
-Epoch 30/30
-20000/20000 [==============================] - 1s 54us/sample - loss: 0.1639 - accuracy: 0.9449 - val_loss: 0.2840 - val_accuracy: 0.8912
+      Train on 20000 samples, validate on 5000 samples
+      ...
+      Epoch 30/30
+      20000/20000 [==============================] - 1s 54us/sample - loss: 0.1639 - accuracy: 0.9449 - val_loss: 0.2840 - val_accuracy: 0.8912
 ```
 
 通过这种方法，我们的模型达到了大约88%的验证精度（注意模型过度拟合，训练精度显著提高）。
@@ -274,7 +262,7 @@ weights = e.get_weights()[0]
 print(weights.shape) # shape: (vocab_size, embedding_dim)
 ```
 ```
-(10000, 16)
+    (10000, 16)
 ```
 
 我们现在将权重写入磁盘。要使用[Embedding Projector](http://projector.tensorflow.org)，我们将以制表符分隔格式上传两个文件：向量文件（包含嵌入）和元数据文件（包含单词）。
@@ -331,4 +319,6 @@ else:
 
 * 要了解有关文本分类的更多信息（包括整体工作流程，如果您对何时使用嵌入与one-hot编码感到好奇），我们推荐[Google的实战课程-文本分类指南](https://developers.google.cn/machine-learning/guides/text-classification/step-2-5)。
 
-
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings](https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md)
