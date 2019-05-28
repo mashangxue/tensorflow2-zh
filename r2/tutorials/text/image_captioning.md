@@ -1,74 +1,36 @@
 ---
-title: Image Captioning with Attention
+title: 使用注意力机制给出图片标题 (tensorflow2官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-text-image_captioning
 ---
 
-##### Copyright 2018 The TensorFlow Authors.
+# 使用注意力机制给出图片标题 (tensorflow2官方教程翻译)
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/image_captioning](https://tensorflow.google.cn/alpha/tutorials/text/image_captioning)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md)
 
+给定如下图像，我们的目标是生成一个标题，例如“冲浪者骑在波浪上”。
 
+![Man Surfing](https://tensorflow.google.cn/images/surf.jpg)
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+在这里，我们将使用基于注意力的模型。这使我们能够在生成标题时查看模型关注的图像部分。
 
-# Image Captioning with Attention
+![Prediction](https://tensorflow.google.cn/images/imcap_prediction.png)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/text/image_captioning">
-    <img src="https://www.tensorflow.org/images/tf_logo_32px.png" />
-    View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/text/image_captioning.ipynb">
-    <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />
-    Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/image_captioning.ipynb">
-    <img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />
-    View source on GitHub</a>
-  </td>
-</table>
+模型体系结构类似于论文[Show, Attend and Tell: Neural Image Caption Generation with Visual Attention](https://arxiv.org/abs/1502.03044).
 
-Given an image like the below, our goal is to generate a caption, such as "a surfer riding on a wave".
+本教程是一个端到端的例子。当您运行时，它下载 [MS-COCO](http://cocodataset.org/#home) 数据集，使用Inception V3对图像子集进行预处理和缓存，训练一个编解码器模型，并使用训练过的模型对新图像生成标题。
 
-![Man Surfing](https://tensorflow.org/images/surf.jpg)
+在本例中，您将使用相对较少的数据来训练模型，大约20,000张图像对应30,000个标题(因为数据集中每个图像都有多个标题)。
 
-*[Image Source](https://commons.wikimedia.org/wiki/Surfing#/media/File:Surfing_in_Hawaii.jpg), License: Public Domain*
+导入库
 
-Here, we'll use an attention-based model. This enables us to see which parts of the image the model focuses on as it generates a caption.
-
-![Prediction](https://tensorflow.org/images/imcap_prediction.png)
-
-This model architecture below is similar to [Show, Attend and Tell: Neural Image Caption Generation with Visual Attention](https://arxiv.org/abs/1502.03044).
-
-This notebook is an end-to-end example. When run, it will download the  [MS-COCO](http://cocodataset.org/#home) dataset, preprocess and cache a subset of the images using Inception V3, train an encoder-decoder model, and use it to generate captions on new images.
-
-In this example, you will train a model on a relatively small amount of data.The model will be trained on the first 30,000 captions (corresponding to about ~20,000 images depending on shuffling, as there are multiple captions per image in the dataset).
-
-
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
-```
 
-
-```
-!pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 
 # We'll generate plots of attention in order to see which parts of an image
@@ -89,14 +51,12 @@ from PIL import Image
 import pickle
 ```
 
-## Download and prepare the MS-COCO dataset
+## 下载并准备MS-COCO数据集
 
-We will use the [MS-COCO dataset](http://cocodataset.org/#home) to train our model. This dataset contains >82,000 images, each of which has been annotated with at least 5 different captions. The code below will download and extract the dataset automatically.
+您将使用MS-COCO数据集来训练我们的模型。该数据集包含超过82,000个图像，每个图像至少有5个不同的标题注释。下面的代码自动下载并提取数据集。
+注意：训练集是一个13GB的文件。
 
-**Caution: large download ahead**. We'll use the training set, it's a 13GB file.
-
-
-```
+```python
 annotation_zip = tf.keras.utils.get_file('captions.zip',
                                           cache_subdir=os.path.abspath('.'),
                                           origin = 'http://images.cocodataset.org/annotations/annotations_trainval2014.zip',
@@ -114,11 +74,11 @@ else:
   PATH = os.path.abspath('.')+'/train2014/'
 ```
 
-## Optionally, limit the size of the training set for faster training
-For this example, we'll select a subset of 30,000 captions and use these and the corresponding images to train our model. As always, captioning quality will improve if you choose to use more data.
+## （可选）限制训练集的大小以加快训练速度
 
+对于本例，我们将选择30,000个标题的子集，并使用这些标题和相应的图像来训练我们的模型。与往常一样，如果您选择使用更多的数据，标题质量将会提高。
 
-```
+```python
 # read the json file
 with open(annotation_file, 'r') as f:
     annotations = json.load(f)
@@ -148,26 +108,23 @@ img_name_vector = img_name_vector[:num_examples]
 ```
 
 
-```
+```python
 len(train_captions), len(all_captions)
 ```
 
-
-
-
-    (30000, 414113)
-
-
-
-## Preprocess the images using InceptionV3
-Next, we will use InceptionV3 (pretrained on Imagenet) to classify each image. We will extract features from the last convolutional layer.
-
-First, we will need to convert the images into the format inceptionV3 expects by:
-* Resizing the image to (299, 299)
-* Using the [preprocess_input](https://www.tensorflow.org/api_docs/python/tf/keras/applications/inception_v3/preprocess_input) method to place the pixels in the range of -1 to 1 (to match the format of the images used to train InceptionV3).
-
-
 ```
+    (30000, 414113)
+```
+
+## 使用InceptionV3预处理图像
+
+接下来，我们将使用InceptionV3（在Imagenet上预训练）对每个图像进行分类。我们将从最后一个卷积层中提取特征。
+
+首先，我们需要将图像转换成inceptionV3期望的格式:
+* 将图像大小调整为299px×299px
+* 使用[preprocess_input](https://www.tensorflow.org/api_docs/python/tf/keras/applications/inception_v3/preprocess_input)方法对图像进行预处理，使图像规范化，使其包含-1到1范围内的像素，这与用于训练InceptionV3的图像的格式相匹配。
+
+```python
 def load_image(image_path):
     img = tf.io.read_file(image_path)
     img = tf.image.decode_jpeg(img, channels=3)
@@ -176,16 +133,13 @@ def load_image(image_path):
     return img, image_path
 ```
 
-## Initialize InceptionV3 and load the pretrained Imagenet weights
+## 初始化InceptionV3并加载预训练的Imagenet权重
 
-To do so, we'll create a tf.keras model where the output layer is the last convolutional layer in the InceptionV3 architecture.
-* Each image is forwarded through the network and the vector that we get at the end is stored in a dictionary (image_name --> feature_vector).
-* We use the last convolutional layer because we are using attention in this example. The shape of the output of this layer is ```8x8x2048```.
-* We avoid doing this during training so it does not become a bottleneck.
-* After all the images are passed through the network, we pickle the dictionary and save it to disk.
+现在您将创建一个 tf.keras 模型，其中输出层是 InceptionV3 体系结构中的最后一个卷积层。该层的输出形状为 `8x8x2048` 。使用最后一个卷积层是因为在这个例子中使用了注意力。您不会在训练期间执行此初始化，因为它可能会成为瓶颈。
+* 您通过网络转发每个图像并将结果向量存储在字典中(image_name --> feature_vector)
+* 在所有图像通过网络传递之后，您挑选字典并将其保存到磁盘。
 
-
-```
+```python
 image_model = tf.keras.applications.InceptionV3(include_top=False,
                                                 weights='imagenet')
 new_input = image_model.input
@@ -194,13 +148,17 @@ hidden_layer = image_model.layers[-1].output
 image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
 ```
 
-## Caching the features extracted from InceptionV3
+## 缓存从InceptionV3中提取的特性
 
-We will pre-process each image with InceptionV3 and cache the output to disk. Caching the output in RAM would be faster but memory intensive, requiring 8 \* 8 \* 2048 floats per image. At the time of writing, this would exceed the memory limitations of Colab (although these may change, an instance appears to have about 12GB of memory currently).
+您将使用InceptionV3预处理每个映像并将输出缓存到磁盘。缓存RAM中的输出会更快但内存密集，每个映像需要 8 \* 8 \* 2048 个浮点数。在撰写本文时，这超出了Colab的内存限制（目前为12GB内存）。
 
-Performance could be improved with a more sophisticated caching strategy (e.g., by sharding the images to reduce random access disk I/O) at the cost of more code.
+可以通过更复杂的缓存策略（例如，通过分割图像以减少随机访问磁盘 I/O）来提高性能，但这需要更多代码。
 
-This will take about 10 minutes to run in Colab with a GPU. If you'd like to see a progress bar, you could: install [tqdm](https://github.com/tqdm/tqdm) (```!pip install tqdm```), import it (```from tqdm import tqdm```), then change this line: 
+使用GPU在Clab中运行大约需要10分钟。如果您想查看进度条，可以：
+使用GPU在Colab中运行大约需要10分钟。如果你想看到一个进度条，你可以：
+* 安装[tqdm](https://github.com/tqdm/tqdm) (```!pip install tqdm```)，
+* 导入它(```from tqdm import tqdm```)，
+* 然后改变这一行：
 
 ```for img, path in image_dataset:```
 
@@ -209,7 +167,7 @@ to:
 ```for img, path in tqdm(image_dataset):```.
 
 
-```
+```python
 # getting the unique images
 encode_train = sorted(set(img_name_vector))
 
@@ -228,22 +186,21 @@ for img, path in image_dataset:
     np.save(path_of_feature, bf.numpy())
 ```
 
-## Preprocess and tokenize the captions
+## 对标题进行预处理和标记
 
-* First, we'll tokenize the captions (e.g., by splitting on spaces). This will give us a  vocabulary of all the unique words in the data (e.g., "surfing", "football", etc).
-* Next, we'll limit the vocabulary size to the top 5,000 words to save memory. We'll replace all other words with the token "UNK" (for unknown).
-* Finally, we create a word --> index mapping and vice-versa.
-* We will then pad all sequences to the be same length as the longest one.
+* 首先，您将对标题进行标记（例如，通过拆分空格）。这为我们提供了数据中所有独特单词的词汇表（例如，“冲浪”，“足球”等）。
+* 接下来，您将词汇量限制为前5,000个单词（以节省内存）。您将使用令牌“UNK”（未知）替换所有其他单词。
+* 然后，您可以创建单词到索引和索引到单词的映射。
+* 最后，将所有序列填充到与最长序列相同的长度。
 
-
-```
+```python
 # This will find the maximum length of any caption in our dataset
 def calc_max_length(tensor):
     return max(len(t) for t in tensor)
 ```
 
 
-```
+```python
 # The steps above is a general process of dealing with text processing
 
 # choosing the top 5000 words from the vocabulary
@@ -256,35 +213,35 @@ train_seqs = tokenizer.texts_to_sequences(train_captions)
 ```
 
 
-```
+```python
 tokenizer.word_index['<pad>'] = 0
 tokenizer.index_word[0] = '<pad>'
 ```
 
 
-```
+```python
 # creating the tokenized vectors
 train_seqs = tokenizer.texts_to_sequences(train_captions)
 ```
 
 
-```
+```python
 # padding each vector to the max_length of the captions
 # if the max_length parameter is not provided, pad_sequences calculates that automatically
 cap_vector = tf.keras.preprocessing.sequence.pad_sequences(train_seqs, padding='post')
 ```
 
 
-```
+```python
 # calculating the max_length
 # used to store the attention weights
 max_length = calc_max_length(train_seqs)
 ```
 
-## Split the data into training and testing
+## 将数据分解为训练和测试
 
 
-```
+```python
 # Create training and validation sets using 80-20 split
 img_name_train, img_name_val, cap_train, cap_val = train_test_split(img_name_vector,
                                                                     cap_vector,
@@ -293,23 +250,20 @@ img_name_train, img_name_val, cap_train, cap_val = train_test_split(img_name_vec
 ```
 
 
-```
+```python
 len(img_name_train), len(cap_train), len(img_name_val), len(cap_val)
 ```
 
-
-
-
-    (24000, 24000, 6000, 6000)
-
-
-
-## Our images and captions are ready! Next, let's create a tf.data dataset to use for training our model.
-
-
-
-
 ```
+    (24000, 24000, 6000, 6000)
+```
+
+
+## 创建用于训练的tf.data数据集
+
+我们的图片和标题已准备就绪！接下来，让我们创建一个tf.data数据集来用于训练我们的模型。
+
+```python
 # feel free to change these parameters according to your system's configuration
 
 BATCH_SIZE = 64
@@ -325,7 +279,7 @@ attention_features_shape = 64
 ```
 
 
-```
+```python
 # loading the numpy files
 def map_func(img_name, cap):
   img_tensor = np.load(img_name.decode('utf-8')+'.npy')
@@ -333,7 +287,7 @@ def map_func(img_name, cap):
 ```
 
 
-```
+```python
 dataset = tf.data.Dataset.from_tensor_slices((img_name_train, cap_train))
 
 # using map to load the numpy files in parallel
@@ -346,19 +300,20 @@ dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
 dataset = dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 ```
 
-## Model
-
-Fun fact, the decoder below is identical to the one in the example for [Neural Machine Translation with Attention](../sequences/nmt_with_attention.ipynb).
-
-The model architecture is inspired by the [Show, Attend and Tell](https://arxiv.org/pdf/1502.03044.pdf) paper.
-
-* In this example, we extract the features from the lower convolutional layer of InceptionV3 giving us a vector of shape (8, 8, 2048).
-* We squash that to a shape of (64, 2048).
-* This vector is then passed through the CNN Encoder(which consists of a single Fully connected layer).
-* The RNN(here GRU) attends over the image to predict the next word.
+## 模型
 
 
-```
+有趣的事实：下面的解码器与 [注意神经机器翻译的示例](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)中的解码器相同。
+
+模型架构的灵感来自论文 [Show, Attend and Tell](https://arxiv.org/pdf/1502.03044.pdf) 。
+
+* 在这个例子中，你从InceptionV3的下卷积层中提取特征，给我们一个形状矢量(8, 8, 2048).
+* 你将它压成（64,2048）的形状。
+* 然后，该向量通过CNN编码器（由单个完全连接的层组成）。
+* RNN（此处为GRU）参与图像以预测下一个单词。
+
+
+```python
 class BahdanauAttention(tf.keras.Model):
   def __init__(self, units):
     super(BahdanauAttention, self).__init__()
@@ -388,7 +343,7 @@ class BahdanauAttention(tf.keras.Model):
 ```
 
 
-```
+```python
 class CNN_Encoder(tf.keras.Model):
     # Since we have already extracted the features and dumped it using pickle
     # This encoder passes those features through a Fully connected layer
@@ -404,7 +359,7 @@ class CNN_Encoder(tf.keras.Model):
 ```
 
 
-```
+```python
 class RNN_Decoder(tf.keras.Model):
   def __init__(self, embedding_dim, units, vocab_size):
     super(RNN_Decoder, self).__init__()
@@ -449,13 +404,13 @@ class RNN_Decoder(tf.keras.Model):
 ```
 
 
-```
+```python
 encoder = CNN_Encoder(embedding_dim)
 decoder = RNN_Decoder(embedding_dim, units, vocab_size)
 ```
 
 
-```
+```python
 optimizer = tf.keras.optimizers.Adam()
 loss_object = tf.keras.losses.SparseCategoricalCrossentropy(
     from_logits=True, reduction='none')
@@ -470,10 +425,10 @@ def loss_function(real, pred):
   return tf.reduce_mean(loss_)
 ```
 
-## Checkpoint
+## Checkpoint 检查点
 
 
-```
+```python
 checkpoint_path = "./checkpoints/train"
 ckpt = tf.train.Checkpoint(encoder=encoder,
                            decoder=decoder,
@@ -482,32 +437,32 @@ ckpt_manager = tf.train.CheckpointManager(ckpt, checkpoint_path, max_to_keep=5)
 ```
 
 
-```
+```python
 start_epoch = 0
 if ckpt_manager.latest_checkpoint:
   start_epoch = int(ckpt_manager.latest_checkpoint.split('-')[-1])
 ```
 
-## Training
+## 训练
 
-* We extract the features stored in the respective `.npy` files and then pass those features through the encoder.
-* The encoder output, hidden state(initialized to 0) and the decoder input (which is the start token) is passed to the decoder.
-* The decoder returns the predictions and the decoder hidden state.
-* The decoder hidden state is then passed back into the model and the predictions are used to calculate the loss.
-* Use teacher forcing to decide the next input to the decoder.
-* Teacher forcing is the technique where the target word is passed as the next input to the decoder.
-* The final step is to calculate the gradients and apply it to the optimizer and backpropagate.
+* 您提取各自.npy文件中存储的特性，然后通过编码器传递这些特性。
+* 编码器输出，隐藏状态（初始化为0）和解码器输入（它是开始标记）被传递给解码器。
+* 解码器返回预测和解码器隐藏状态。
+* 然后将解码器隐藏状态传递回模型，并使用预测来计算损失。
+* 使用teacher forcing决定解码器的下一个输入。
+* Teacher forcing 是将目标字作为下一个输入传递给解码器的技术。
+* 最后一步是计算梯度，并将其应用于优化器和反向传播。
 
 
 
-```
+```python
 # adding this in a separate cell because if you run the training cell
 # many times, the loss_plot array will be reset
 loss_plot = []
 ```
 
 
-```
+```python
 @tf.function
 def train_step(img_tensor, target):
   loss = 0
@@ -542,7 +497,7 @@ def train_step(img_tensor, target):
 ```
 
 
-```
+```python
 EPOCHS = 20
 
 for epoch in range(start_epoch, EPOCHS):
@@ -567,139 +522,8 @@ for epoch in range(start_epoch, EPOCHS):
     print ('Time taken for 1 epoch {} sec\n'.format(time.time() - start))
 ```
 
-    Epoch 1 Batch 0 Loss 2.0556
-    Epoch 1 Batch 100 Loss 1.0668
-    Epoch 1 Batch 200 Loss 0.8879
-    Epoch 1 Batch 300 Loss 0.8524
-    Epoch 1 Loss 1.009767
-    Time taken for 1 epoch 256.95692324638367 sec
-    
-    Epoch 2 Batch 0 Loss 0.8081
-    Epoch 2 Batch 100 Loss 0.7681
-    Epoch 2 Batch 200 Loss 0.6946
-    Epoch 2 Batch 300 Loss 0.7042
-    Epoch 2 Loss 0.756167
-    Time taken for 1 epoch 186.68594098091125 sec
-    
-    Epoch 3 Batch 0 Loss 0.6851
-    Epoch 3 Batch 100 Loss 0.6817
-    Epoch 3 Batch 200 Loss 0.6316
-    Epoch 3 Batch 300 Loss 0.6391
-    Epoch 3 Loss 0.679992
-    Time taken for 1 epoch 186.36522102355957 sec
-    
-    Epoch 4 Batch 0 Loss 0.6381
-    Epoch 4 Batch 100 Loss 0.6314
-    Epoch 4 Batch 200 Loss 0.5915
-    Epoch 4 Batch 300 Loss 0.5961
-    Epoch 4 Loss 0.635389
-    Time taken for 1 epoch 186.6236436367035 sec
-    
-    Epoch 5 Batch 0 Loss 0.5991
-    Epoch 5 Batch 100 Loss 0.5896
-    Epoch 5 Batch 200 Loss 0.5607
-    Epoch 5 Batch 300 Loss 0.5670
-    Epoch 5 Loss 0.602497
-    Time taken for 1 epoch 187.06984400749207 sec
-    
-    Epoch 6 Batch 0 Loss 0.5679
-    Epoch 6 Batch 100 Loss 0.5558
-    Epoch 6 Batch 200 Loss 0.5350
-    Epoch 6 Batch 300 Loss 0.5461
-    Epoch 6 Loss 0.575848
-    Time taken for 1 epoch 187.72310757637024 sec
-    
-    Epoch 7 Batch 0 Loss 0.5503
-    Epoch 7 Batch 100 Loss 0.5283
-    Epoch 7 Batch 200 Loss 0.5120
-    Epoch 7 Batch 300 Loss 0.5242
-    Epoch 7 Loss 0.551446
-    Time taken for 1 epoch 187.74794459342957 sec
-    
-    Epoch 8 Batch 0 Loss 0.5432
-    Epoch 8 Batch 100 Loss 0.5078
-    Epoch 8 Batch 200 Loss 0.5003
-    Epoch 8 Batch 300 Loss 0.4915
-    Epoch 8 Loss 0.529145
-    Time taken for 1 epoch 186.81623315811157 sec
-    
-    Epoch 9 Batch 0 Loss 0.5156
-    Epoch 9 Batch 100 Loss 0.4842
-    Epoch 9 Batch 200 Loss 0.4923
-    Epoch 9 Batch 300 Loss 0.4677
-    Epoch 9 Loss 0.509899
-    Time taken for 1 epoch 189.49438571929932 sec
-    
-    Epoch 10 Batch 0 Loss 0.4995
-    Epoch 10 Batch 100 Loss 0.4710
-    Epoch 10 Batch 200 Loss 0.4750
-    Epoch 10 Batch 300 Loss 0.4601
-    Epoch 10 Loss 0.492096
-    Time taken for 1 epoch 189.16131472587585 sec
-    
-    Epoch 11 Batch 0 Loss 0.4797
-    Epoch 11 Batch 100 Loss 0.4495
-    Epoch 11 Batch 200 Loss 0.4552
-    Epoch 11 Batch 300 Loss 0.4408
-    Epoch 11 Loss 0.474645
-    Time taken for 1 epoch 190.57548332214355 sec
-    
-    Epoch 12 Batch 0 Loss 0.4787
-    Epoch 12 Batch 100 Loss 0.4315
-    Epoch 12 Batch 200 Loss 0.4504
-    Epoch 12 Batch 300 Loss 0.4293
-    Epoch 12 Loss 0.457647
-    Time taken for 1 epoch 190.24215531349182 sec
-    
-    Epoch 13 Batch 0 Loss 0.4621
-    Epoch 13 Batch 100 Loss 0.4107
-    Epoch 13 Batch 200 Loss 0.4271
-    Epoch 13 Batch 300 Loss 0.4133
-    Epoch 13 Loss 0.442507
-    Time taken for 1 epoch 187.96875071525574 sec
-    
-    Epoch 14 Batch 0 Loss 0.4383
-    Epoch 14 Batch 100 Loss 0.3987
-    Epoch 14 Batch 200 Loss 0.4239
-    Epoch 14 Batch 300 Loss 0.3913
-    Epoch 14 Loss 0.429215
-    Time taken for 1 epoch 185.89738130569458 sec
-    
-    Epoch 15 Batch 0 Loss 0.4121
-    Epoch 15 Batch 100 Loss 0.3933
-    Epoch 15 Batch 200 Loss 0.4079
-    Epoch 15 Batch 300 Loss 0.3788
-    Epoch 15 Loss 0.415965
-    Time taken for 1 epoch 186.6773328781128 sec
-    
-    Epoch 16 Batch 0 Loss 0.4062
-    Epoch 16 Batch 100 Loss 0.3752
-    Epoch 16 Batch 200 Loss 0.3947
-    Epoch 16 Batch 300 Loss 0.3715
-    Epoch 16 Loss 0.402814
-    Time taken for 1 epoch 186.04795384407043 sec
-    
-    Epoch 17 Batch 0 Loss 0.3793
-    Epoch 17 Batch 100 Loss 0.3604
-    Epoch 17 Batch 200 Loss 0.3941
-    Epoch 17 Batch 300 Loss 0.3504
-    Epoch 17 Loss 0.391162
-    Time taken for 1 epoch 187.62019681930542 sec
-    
-    Epoch 18 Batch 0 Loss 0.3685
-    Epoch 18 Batch 100 Loss 0.3496
-    Epoch 18 Batch 200 Loss 0.3744
-    Epoch 18 Batch 300 Loss 0.3480
-    Epoch 18 Loss 0.382786
-    Time taken for 1 epoch 185.68778085708618 sec
-    
-    Epoch 19 Batch 0 Loss 0.3608
-    Epoch 19 Batch 100 Loss 0.3384
-    Epoch 19 Batch 200 Loss 0.3500
-    Epoch 19 Batch 300 Loss 0.3229
-    Epoch 19 Loss 0.371033
-    Time taken for 1 epoch 185.8159191608429 sec
-    
+```
+    ......
     Epoch 20 Batch 0 Loss 0.3568
     Epoch 20 Batch 100 Loss 0.3288
     Epoch 20 Batch 200 Loss 0.3357
@@ -707,10 +531,10 @@ for epoch in range(start_epoch, EPOCHS):
     Epoch 20 Loss 0.358618
     Time taken for 1 epoch 186.8766734600067 sec
     
-
-
-
 ```
+
+
+```python
 plt.plot(loss_plot)
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
@@ -718,18 +542,17 @@ plt.title('Loss Plot')
 plt.show()
 ```
 
-
-![png](image_captioning_files/image_captioning_44_0.png)
-
-
-## Caption!
-
-* The evaluate function is similar to the training loop, except we don't use teacher forcing here. The input to the decoder at each time step is its previous predictions along with the hidden state and the encoder output.
-* Stop predicting when the model predicts the end token.
-* And store the attention weights for every time step.
+![png](image_captioning_44_0.png)
 
 
-```
+## 标题!
+
+* 评估函数类似于训练循环，只是这里不使用 teacher forcing 。解码器在每个时间步长的输入是其先前的预测，以及隐藏状态和编码器的输出。
+* 当模型预测结束令牌时停止预测。
+* 并存储每个时间步的注意力。
+
+
+```python
 def evaluate(image):
     attention_plot = np.zeros((max_length, attention_features_shape))
 
@@ -762,7 +585,7 @@ def evaluate(image):
 ```
 
 
-```
+```python
 def plot_attention(image, result, attention_plot):
     temp_image = np.array(Image.open(image))
 
@@ -781,7 +604,7 @@ def plot_attention(image, result, attention_plot):
 ```
 
 
-```
+```python
 # captions on the validation set
 rid = np.random.randint(0, len(img_name_val))
 image = img_name_val[rid]
@@ -795,27 +618,24 @@ plot_attention(image, result, attention_plot)
 Image.open(img_name_val[rid])
 ```
 
+```
     Real Caption: <start> a man gets ready to hit a ball with a bat <end>
     Prediction Caption: a baseball player begins to bat <end>
-
-
-
-![png](image_captioning_files/image_captioning_48_1.png)
-
-
-
-
-
-![png](image_captioning_files/image_captioning_48_2.png)
-
-
-
-## Try it on your own images
-For fun, below we've provided a method you can use to caption your own images with the model we've just trained. Keep in mind, it was trained on a relatively small amount of data, and your images may be different from the training data (so be prepared for weird results!)
-
-
-
 ```
+
+
+![png](image_captioning_48_1.png)
+
+
+![png](image_captioning_48_2.png)
+
+
+
+## 在你自己的图片上试试
+
+为了好玩，下面我们提供了一种方法，您可以使用我们刚刚训练过的模型为您自己的图像添加标题。请记住，它是在相对少量的数据上训练的，您的图像可能与训练数据不同（因此请为奇怪的结果做好准备！）
+
+```python
 image_url = 'https://tensorflow.org/images/surf.jpg'
 image_extension = image_url[-4:]
 image_path = tf.keras.utils.get_file('image'+image_extension,
@@ -828,20 +648,15 @@ plot_attention(image_path, result, attention_plot)
 Image.open(image_path)
 ```
 
+```
     Prediction Caption: a man riding a surf board in the water <end>
+```
+
+![png](image_captioning_50_1.png)
+
+![png](image_captioning_50_2.png)
 
 
+# 下一步
 
-![png](image_captioning_files/image_captioning_50_1.png)
-
-
-
-
-
-![png](image_captioning_files/image_captioning_50_2.png)
-
-
-
-# Next steps
-
-Congrats! You've just trained an image captioning model with attention. Next, we recommend taking a look at this example [Neural Machine Translation with Attention](../sequences/nmt_with_attention.ipynb). It uses a similar architecture to translate between Spanish and English sentences. You can also experiment with training the code in this notebook on a different dataset.
+恭喜！您刚刚训练了一个注意力机制给图像取标题的模型。接下来，看一下这个[使用注意力机制的神经机器翻译示例](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)。它使用类似的架构来翻译西班牙语和英语句子。您还可以尝试在不同的数据集上训练此笔记本中的代码。
