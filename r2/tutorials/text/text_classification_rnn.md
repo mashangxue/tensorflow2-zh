@@ -1,27 +1,18 @@
 ---
-title: 使用RNN对文本进行分类
+title: 使用RNN对文本进行分类实践：电影评论 (tensorflow2官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-text-text_classification_rnn
 ---
 
-# 使用RNN对文本进行分类
+# 使用RNN对文本进行分类实践：电影评论 (tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/text/text_classification_rnn"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/text/text_classification_rnn.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/text_classification_rnn.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn](https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md)
 
-
-本文本分类教程在[IMDB大型影评数据集](http://ai.stanford.edu/~amaas/data/sentiment/) 上训练一个循环神经网络进行情感分类。
+本教程在[IMDB大型影评数据集](http://ai.stanford.edu/~amaas/data/sentiment/) 上训练一个循环神经网络进行情感分类。
 
 ```python
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -33,7 +24,7 @@ import tensorflow as tf
 
 导入matplotlib并创建一个辅助函数来绘制图形
 
-```
+```python
 import matplotlib.pyplot as plt
 
 
@@ -46,8 +37,7 @@ def plot_graphs(history, string):
   plt.show()
 ```
 
-## 设置输入管道
-
+## 1. 设置输入管道
 
 IMDB大型电影影评数据集是一个二元分类数据集，所有评论都有正面或负面的情绪标签。
 
@@ -117,7 +107,7 @@ train_dataset = train_dataset.padded_batch(BATCH_SIZE, train_dataset.output_shap
 test_dataset = test_dataset.padded_batch(BATCH_SIZE, test_dataset.output_shapes)
 ```
 
-## 创建模型
+## 2. 创建模型
 
 构建一个`tf.keras.Sequential`模型并从嵌入层开始，嵌入层每个字存储一个向量，当被调用时，它将单词索引的序列转换为向量序列，这些向量是可训练的，在训练之后（在足够的数据上），具有相似含义的词通常具有相似的向量。
 
@@ -141,7 +131,7 @@ model.compile(loss='binary_crossentropy',
               metrics=['accuracy'])
 ```
 
-## 训练模型
+## 3. 训练模型
 
 ```python
 history = model.fit(train_dataset, epochs=10,
@@ -230,9 +220,7 @@ plot_graphs(history, 'loss')
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_30_0.png)
 
-
-## 堆叠两个或更多LSTM层
-
+## 4. 堆叠两个或更多LSTM层
 
 Keras递归层有两种可以用的模式，由`return_sequences`构造函数参数控制：
 
@@ -321,3 +309,6 @@ plot_graphs(history, 'loss')
 
 查看其它现有的递归层，例如[GRU层](https://tensorflow.google.cn/api_docs/python/tf/keras/layers/GRU)。
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn](https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md)

@@ -41,11 +41,11 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md)
 
-#### Classify text (文本分类项目实战：电影评论)
+#### Classify text 使用Keras和TensorFlow Hub对电影评论进行文本分类 (tensorflow2官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md)
 
 #### Classify structured data (结构化数据分类实战：心脏病预测)
 
@@ -65,7 +65,8 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md)
 
-#### Save and restore models (tensorflow2保存和加载模型 )
+#### Save and restore models 
+(tensorflow2保存和加载模型 )
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models)
@@ -81,18 +82,40 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md)
 
 #### Transfer learning with TFHub
+基于Keras使用TensorFlow Hub实现迁移学习(tensorflow2官方教程翻译)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md)
 
 #### Transfer learning with pretrained CNNs
+使用预训练的卷积神经网络进行迁移学习 (tensorflow2官方教程翻译)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md)
 
 ### Text and sequences
 
 #### Intro to word embeddings
+词嵌入 Word embedding (tensorflow2官方教程翻译)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings](https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md)
+
+#### Classify preprocessed text
+(文本分类项目实战：电影评论)
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)
+
 #### Classify text with a RNN
 
 ### Estimators
 
 #### Linear models
-
 
 ## Advanced tutorials
 

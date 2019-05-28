@@ -6,8 +6,7 @@ top: 1918
 abbrlink: tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub
 ---
 
-# 使用Keras和TensorFlow Hub对电影评论进行文本分类
-
+# 使用Keras和TensorFlow Hub对电影评论进行文本分类 (tensorflow2官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub)
