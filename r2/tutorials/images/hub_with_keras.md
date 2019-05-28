@@ -6,26 +6,22 @@ top: 1999
 abbrlink: tensorflow/tf2-tutorials-images-hub_with_keras
 ---
 
-# TensorFlow Hub with Keras
+# 基于Keras使用TensorFlow Hub实现迁移学习(tensorflow2官方教程翻译)
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/images/hub_with_keras"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/images/hub_with_keras.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/images/hub_with_keras.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md)
 
-[TensorFlow Hub](http://tensorflow.org/hub)是一种共享预训练模型组件的方法。有关预先训练模型的可搜索列表，请参阅[TensorFlow模块中心TensorFlow Module Hub](https://tfhub.dev/)。
+[TensorFlow Hub](http://tensorflow.google.cn/hub)是一种共享预训练模型组件的方法。
+
+> TensorFlow Hub是一个用于促进机器学习模型的可重用部分的发布，探索和使用的库。特别是，它提供经过预先训练的TensorFlow模型，可以在新任务中重复使用。（可以理解为做迁移学习：可以使用较小的数据集训练模型，可以改善泛化和加快训练。）GitHub 地址：[https://github.com/tensorflow/hub](https://github.com/tensorflow/hub)
+
+有关预先训练模型的可搜索列表，请参阅[TensorFlow模块中心TensorFlow Module Hub](https://tfhub.dev/)。
 
 本教程演示：
 1. 如何在tf.keras中使用TensorFlow Hub。
-1. 如何使用TensorFlow Hub进行图像分类。
-1. 如何做简单的迁移学习。
+2. 如何使用TensorFlow Hub进行图像分类。
+3. 如何做简单的迁移学习。
 
 ## 1. 安装和导入包
 
@@ -387,5 +383,8 @@ abs(reloaded_result_batch - result_batch).max()
 ```
 `0.0`
 
-这个保存的模型可以在以后加载推理，或转换为[TFLite](https://www.tensorflow.org/lite/convert/) 和 [TFjs](https://github.com/tensorflow/tfjs-converter)。
+这个保存的模型可以在以后加载推理，或转换为[TFLite](https://www.tensorflow.google.cn/lite/convert/) 和 [TFjs](https://github.com/tensorflow/tfjs-converter)。
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md)

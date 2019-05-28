@@ -81,6 +81,7 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md)
 
 #### Transfer learning with TFHub
+
 #### Transfer learning with pretrained CNNs
 
 ### Text and sequences
