@@ -1,12 +1,12 @@
 ---
-title: 回归项目实战：预测燃油效率 (tensorflow2官方教程翻译)
+title: 回归项目实战：预测燃油效率 (tensorflow2.0官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1914
 abbrlink: tensorflow/tf2-tutorials-keras-basic_regression
 ---
 
-# 回归项目实战：预测燃油效率 (tensorflow2官方教程翻译)
+# 回归项目实战：预测燃油效率 (tensorflow2.0官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)

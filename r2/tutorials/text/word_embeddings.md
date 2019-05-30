@@ -1,12 +1,12 @@
 ---
-title: 使用词嵌入
+title: NLP词嵌入Word embedding实战项目 (tensorflow2.0官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-text-word_embeddings
 ---
 
-# 词嵌入 Word embedding (tensorflow2官方教程翻译)
+# NLP词嵌入Word embedding实战项目 (tensorflow2.0官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings](https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings)

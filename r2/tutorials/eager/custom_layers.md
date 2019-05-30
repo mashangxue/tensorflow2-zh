@@ -1,12 +1,12 @@
 ---
-title: 自定义层 (tensorflow2官方教程翻译）
+title: 使用Keras自定义层 (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-eager-custom_layers
 ---
 
-# 自定义层
+# 使用Keras自定义层 (tensorflow2.0官方教程翻译）
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)

@@ -1,12 +1,12 @@
 ---
-title: tf.function和AutoGraph (tensorflow2官方教程翻译）
+title: tf.function和AutoGraph (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-eager-tf_function
 ---
 
-# tf.function和 AutoGraph (tensorflow2官方教程翻译）
+# tf.function和 AutoGraph (tensorflow2.0官方教程翻译）
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function)
 

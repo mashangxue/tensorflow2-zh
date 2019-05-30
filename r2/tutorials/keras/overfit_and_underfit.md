@@ -1,12 +1,12 @@
 ---
-title: 探索过拟合和欠拟合 (tensorflow2官方教程翻译)
+title: 探索过拟合和欠拟合 (tensorflow2.0官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1915
 abbrlink: tensorflow/tf2-tutorials-keras-overfit_and_underfit
 ---
 
-# 探索过拟合和欠拟合 (tensorflow2官方教程翻译)
+# 探索过拟合和欠拟合 (tensorflow2.0官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)

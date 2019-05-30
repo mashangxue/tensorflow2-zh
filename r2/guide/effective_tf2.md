@@ -1,5 +1,5 @@
 ---
-title: 高效的TensorFlow 2.0
+title: 高效的TensorFlow 2.0 (tensorflow2.0官方教程翻译)
 tags: 
     - tensorflow2.0
 categories: 
@@ -8,7 +8,7 @@ top: 1902
 abbrlink: tensorflow/tf2-guide-effective_tf2
 ---
 
-# 高效的TensorFlow 2.0
+# 高效的TensorFlow 2.0 (tensorflow2.0官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2](http://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2)
 > 英文版本：[https://tensorflow.google.cn/alpha/guide/effective_tf2](https://tensorflow.google.cn/alpha/guide/effective_tf2)

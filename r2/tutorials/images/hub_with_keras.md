@@ -1,12 +1,12 @@
 ---
-title: TensorFlow Hub with Keras
+title: 基于Keras使用TensorFlow Hub实现迁移学习(tensorflow2.0官方教程翻译)
 tags: tensorflow2.0
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-images-hub_with_keras
 ---
 
-# 基于Keras使用TensorFlow Hub实现迁移学习(tensorflow2官方教程翻译)
+# 基于Keras使用TensorFlow Hub实现迁移学习(tensorflow2.0官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras)

@@ -1,12 +1,12 @@
 ---
-title: 专家入门TensorFlow 2.0 (tensorflow2官方教程翻译)
+title: 专家入门TensorFlow 2.0 (tensorflow2.0官方教程翻译)
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1906
 abbrlink: tensorflow/tf2-tutorials-quickstart-advanced
 ---
 
-# 专家入门TensorFlow 2.0使用流程：数据处理、自定义模型、损失、指标、梯度下降 (tensorflow2官方教程翻译)
+# 专家入门TensorFlow 2.0使用流程：数据处理、自定义模型、损失、指标、梯度下降 (tensorflow2.0官方教程翻译)
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced](https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced)
