@@ -451,18 +451,22 @@ model.fit(x_train, y_train, batch_size=64, validation_split=0.2, epochs=3)
 
 
 
-### Training & evaluation from tf.data Datasets
+### 来自tf.data数据集的培训和评估
 
 In the past few paragraphs, you've seen how to handle losses, metrics, and optimizers, and you've seen how to use the `validation_data` and `validation_split` arguments in `fit`, when your data is passed as Numpy arrays.
+在过去的几段中，您已经了解了如何处理损失，度量和优化器，并且您已经看到，当您的数据作为Numpy数组传递时，如何在`fit`中使用`validation_data` 和 `validation_split` 参数
 
 Let's now take a look at the case where your data comes in the form of a tf.data Dataset.
+现在让我们看一下您的数据以tf.data数据集的形式出现的情况。
 
 The tf.data API is a set of utilities in TensorFlow 2.0 for loading and preprocessing data in a way that's fast and scalable.
+tf.data API是TensorFlow 2.0中的一组实用程序，用于以快速和可伸缩的方式加载和预处理数据。
 
-For a complete guide about creating Datasets, see [the tf.data documentation](https://www.tensorflow.org/versions/r2.0/api_docs/python/tf).
+For a complete guide about creating Datasets, see [the tf.data documentation](https://tensorflow.google.cn/versions/r2.0/api_docs/python/tf).
+有关创建数据集的完整指南，请参阅[the tf.data 文档](https://tensorflow.google.cn/versions/r2.0/api_docs/python/tf)。
 
 You can pass a Dataset instance directly to the methods `fit()`, `evaluate()`, and `predict()`:
-
+您可以将数据集实例直接传递给方法 `fit()`, `evaluate()`, 和 `predict()`：
 
 ```
 model = get_compiled_model()
@@ -510,6 +514,11 @@ If you want to run training only on a specific number of batches from this Datas
 
 If you do this, the dataset is not reset at the end of each epoch, instead we just keep drawing the next batches. The dataset will eventually run out of data (unless it is an infinitely-looping dataset).
 
+请注意，数据集在每个周期的末尾都会重置，因此可以重复使用下一个周期。
+
+如果您只想从此数据集中对特定数量的批次运行训练，则可以传递 `steps_per_epoch`  参数，该参数指定在继续下一个周期之前使用此数据集运行模型的训练步数。
+
+如果这样做，数据集不会在每个周期的末尾重置，而是我们只是继续绘制下一批。数据集最终会耗尽数据（除非它是一个无限循环的数据集）。
 
 ```
 model = get_compiled_model()
@@ -537,10 +546,10 @@ model.fit(train_dataset.take(100), epochs=3)
 
 
 
-#### Using a validation dataset
+#### 使用验证数据集
 
 You can pass a Dataset instance as the `validation_data` argument in `fit`:
-
+您可以将数据集实例作为`fit`中的`validation_data`参数传递：
 
 ```
 model = get_compiled_model()
@@ -575,6 +584,9 @@ At the end of each epoch, the model will iterate over the validation Dataset and
 
 If you want to run validation only on a specific number of batches from this Dataset, you can pass the `validation_steps` argument, which specifies how many validation steps the model should run with the validation Dataset before interrupting validation and moving on to the next epoch:
 
+在每个周期结束时，模型将迭代验证数据集并计算验证损失和验证指标。
+
+如果你想只在这个数据集中特定数量的批次上运行验证，你可以传递“validation_steps”参数，它指定了模型在中断验证并进入下一个周期之前，应该与验证数据集一起运行多少个验证步骤:
 
 ```
 model = get_compiled_model()
@@ -612,26 +624,37 @@ Note that the validation Dataset will be reset after each use (so that you will 
 
 The argument `validation_split` (generating a holdout set from the training data) is not supported when training from Dataset objects, since this features requires the ability to index the samples of the datasets, which is not possible in general with the Dataset API.
 
+请注意，验证数据集将在每次使用后重置（这样您将始终评估从epoch到epoch的相同样本）。从数据集对象进行训练时，不支持参数validation_split（从训练数据生成保持集），因为此功能需要能够索引数据集的样本，这通常是数据集API无法实现的。
 
-### Other input formats supported
+### 支持其他输入格式Other input formats supported
 
 Besides Numpy arrays and TensorFlow Datasets, it's possible to train a Keras model using Pandas dataframes, or from Python generators that yield batches.
 
 In general, we recommend that you use Numpy input data if your data is small and fits in memory, and Datasets otherwise.
 
-### Using sample weighting and class weighting
+除了Numpy数组和TensorFlow数据集之外，还可以使用Pandas数据帧或产生批量的Python生成器来训练Keras模型。
+
+通常，如果数据很小并且适合内存，我们建议您使用Numpy输入数据，否则使用数据集。
+
+### 使用样本加权和类权重
 
 Besides input data and target data, it is possible to pass sample weights or class weights to a model when using `fit`:
+除了输入数据和目标数据之外，还可以在使用 `fit` 时将样本权重或类权重传递给模型：
 
-- When training from Numpy data: via the `sample_weight` and `class_weight` arguments.
-- When training from Datasets: by having the Dataset return a tuple `(input_batch, target_batch, sample_weight_batch)` .
+- 从Numpy数据训练时：通过`sample_weight`和`class_weight`参数。 
+- 从数据集训练时：通过让数据集返回一个元组  `(input_batch, target_batch, sample_weight_batch)` .
 
 A "sample weights" array is an array of numbers that specify how much weight each sample in a batch should have in computing the total loss. It is commonly used in imbalanced classification problems (the idea being to give more weight to rarely-seen classes). When the weights used are ones and zeros, the array can be used as a *mask* for the loss function (entirely discarding the contribution of certain samples to the total loss).
 
+"sample weights" 数组是一个数字数组，用于指定批处理中每个样本在计算总损失时应具有多少权重。它通常用于不平衡的分类问题（这个想法是为了给予很少见的类别更多的权重）。当使用的权重是1和0时，该数组可以用作损失函数的掩码（完全丢弃某些样本对总损失的贡献）。
+
 A "class weights" dict is a more specific instance of the same concept: it maps class indices to the sample weight that should be used for samples belonging to this class. For instance, if class "0" is twice less represented than class "1" in your data, you could use `class_weight={0: 1., 1: 0.5}`.
+
+"class weights" 字典是同一概念的更具体的实例：它将类索引映射到应该用于属于该类的样本的样本权重。例如，如果类“0”比数据中的类“1”少两倍，则可以使用 `class_weight={0: 1., 1: 0.5}`.
 
 Here's a Numpy example where we use class weights or sample weights to give more importance to the correct classification of class #5 (which is the digit "5" in the MNIST dataset).
 
+这是一个Numpy示例，我们使用类权重class weights或样本权重sample weights来更加重视 class #5 的正确分类（这是MNIST数据集中的数字“5”）。
 
 ```
 import numpy as np
@@ -683,7 +706,7 @@ model.fit(x_train, y_train,
 
 
 Here's a matching Dataset example:
-
+这是一个匹配的数据集示例：
 
 ```
 sample_weight = np.ones(shape=(len(y_train),))
@@ -716,12 +739,12 @@ model.fit(train_dataset, epochs=3)
 
 
 
-### Passing data to multi-input, multi-output models
+### 将数据传递到多输入，多输出模型 Passing data to multi-input, multi-output models
 
 In the previous examples, we were considering a model with a single input (a tensor of shape `(764,)`) and a single output (a prediction tensor of shape `(10,)`). But what about models that have multiple inputs or outputs?
-
+在前面的例子中，我们考虑的是一个带有单个输入的模型（形状为 `(764,)` 的张量）和单个输出（形状为 `(10,)` 的预测张量）。但是具有多个输入或输出的模型呢？
 Consider the following model, which has an image input of shape `(32, 32, 3)` (that's `(height, width, channels)`) and a timeseries input of shape `(None, 10)` (that's `(timesteps, features)`). Our model will have two outputs computed from the combination of these inputs: a "score" (of shape `(1,)`) and a probability distribution over 5 classes (of shape `(10,)`).
-
+考虑下面的模型，它有一个形状为 `(32, 32, 3)`  的形状输入（即“（高度，宽度，通道）”）和形状为 `(None, 10)` 的时间序列输入（即“（时间步长，特征）”）。我们的模型将根据这些输入的组合计算两个输出：“得分”（形状为`(1,)`和5个类别（形状为`(10,)`）的概率分布。
 
 
 ```
@@ -747,7 +770,7 @@ model = keras.Model(inputs=[image_input, timeseries_input],
 ```
 
 Let's plot this model, so you can clearly see what we're doing here (note that the shapes shown in the plot are batch shapes, rather than per-sample shapes).
-
+让我们绘制这个模型，这样你就可以清楚地看到我们在这里做的事情（请注意，图中显示的形状是批量形状，而不是每个样本的形状）。
 
 ```
 keras.utils.plot_model(model, 'multi_input_and_output_model.png', show_shapes=True)
@@ -756,12 +779,12 @@ keras.utils.plot_model(model, 'multi_input_and_output_model.png', show_shapes=Tr
 
 
 
-![png](training_and_evaluation_files/training_and_evaluation_48_0.png)
+![png](training_and_evaluation_48_0.png)
 
 
 
 At compilation time, we can specify different losses to different ouptuts, by passing the loss functions as a list:
-
+在编译时，我们可以通过将损失函数作为列表传递给不同的输出指定不同的损失：
 
 ```
 model.compile(
@@ -771,9 +794,10 @@ model.compile(
 ```
 
 If we only passed a single loss function to the model, the same loss function would be applied to every output, which is not appropriate here.
+如果我们只将单个损失函数传递给模型，则相同的损失函数将应用于每个输出，这在这里是不合适的。
 
 Likewise for metrics:
-
+同样适用于指标：
 
 ```
 model.compile(
@@ -786,7 +810,7 @@ model.compile(
 ```
 
 Since we gave names to our output layers, we coud also specify per-output losses and metrics via a dict:
-
+由于我们为输出层指定了名称，因此我们还可以通过dict指定每个输出的损失和指标：
 
 ```
 model.compile(
@@ -799,9 +823,9 @@ model.compile(
 ```
 
 We recommend the use of explicit names and dicts if you have more than 2 outputs.
-
+如果您有超过2个输出，我们建议使用显式名称和dicts。
 It's possible to give different weights to different output-specific losses (for instance, one might wish to privilege the "score" loss in our example, by giving to 2x the importance of the class loss), using the `loss_weight` argument:
-
+可以给不同的输出特定损失赋予不同的权重（例如，可能希望通过使用`loss_weight`参数赋予2x类损失的重要性来保留我们示例中的“得分”损失特权：
 
 ```
 model.compile(
@@ -815,7 +839,7 @@ model.compile(
 ```
 
 You could also chose not to compute a loss for certain outputs, if these outputs meant for prediction but not for training:
-
+您还可以选择不计算某些输出的损失，如果这些输出用于预测但不用于训练：
 
 ```
 # List loss version
@@ -834,8 +858,9 @@ model.compile(
 
 
 Passing data to a multi-input or multi-output model in `fit` works in a similar way as specifying a loss function in `compile`:
+将数据传递给`fit`中的多输入或多输出模型的工作方式与在`compile`中指定损失函数的方式类似：
 you can pass *lists of Numpy arrays (with 1:1 mapping to the outputs that received a loss function)* or *dicts mapping output names to Numpy arrays of training data*.
-
+你可以传递Numpy数组列表（1：1映射到接收到损失函数的输出）或者将输出名称映射到Numpy训练数据数组。
 
 ```
 model.compile(
@@ -884,7 +909,7 @@ model.fit({'img_input': img_data, 'ts_input': ts_data},
 
 Here's the Dataset use case: similarly as what we did for Numpy arrays, the Dataset should return
 a tuple of dicts.
-
+这是数据集用例：类似于我们为Numpy数组所做的，数据集应该返回一个dicts元组。
 
 ```
 train_dataset = tf.data.Dataset.from_tensor_slices(
@@ -910,19 +935,20 @@ model.fit(train_dataset, epochs=3)
 
 
 
-### Using callbacks
+### 使用回调Using callbacks
 
 Callbacks in Keras are objects that are called at different point during training (at the start of an epoch, at the end of a batch, at the end of an epoch, etc.) and which can be used to implement behaviors such as:
 
-- Doing validation at different points during training (beyond the built-in per-epoch validation)
-- Checkpointing the model at regular intervals or when it exceeds a certain accuracy threshold
-- Changing the learning rate of the model when training seems to be plateauing
-- Doing fine-tuning of the top layers when training seems to be plateauing
-- Sending email or instant message notifications when training ends or where a certain performance threshold is exceeded
+Keras中的回调是在训练期间（在周期开始时，批处理结束时，周期结束时等）在不同点调用的对象，可用于实现以下行为：
+- 在训练期间的不同时间点进行验证（超出内置的每个时期验证）Doing validation at different points during training (beyond the built-in per-epoch validation)
+- 定期检查模型或超过某个精度阈值Checkpointing the model at regular intervals or when it exceeds a certain accuracy threshold
+- 在训练时改变模型的学习率似乎是平稳的 Changing the learning rate of the model when training seems to be plateauing
+- 在训练时对顶层进行微调似乎是平稳的Doing fine-tuning of the top layers when training seems to be plateauing
+- 在训练结束或超出某个性能阈值时发送电子邮件或即时消息通知Sending email or instant message notifications when training ends or where a certain performance threshold is exceeded
 - Etc.
 
 Callbacks can be passed as a list to your call to `fit`:
-
+回调可以作为列表传递给你对 `fit` 的调用：
 
 ```
 model = get_compiled_model()
@@ -967,21 +993,22 @@ model.fit(x_train, y_train,
 
 
 
-#### Many built-in callbacks are available
+#### 许多内置回调都可用 Many built-in callbacks are available
 
-- `ModelCheckpoint`: Periodically save the model.
-- `EarlyStopping`: Stop training when training is no longer improving the validation metrics.
-- `TensorBoard`: periodically write model logs that can be visualized in TensorBoard (more details in the section "Visualization").
-- `CSVLogger`: streams loss and metrics data to a CSV file.
+- `ModelCheckpoint`: 定期保存模型。
+- `EarlyStopping`: 当训练不再改进验证指标时停止训练。Stop training when training is no longer improving the validation metrics.
+- `TensorBoard`: 定期编写可在TensorBoard中显示的模型日志（更多细节见“可视化”）。
+- `CSVLogger`: 将丢失和指标数据丢失到CSV文件。streams loss and metrics data to a CSV file.
 - etc.
 
 
 
-#### Writing your own callback
+#### 编写自己的回调
 
 You can create a custom callback by extending the base class keras.callbacks.Callback. A callback has access to its associated model through the class property `self.model`.
-
+您可以通过扩展基类 `keras.callbacks.Callback` 来创建自定义回调。回调可以通过类属性 `self.model` 访问其关联的模型。
 Here's a simple example saving a list of per-batch loss values during training:
+以下是在训练期间保存每批损失值列表的简单示例：
 
 ```python
 class LossHistory(keras.callbacks.Callback):
@@ -993,12 +1020,12 @@ class LossHistory(keras.callbacks.Callback):
         self.losses.append(logs.get('loss'))
 ```
 
-### Checkpointing models
+### 检查点模型
 
 When you're training model on relatively large datasets, it's crucial to save checkpoints of your model at frequent intervals.
-
+当您在相对较大的数据集上训练模型时，以频繁的间隔保存模型的检查点至关重要。
 The easiest way to achieve this is with the `ModelCheckpoint` callback:
-
+实现此目的的最简单方法是使用 `ModelCheckpoint` 回调：
 
 ```
 model = get_compiled_model()
@@ -1044,19 +1071,24 @@ model.fit(x_train, y_train,
 
 
 You call also write your own callback for saving and restoring models.
-
+您也可以编写自己的回调来保存和恢复模型。
 For a complete guide on serialization and saving, see [Guide to Saving and Serializing Models](./saving_and_serializing.ipynb).
+有关序列化和保存的完整指南，请参见[保存和序列化模型指南](https://tensorflow.google.cn/alpha/guide/keras/saving_and_serializing)。
 
-### Using learning rate schedules
+### 使用学习率计划Using learning rate schedules
 
 A common pattern when training deep learning models is to gradually reduce the learning as training progresses. This is generally known as "learning rate decay".
 
 The learning decay schedule could be static (fixed in advance, as a function of the current epoch or the current batch index), or dynamic (responding to the current behavior of the model, in particular the validation loss).
 
-#### Passing a schedule to an optimizer
+在训练深度学习模型时，一个常见的模式是随着训练的进展逐步减少学习。这通常被称为“学习速度衰减”。
+
+学习衰减计划可以是静态的(预先固定，作为当前周期或当前批处理索引的函数)，也可以是动态的(响应模型当前的行为，特别是验证损失)。
+
+#### 将计划传递给优化程序 Passing a schedule to an optimizer
 
 You can easily use a static learning rate decay schedule by passing a schedule object as the `learning_rate` argument in your optimizer:
-
+您可以通过在优化程序中将计划对象作为learning_rate参数传递，轻松使用静态学习速率衰减计划：
 
 
 ```
@@ -1070,33 +1102,43 @@ lr_schedule = keras.optimizers.schedules.ExponentialDecay(
 optimizer = keras.optimizers.RMSprop(learning_rate=lr_schedule)
 ```
 
-Several built-in schedules are available: `ExponentialDecay`, `PiecewiseConstantDecay`, `PolynomialDecay`, and `InverseTimeDecay`.
+有几个内置的schedule表: `ExponentialDecay`, `PiecewiseConstantDecay`, `PolynomialDecay`, and `InverseTimeDecay`.
 
-#### Using callbacks to implement a dynamic learning rate schedule
+#### 使用回调来实现动态学习速率计划 Using callbacks to implement a dynamic learning rate schedule
 
 A dynamic learning rate schedule (for instance, decreasing the learning rate when the validation loss is no longer improving) cannot be achieved with these schedule objects since the optimizer does not have access to validation metrics.
 
 However, callbacks do have access to all metrics, including validation metrics! You can thus achieve this pattern by using a callback that modifies the current learning rate on the optimizer. In fact, this is even built-in as the `ReduceLROnPlateau` callback.
 
-### Visualizing loss and metrics during training
+
+使用这些schedule对象无法实现动态学习速率计划(例如，当验证损失不再改善时降低学习速率)，因为优化器无法访问验证指标。
+
+然而，回调确实可以访问所有指标，包括验证指标!
+因此，可以通过使用回调函数来修改优化器上的当前学习率来实现这种模式。
+事实上，它甚至内置在 `ReduceLROnPlateau`  回调函数中。
+
+### 在训练期间可视化损失和度量Visualizing loss and metrics during training
 
 The best way to keep an eye on your model during training is to use [TensorBoard](https://www.tensorflow.org/tensorboard), a browser-based application that you can run locally that provides you with:
 
-- Live plots of the loss and metrics for training and evaluation
-- (optionally) Visualizations of the histograms of your layer activations
-- (optionally) 3D visualizations of the embedding spaces learned by your `Embedding` layers
+在训练期间密切关注你的模型的最好方法是使用 [TensorBoard](https://www.tensorflow.org/tensorboard) ，这是一个基于浏览器的应用程序，你可以在本地运行，它为你提供:
+- 实时绘制损失和训练和评估指标 Live plots of the loss and metrics for training and evaluation
+- （可选）可视化图层激活的直方图 (optionally) Visualizations of the histograms of your layer activations
+- （可选）由“嵌入”图层学习的嵌入空间的三维可视化 (optionally) 3D visualizations of the embedding spaces learned by your `Embedding` layers
 
 If you have installed TensorFlow with pip, you should be able to launch TensorBoard from the command line:
-
+如果您已经使用pip安装了TensorFlow，那么您应该能够从命令行启动TensorBoard：
 ```
 tensorboard --logdir=/full_path_to_your_logs
 ```
 
-#### Using the TensorBoard callback
+#### 使用TensorBoard回调Using the TensorBoard callback
 
 The easiest way to use TensorBoard with a Keras model and the `fit` method is the `TensorBoard` callback.
+在Keras模型和 `fit` 方法中使用TensorBoard的最简单方法是TensorBoard回调。
 
 In the simplest case, just specify where you want the callback to write logs, and you're good to go:
+在最简单的情况下，只需指定回写日志的位置，就可以了：
 
 ```python
 tensorboard_cbk = keras.callbacks.TensorBoard(log_dir='/full_path_to_your_logs')
@@ -1104,6 +1146,7 @@ model.fit(dataset, epochs=10, callbacks=[tensorboard_cbk])
 ```
 
 The `TensorBoard` callback has many useful options, including whether to log embeddings, histograms, and how often to write logs:
+TensorBoard回调有许多有用的选项，包括是否记录嵌入，直方图以及写入日志的频率：
 
 ```python
 keras.callbacks.TensorBoard(
@@ -1115,16 +1158,19 @@ keras.callbacks.TensorBoard(
 
 
 
-## Part II: Writing your own training & evaluation loops from scratch
+## 第二部分：从头开始编写自己的训练和评估循环Part II: Writing your own training & evaluation loops from scratch
 
 If you want lower-level over your training & evaluation loops than what `fit()` and `evaluate()` provide, you should write your own. It's actually pretty simple! But you should be ready to have a lot more debugging to do on your own.
+如果你想要训练和评估循环的级别低于 `fit()` 和 `evaluate()` 提供的的级别，你应该自己编写。它实际上非常简单！但是你应该准备好自己做更多的调试。
 
-### Using the GradientTape: a first end-to-end example
+### 使用GradientTape：第一个端到端的例子 Using the GradientTape: a first end-to-end example
 
 Calling a model inside a `GradientTape` scope enables you to retrieve the gradients of the trainable weights of the layer with respect to a loss value. Using an optimizer instance, you can use these gradients to update these variables (which you can retrieve using `model.trainable_weights`).
 
-Let's reuse our initial MNIST model from Part I, and let's train it using mini-batch gradient with a custom training loop.
+在“GradientTape”范围内调用模型使您可以根据损失值检索图层的可训练权重的梯度。使用优化器实例，您可以使用这些梯度来更新这些变量（可以使用`model.trainable_weights`检索）。
 
+Let's reuse our initial MNIST model from Part I, and let's train it using mini-batch gradient with a custom training loop.
+让我们重用第一部分中的初始MNIST模型，让我们使用带有自定义训练循环的小批量梯度训练它。
 
 ```
 # Get the model.
@@ -1207,17 +1253,18 @@ for epoch in range(3):
     Seen so far: 38464 samples
 
 
-### Low-level handling of metrics
+### 指标的低级处理Low-level handling of metrics
 
 Let's add metrics to the mix. You can readily reuse the built-in metrics (or custom ones you wrote) in such training loops written from scratch. Here's the flow:
+让我们添加指标。您可以很容易地在这样的训练循环中重用内置的指标（或您编写的自定义指标）。这是流程：
 
-- Instantiate the metric at the start of the loop
-- Call `metric.update_state()` after each batch
-- Call `metric.result()` when you need to display the current value of the metric
-- Call `metric.reset_states()` when you need to clear the state of the metric (typically at the end of an epoch)
+- 在循环开始时实例化度量标准
+- 每批后调用 `metric.update_state()` 
+- 当需要显示度量的当前值时，调用`metric.result()`
+- 当需要清除度量的状态时（通常在一个周期的末尾），调用`metric.reset_states()`
 
 Let's use this knowledge to compute `SparseCategoricalAccuracy` on validation data at the end of each epoch:
-
+让我们使用这些知识在每个周期结束时计算验证数据的 `SparseCategoricalAccuracy` ：
 
 ```
 # Get model
@@ -1317,15 +1364,16 @@ for epoch in range(3):
     Validation acc: 0.7734000086784363
 
 
-### Low-level handling of extra losses
+### 低水平处理额外损失Low-level handling of extra losses
 
 You saw in the previous section that it is possible for regularization losses to be added by a layer by calling `self.add_loss(value)` in the `call` method.
+您在上一节中看到，通过在`call`方法中调用 `self.add_loss(value)` ，可以通过图层添加正则化损失。
 
 In the general case, you will want to take these losses into account in your custom training loops (unless you've written the model yourself and you already know that it creates no such losses).
+在一般情况下，您需要在自定义训练循环中考虑这些损失（除非您自己编写模型并且您已经知道它不会造成这样的损失）。
 
 Recall this example from the previous section, featuring a layer that creates a regularization loss:
-
-
+回想一下上一节的这个例子，它的特点是一个层会产生正则化损失:
 
 ```
 class ActivityRegularizationLayer(layers.Layer):
@@ -1346,13 +1394,14 @@ model = keras.Model(inputs=inputs, outputs=outputs)
 ```
 
 When you call a model, like this:
+当您调用模型时，如下所示：
 
 ```python
 logits = model(x_train)
 ```
 
 the losses it creates during the forward pass are added to the `model.losses` attribute:
-
+它在前向传递期间产生的损失被添加到  `model.losses`  属性中：
 
 ```
 logits = model(x_train[:64])
@@ -1363,7 +1412,7 @@ print(model.losses)
 
 
 The tracked losses are first cleared at the start of the model `__call__`, so you will only see the losses created during this one forward pass. For instance, calling the model repeatedly and then querying `losses` only displays the latest losses, created during the last call:
-
+跟踪损失首先在模型 `__call__` 开始时清除，因此您只能看到在这一次前进过程中产生的损失。例如，重复调用模型然后查询  `losses`  只显示最后一次调用期间创建的最新损失：
 
 ```
 logits = model(x_train[:64])
@@ -1376,7 +1425,7 @@ print(model.losses)
 
 
 To take these losses into account during training, all you have to do is to modify your training loop to add `sum(model.losses)` to your total loss:
-
+要在训练期间考虑这些损失，您所要做的就是修改训练循环，将 `sum(model.losses)`  添加到您的总损失中：
 
 ```
 optimizer = keras.optimizers.SGD(learning_rate=1e-3)
@@ -1431,6 +1480,7 @@ for epoch in range(3):
 
 
 That was the last piece of the puzzle! You've reached the end of this guide.
+那是拼图的最后一块！你已经到了本指南的末尾。
 
 Now you know everything there is to know about using built-in training loops and writing your own from scratch.
-
+现在您已经了解了有关使用内置训练循环以及从头开始编写自己的知识的所有信息。
