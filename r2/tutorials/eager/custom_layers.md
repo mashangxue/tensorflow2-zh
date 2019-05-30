@@ -9,9 +9,7 @@ abbrlink: tensorflow/tf2-tutorials-eager-custom_layers
 # 自定义层
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers)
-
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)
-
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md)
 
 
@@ -23,7 +21,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import tensorflow as tf
 ```
 
-## 层：常用的操作集
+## 1. 对图层的常用操作
 
 在编写机器学习模型的代码时，大多数情况下，您希望以比单个操作和单个变量操作更高的抽象级别上进行操作。
 
@@ -62,7 +60,7 @@ print(layer.variables)
 print(layer.kernel, layer.bias)
 ```
 
-## 实现自定义层
+## 2. 使用keras实现自定义层
 
 实现自己的层的最佳方法是扩展`tf.keras.Layer` 类并实现：
 
@@ -97,7 +95,7 @@ print(layer.trainable_variables)
 如果尽可能使用标准层，则整体代码更易于阅读和维护，因为其他读者将熟悉标准层的行为。如果你想使用 `tf.keras.layers` 中不存在的图层，请考虑提交[github问题](http://github.com/tensorflow/tensorflow/issues/new)，或者最好向我们发送pull request！
 
 
-## 模型：组合层
+## 3. 通过组合层构建模型
 
 在机器学习模型中，许多有趣的类似层的事物都是通过组合现有层来实现的。例如，resnet中的每个残差块都是convolutions、 batch normalizations和shortcut的组合。
 
@@ -164,6 +162,11 @@ my_seq = tf.keras.Sequential([tf.keras.layers.Conv2D(1, (1, 1),
 my_seq(tf.zeros([1, 2, 3, 3]))
 ```
 
-# 下一步
+# 4. 下一步
 
 现在，您可以返回到之前的教程，并调整线性回归示例，以使用更好的结构化层和模型。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md)
+
