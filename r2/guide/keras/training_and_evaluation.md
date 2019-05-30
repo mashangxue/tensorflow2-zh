@@ -1,84 +1,55 @@
+---
+title: 使用 TensorFlow Keras 进行训练和评估 (tensorflow2官方教程翻译)
+tags: tensorflow2.0
+categories: tensorflow2官方教程
+top: 1999
+abbrlink: tensorflow/tf2-guide-keras-training_and_evaluation
+---
 
-##### Copyright 2019 The TensorFlow Authors.
+# 使用TensorFlow Keras进行训练和评估 (tensorflow2官方教程翻译)
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html](http://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/training_and_evaluation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/training_and_evaluation.md)
 
+本指南涵盖了TensorFlow 2.0在两种主要情况下的训练、评估和预测(推理)模型:
+
+- 使用内置API进行训练和验证时（例如`model.fit()`, `model.evaluate()`, `model.predict()` ）。这将在“使用内置的训练和评估循环”一节中讨论。
+- 使用eager execution和 `GradientTape` 对象从头开始编写自定义循环时。这在 “从零开始编写您自己的训练和评估循环” 小节中有介绍。
+
+一般来说，无论您是使用内置循环还是编写自己的循环，模型训练和评估在每种Keras模型(Sequential顺序模型、使用使用函数式API构建的模型以及通过模型子类从零开始编写的模型)中都严格按照相同的方式工作。
+
+本指南不包括分布式训练。
+
+## 设置
+
+安装
 ```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Training and Evaluation with TensorFlow Keras
-
-
-
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/guide/keras/training_and_evaluation"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/guide/keras/training_and_evaluation.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/guide/keras/training_and_evaluation.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
-
-
-
-This guide covers training, evaluation, and prediction (inference)  models in TensorFlow 2.0 in two broad situations:
-
-- When using built-in APIs for training & validation (such as `model.fit()`, `model.evaluate()`, `model.predict()`). This is covered in the section **"Using build-in training & evaluation loops"**.
-- When writing custom loops from scratch using eager execution and the `GradientTape` object. This is covered in the section **"Writing your own training & evaluation loops from scratch"**.
-
-In general, whether you are using built-in loops or writing your own, model training & evaluation works strictly in the same way across every kind of Keras model -- Sequential models, models built with the Functional API, and models written from scratch via model subclassing.
-
-This guide doesn't cover distributed training.
-
-## Setup
-
-
-```
-!pip install pydot
-!apt-get install graphviz
+pip install pydot
+apt-get install graphviz
+pip install tensorflow-gpu==2.0.0-alpha0
 ```
 
-    Requirement already satisfied: pydot in /usr/local/lib/python3.6/dist-packages (1.3.0)
-    Requirement already satisfied: pyparsing>=2.1.4 in /usr/local/lib/python3.6/dist-packages (from pydot) (2.3.1)
-    Reading package lists... Done
-    Building dependency tree
-    Reading state information... Done
-    graphviz is already the newest version (2.40.1-2).
-    0 upgraded, 0 newly installed, 0 to remove and 10 not upgraded.
-
-
-
+导入
 ```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
-!pip install tensorflow-gpu==2.0.0-alpha0
 import tensorflow as tf
 
 tf.keras.backend.clear_session()  # For easy reset of notebook state.
 ```
 
-## Part I: Using build-in training & evaluation loops
+## 第一部分：使用内置训练和评估循环
 
 When passing data to the built-in training loops of a model, you should either use **Numpy arrays** (if your data is small and fits in memory) or **tf.data Dataset** objects. In the next few paragraphs, we'll use the MNIST dataset as Numpy arrays, in order to demonstrate how to use optimizers, losses, and metrics.
 
-### API overview: a first end-to-end example
+将数据传递给模型的内置训练循环时，您应该使用Numpy数组（如果数据很小并且适合内存）或tf.data数据集对象。在接下来的几段中，我们将使用MNIST数据集作为Numpy数组，以演示如何使用优化器，损失和指标。
+
+### API概述：第一个端到端示例
 
 Let's consider the following model (here, we build in with the Functional API, but it could be a Sequential model or a subclassed model as well):
 
-
+让我们考虑以下模型（这里，我们使用Functional API构建，但它也可以是顺序模型或子类模型）：
 
 
 
@@ -96,7 +67,7 @@ model = keras.Model(inputs=inputs, outputs=outputs)
 ```
 
 Here's what the typical end-to-end workflow looks like, consisting of training, validation on a holdout set generated from the original training data, and finally evaluation on the test data:
-
+以下是典型的端到端工作流程的外观，包括训练，对原始训练数据生成的保留集的验证，以及最终对测试数据的评估：
 
 
 ```
@@ -169,14 +140,15 @@ print('predictions shape:', predictions.shape)
     predictions shape: (3, 10)
 
 
-### Specifying a loss, metrics, and an optimizer
+### 指定损失，指标和优化程序Specifying a loss, metrics, and an optimizer
 
 To train a model with `fit`, you need to specify a loss function, an optimizer, and optionally, some metrics to monitor.
 
 You pass these to the model as arguments to the `compile()` method:
 
+要训练合适的模型，您需要指定一个损失函数，一个优化器，以及可选的一些要监控的指标。
 
-
+您将这些作为 `compile()` 方法的参数传递给模型：
 
 ```
 model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=1e-3),
@@ -191,6 +163,12 @@ and you can modulate to contribution of each output to the total loss of the mod
 
 Note that in many cases, the loss and metrics are specified via string identifiers, as a shortcut:
 
+`metrics` 参数应该是一个列表（您的模型可以包含任意数量的度量标准）。
+
+如果您的模型有多个输出，您可以为每个输出指定不同的损失和度量，并且您可以调整每个输出对模型总损失的贡献。
+您将在“将数据传递到多输入、多输出模型”一节中找到更多关于此的详细信息。
+
+注意，在很多情况下，损失和指标是通过字符串标识符指定的，作为一种快捷方式:
 
 
 ```
@@ -200,7 +178,7 @@ model.compile(optimizer=keras.optimizers.RMSprop(learning_rate=1e-3),
 ```
 
 For later reuse, let's put our model definition and compile step in functions; we will call them several times across different examples in this guide.
-
+为了以后的重用，我们将模型定义和编译步骤放在函数中;我们将在本指南的不同示例中多次调用它们。
 
 ```
 def get_uncompiled_model():
@@ -219,41 +197,42 @@ def get_compiled_model():
   return model
 ```
 
-#### Many built-in optimizers, losses, and metrics are available
+#### 许多内置的优化器、损失和指标都是可用的
 
 In general, you won't have to create from scratch your own losses, metrics, or optimizers, because what you need is likely already part of the Keras API:
-
-Optimizers:
+通常，您不必从头开始创建自己的损失，指标或优化器，因为您需要的可能已经是Keras API的一部分：
+Optimizers优化器:
 - `SGD()` (with or without momentum)
 - `RMSprop()`
 - `Adam()`
 - etc.
 
-Losses:
+Losses损失:
 - `MeanSquaredError()`
 - `KLDivergence()`
 - `CosineSimilarity()`
 - etc.
 
-Metrics:
+Metrics指标:
 - `AUC()`
 - `Precision()`
 - `Recall()`
 - etc.
 
-#### Writing custom losses and metrics
+#### 编写自定义损失和指标
 
 If you need a metric that isn't part of the API, you can easily create custom metrics by subclassing the `Metric` class. You will need to implement 4 methods:
-
-- `__init__(self)`,  in which you will create state variables for your metric.
-- `update_state(self, y_true, y_pred, sample_weight=None)`, which uses the targets `y_true` and the model predictions `y_pred` to update the state variables.
-- `result(self)`, which uses the state variables to compute the final results.
-- `reset_states(self)`, which reinitializes the state of the metric.
+如果您需要不属于API的指标，则可以通过继承Metric类轻松创建自定义指标。您需要实现4种方法：
+- `__init__(self)`,  您将在其中为指标创建状态变量。in which you will create state variables for your metric.
+- `update_state(self, y_true, y_pred, sample_weight=None)`, 它使用目标`y_true`和模型预测`y_pred`来更新状态变量。which uses the targets `y_true` and the model predictions `y_pred` to update the state variables.
+- `result(self)`, 它使用状态变量来计算最终结果。which uses the state variables to compute the final results.
+- `reset_states(self)`, 它重新初始化度量的状态。which reinitializes the state of the metric.
 
 State update and results computation are kept separate (in `update_state()` and `result()`, respectively) because in some cases, results computation might be very expensive, and would only be done periodically.
+状态更新和结果计算是分开的（分别在`update_state()` 和 `result()`中）因为在某些情况下，结果计算可能非常昂贵，并且只能定期进行。
 
 Here's a simple example showing how to implement a `CatgoricalTruePositives` metric, that counts how many samples where correctly classified as belonging to a given class:
-
+这是一个简单的例子，展示了如何实现一个 `CatgoricalTruePositives`  指标，它计算了正确分类为属于给定类的样本数量：
 
 ```
 class CatgoricalTruePositives(keras.metrics.Metric):
@@ -305,11 +284,15 @@ model.fit(x_train, y_train,
 
 
 
-#### Handling losses and metrics that don't fit the standard signature
+#### 处理不符合标准签名的损失和指标
 
 The overwhelming majority of losses and metrics can be computed from `y_true` and `y_pred`, where `y_pred` is an output of your model. But not all of them. For instance, a regularization loss may only require the activation of a layer (there are no targets in this case), and this activation may not be a model output.
 
 In such cases, you can call `self.add_loss(loss_value)` from inside the `call` method of a custom layer. Here's a simple example that adds activity regularization (note that activity regularization is built-in in all Keras layers -- this layer is just for the sake of providing a concrete example):
+
+绝大多数损失和指标可以从`y_true`和`y_pred`计算，其中`y_pred`是模型的输出。但不是全部。例如，正则化损失可能仅需要激活层（在这种情况下没有目标），并且该激活可能不是模型输出。
+
+在这种情况下，您可以从自定义图层的`call`方法中调用  `self.add_loss(loss_value)` 。这是一个添加活动正则化的简单示例（请注意，活动正则化是内置于所有Keras层中的 - 此层仅用于提供具体示例）：
 
 
 
@@ -351,7 +334,7 @@ model.fit(x_train, y_train,
 
 
 You can do the same for logging metric values:
-
+您可以执行相同的记录度量标准值：
 
 ```
 class MetricLoggingLayer(layers.Layer):
@@ -398,6 +381,9 @@ In the [Functional API](functional.ipynb), you can also call `model.add_loss(los
 
 Here's a simple example:
 
+在 [Functional API](https://tensorflow.google.cn/alpha/guide/keras/functional) 中，您还可以调用 `model.add_loss(loss_tensor)`, 或 `model.add_metric(metric_tensor, name, aggregation)`。
+
+这是一个简单的例子：
 
 ```
 inputs = keras.Input(shape=(784,), name='digits')
@@ -430,17 +416,19 @@ model.fit(x_train, y_train,
 
 
 
-#### Automatically setting apart a validation holdout set
+#### 自动设置验证保持集Automatically setting apart a validation holdout set
 
 In the first end-to-end example you saw, we used the `validation_data` argument to pass a tuple
 of Numpy arrays `(x_val, y_val)` to the model for evaluating a validation loss and validation metrics at the end of each epoch.
+在您看到的第一个端到端示例中，我们使用 `validation_data` 参数将Numpy数组  `(x_val, y_val)` 的元组传递给模型，以便在每个时期结束时评估验证损失和验证指标。
 
 Here's another option: the argument `validation_split` allows you to automatically reserve part of your training data for validation. The argument value represents the fraction of the data to be reserved for validation, so it should be set to a number higher than 0 and lower than 1. For instance, `validation_split=0.2` means "use 20% of the data for validation", and `validation_split=0.6` means "use 60% of the data for validation".
+这是另一个选项：参数 `validation_split` 允许您自动保留部分训练数据以进行验证。参数值表示要为验证保留的数据的分数，因此应将其设置为大于0且小于1的数字。例如，`validation_split=0.2`  表示“使用20％的数据进行验证”，`validation_split=0.6` 表示“使用60％的数据进行验证”。
 
 The way the validation is computed is by *taking the last x% samples of the arrays received by the `fit` call, before any shuffling*.
-
+计算验证的方法是：在任何混洗之前，通过`fit`调用接收的数组的最后x％样本。
 You can only use `validation_split` when training with Numpy data.
-
+在使用Numpy数据进行训练时，您只能使用 `validation_split`。
 
 ```
 model = get_compiled_model()
