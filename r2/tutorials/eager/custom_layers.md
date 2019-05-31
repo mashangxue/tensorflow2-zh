@@ -8,13 +8,8 @@ abbrlink: tensorflow/tf2-tutorials-eager-custom_layers
 
 # 使用Keras自定义层 (tensorflow2.0官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md)
-
-
 我们建议使用 `tf.keras` 作为构建神经网络的高级API，也就是说，大多数TensorFlow API都可用于Eager execution。
- 
+
 ```python
 from __future__ import absolute_import, division, print_function, unicode_literals
 
@@ -166,7 +161,6 @@ my_seq(tf.zeros([1, 2, 3, 3]))
 
 现在，您可以返回到之前的教程，并调整线性回归示例，以使用更好的结构化层和模型。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers)
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md)
-

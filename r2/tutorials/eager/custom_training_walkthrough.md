@@ -1,5 +1,5 @@
 ---
-title: 自定义训练：演示
+title: 使用Keras演示TensorFlow2.0自定义训练实战 (tensorflow2.0官方教程翻译）
 tags: 
     - tensorflow2.0
 categories: 
@@ -8,18 +8,12 @@ top: 1999
 abbrlink: tensorflow/tf2-tutorials-eager-custom_training_walkthrough
 ---
 
-# 自定义训练：演示 (tensorflow2.0官方教程翻译）
+# 使用Keras演示TensorFlow2.0自定义训练实战 (tensorflow2.0官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md)
-
-本指南使用机器学习按品种对鸢尾花进行分类。它利用 TensorFlow 的 Eager Execution 来执行以下操作： 
+本指南使用机器学习对鸢尾花按品种进行分类。它利用 TensorFlow 的 Eager Execution 来执行以下操作：
 
 1. 构建模型
-
 2. 使用样本数据训练该模型
-
 3. 利用该模型对未知数据进行预测。
 
 ## 1. TensorFlow 编程
@@ -278,7 +272,7 @@ model = tf.keras.Sequential([
 
 隐藏层和神经元的理想数量取决于问题和数据集。与机器学习的多个方面一样，选择最佳的神经网络形状需要一定的知识水平和实验基础。一般来说，增加隐藏层和神经元的数量通常会产生更强大的模型，而这需要更多数据才能有效地进行训练。
 
-### 5.4. 使用模型  Using the model
+### 5.4. 查看模型
 
 我们快速了解一下此模型如何处理一批特征：
 
@@ -428,10 +422,8 @@ for epoch in range(num_epochs):
 ```
 
 ```
-      Epoch 000: Loss: 1.568, Accuracy: 30.000% 
-      Epoch 050: Loss: 0.061, Accuracy: 98.333% 
-      Epoch 100: Loss: 0.058, Accuracy: 97.500% 
-      Epoch 150: Loss: 0.044, Accuracy: 99.167% 
+      Epoch 000: Loss: 1.568, Accuracy: 30.000%
+      ...
       Epoch 200: Loss: 0.049, Accuracy: 97.500%
 ```
 
@@ -581,3 +573,7 @@ for i, logits in enumerate(predictions):
       Example 1 prediction: Iris versicolor (100.0%) 
       Example 2 prediction: Iris virginica (99.5%)
 ```
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md)
