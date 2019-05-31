@@ -8,19 +8,11 @@ top: 1999
 abbrlink: tensorflow/tf2-tutorials-eager-custom_training_walkthrough
 ---
 
-# 自定义训练：演示
+# 自定义训练：演示 (tensorflow2.0官方教程翻译）
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/eager/custom_training_walkthrough"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/custom_training_walkthrough.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/eager/custom_training_walkthrough.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md)
 
 本指南使用机器学习按品种对鸢尾花进行分类。它利用 TensorFlow 的 Eager Execution 来执行以下操作： 
 
@@ -30,7 +22,7 @@ abbrlink: tensorflow/tf2-tutorials-eager-custom_training_walkthrough
 
 3. 利用该模型对未知数据进行预测。
 
-## TensorFlow 编程
+## 1. TensorFlow 编程
 
 本指南采用了以下高级 TensorFlow 概念：
 
@@ -52,9 +44,9 @@ abbrlink: tensorflow/tf2-tutorials-eager-custom_training_walkthrough
 
 5. 使用经过训练的模型进行预测。
 
-## 设置程序
+## 2. 设置程序
 
-### 配置导入
+### 2.1. 配置导入
 
 导入所需的 Python 模块（包括 TensorFlow），默认情况下，TensorFlow使用 Eager Execution 来立即评估操作，并返回具体的值，而不是创建稍后执行的计算图。如果您习惯使用 REPL 或 python 交互控制台，对于 Eager Execution 您会用起来得心应手。
 
@@ -74,7 +66,7 @@ print("Eager execution: {}".format(tf.executing_eagerly()))
       TensorFlow version: 2.0.0-alpha0 Eager execution: True
 ```
 
-## 鸢尾花分类问题 The Iris classification problem
+## 3. 鸢尾花分类问题 The Iris classification problem
 
 想象一下，您是一名植物学家，正在寻找一种能够对所发现的每株鸢尾花进行自动归类的方法。机器学习可提供多种从统计学上分类花卉的算法。例如，一个复杂的机器学习程序可以根据照片对花卉进行分类。我们的要求并不高，我们将根据鸢尾花花萼和花瓣的长度和宽度对其进行分类。
 
@@ -96,11 +88,11 @@ print("Eager execution: {}".format(tf.executing_eagerly()))
 
 幸运的是，有人已经创建了一个包含 120 株鸢尾花的数据集（其中有花萼和花瓣的测量值）。这是一个在入门级机器学习分类问题中经常使用的经典数据集。
 
-## 导入和解析训练数据集
+## 4. 导入和解析训练数据集
 
 下载数据集文件并将其转换为可供此 Python 程序使用的结构。
 
-### 下载数据集
+### 4.1. 下载数据集
 
 使用 [tf.keras.utils.get_file](https://www.tensorflow.org/api_docs/python/tf/keras/utils/get_file) 函数下载训练数据集文件。该函数会返回下载文件的文件路径。
 
@@ -113,7 +105,7 @@ train_dataset_fp = tf.keras.utils.get_file(fname=os.path.basename(train_dataset_
 print("Local copy of the dataset file: {}".format(train_dataset_fp))
 ```
 
-### 检查数据
+### 4.2. 检查数据
 
 数据集 `iris_training.csv` 是一个纯文本文件，其中存储了逗号分隔值 (CSV) 格式的表格式数据。请使用 `head -n5` 命令查看前 5 个条目：
 
@@ -167,7 +159,7 @@ print("Label: {}".format(label_name))
 class_names = ['Iris setosa', 'Iris versicolor', 'Iris virginica']
 ```
 
-### 创建一个 `tf.data.Dataset`
+### 4.3. 创建一个 `tf.data.Dataset`
 
 TensorFlow 的 Dataset API 可处理在向模型加载数据时遇到的许多常见情况。这是一种高阶 API，用于读取数据并将其转换为可供训练使用的格式。如需了解详情，请参阅[数据集快速入门指南](https://tensorflow.google.cn/guide/datasets_for_estimators)。
 
@@ -243,15 +235,15 @@ print(features[:5])
     [6.6 3. 4.4 1.4]], shape=(5, 4), dtype=float32)
 ```
 
-## 选择模型类型
+## 5. 选择模型类型
 
-### 为何要使用模型？
+### 5.1. 为何要使用模型？
 
 模型是指特征与标签之间的关系。对于鸢尾花分类问题，模型定义了花萼和花瓣测量值与预测的鸢尾花品种之间的关系。一些简单的模型可以用几行代数进行描述，但复杂的机器学习模型拥有大量难以汇总的参数。
 
 您能否在不使用机器学习的情况下确定四个特征与鸢尾花品种之间的关系？也就是说，您能否使用传统编程技巧（例如大量条件语句）创建模型？也许能，前提是反复分析该数据集，并最终确定花瓣和花萼测量值与特定品种的关系。对于更复杂的数据集来说，这会变得非常困难，或许根本就做不到。一个好的机器学习方法可为您确定模型。如果您将足够多的代表性样本馈送到正确类型的机器学习模型中，该程序便会为您找出相应的关系。
 
-### 选择模型
+### 5.2. 选择模型
 
 我们需要选择要进行训练的模型类型。模型具有许多类型，挑选合适的类型需要一定的经验。本教程使用神经网络来解决鸢尾花分类问题。神经网络可以发现特征与标签之间的复杂关系。神经网络是一个高度结构化的图，其中包含一个或多个隐藏层。每个隐藏层都包含一个或多个神经元。神经网络有多种类别，该程序使用的是密集型神经网络，也称为全连接神经网络：一个层中的神经元将从上一层中的每个神经元获取输入连接。例如，图 2 显示了一个密集型神经网络，其中包含 1 个输入层、2 个隐藏层以及 1 个输出层：
 
@@ -268,7 +260,7 @@ print(features[:5])
 当图 2 中的模型经过训练并馈送未标记的样本时，它会产生 3 个预测结果：相应鸢尾花属于指定品种的可能性。这种预测称为[推理](https://developers.google.cn/machine-learning/crash-course/glossary#inference)。对于该示例，输出预测结果的总和是 1.0。在图 2 中，该预测结果分解如下：山鸢尾为 0.02，变色鸢尾为 0.95，维吉尼亚鸢尾为 0.03。这意味着该模型预测某个无标签鸢尾花样本是变色鸢尾的概率为 95％。
 
 
-### 使用Keras创建模型
+### 5.3. 使用Keras创建模型
 
 TensorFlow `tf.keras` API 是创建模型和层的首选方式。通过该 API，您可以轻松地构建模型并进行实验，而将所有部分连接在一起的复杂工作则由 Keras 处理。
 
@@ -286,7 +278,7 @@ model = tf.keras.Sequential([
 
 隐藏层和神经元的理想数量取决于问题和数据集。与机器学习的多个方面一样，选择最佳的神经网络形状需要一定的知识水平和实验基础。一般来说，增加隐藏层和神经元的数量通常会产生更强大的模型，而这需要更多数据才能有效地进行训练。
 
-### 使用模型  Using the model
+### 5.4. 使用模型  Using the model
 
 我们快速了解一下此模型如何处理一批特征：
 
@@ -310,13 +302,13 @@ print("Prediction: {}".format(tf.argmax(predictions, axis=1)))
 print("    Labels: {}".format(labels))
 ```
 
-## 训练模型
+## 6. 训练模型
 
 训练是一个机器学习阶段，在此阶段中，模型会逐渐得到优化，也就是说，模型会了解数据集。目标是充分了解训练数据集的结构，以便对未见过的数据进行预测。如果您从训练数据集中获得了过多的信息，预测便会仅适用于模型见过的数据，但是无法泛化。此问题称为[过拟合](https://developers.google.cn/machine-learning/crash-course/glossary#overfitting)，好比将答案死记硬背下来，而不去理解问题的解决方式。
 
 鸢尾花分类问题是监督式机器学习的一个示例：模型通过包含标签的样本加以训练。在非监督式机器学习中，样本不包含标签。相反，模型通常会在特征中发现一些规律。
 
-### 定义损失和梯度函数
+### 6.1. 定义损失和梯度函数
 
 在训练和评估阶段，我们都需要计算模型的损失。这样可以衡量模型的预测结果与预期标签有多大偏差，也就是说，模型的效果有多差。我们希望尽可能减小或优化这个值。
 
@@ -347,7 +339,7 @@ def grad(model, inputs, targets):
   return loss_value, tape.gradient(loss_value, model.trainable_variables)
 ```
 
-### 创建优化器
+### 6.2. 创建优化器
 
 *[优化器](https://developers.google.cn/machine-learning/crash-course/glossary#optimizer)* 会将计算出的梯度应用于模型的变量，以最小化 loss 函数。您可以将损失函数想象为一个曲面（见图 3），我们希望通过到处走动找到该曲面的最低点。梯度指向最高速上升的方向，因此我们将沿相反的方向向下移动。我们以迭代方式计算每个批次的损失和梯度，以在训练过程中调整模型。模型会逐渐找到权重和偏差的最佳组合，从而将损失降至最低。损失越低，模型的预测效果就越好。
 
@@ -388,7 +380,7 @@ print("Step: {},         Loss: {}".format(optimizer.iterations.numpy(),
       Step: 1, Loss: 1.7618987560272217
 ```
 
-### 训练循环
+### 6.3. 训练循环
 
 一切准备就绪后，就可以开始训练模型了！训练循环会将数据集样本馈送到模型中，以帮助模型做出更好的预测。以下代码块可设置这些训练步骤：
 
@@ -443,7 +435,7 @@ for epoch in range(num_epochs):
       Epoch 200: Loss: 0.049, Accuracy: 97.500%
 ```
 
-### 可视化损失函数随时间推移而变化的情况
+### 6.4. 可视化损失函数随时间推移而变化的情况
 
 虽然输出模型的训练过程有帮助，但查看这一过程往往更有帮助。TensorBoard 是与 TensorFlow 封装在一起的出色可视化工具，不过我们可以使用 matplotlib 模块创建基本图表。
 
@@ -464,7 +456,7 @@ plt.show()
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough_files/output_54_0.png)
 
-## 评估模型的效果
+## 7. 评估模型的效果
 
 模型已经过训练，现在我们可以获取一些关于其效果的统计信息了。
 
@@ -501,7 +493,7 @@ plt.show()
   </td></tr>
 </table>
 
-### 设置测试数据集
+### 7.1. 设置测试数据集
 
 评估模型与训练模型相似。最大的区别在于，样本来自一个单独的测试集，而不是训练集。为了公正地评估模型的效果，用于评估模型的样本务必与用于训练模型的样本不同。
 
@@ -527,7 +519,7 @@ test_dataset = tf.data.experimental.make_csv_dataset(
 test_dataset = test_dataset.map(pack_features_vector)
 ```
 
-### 根据测试数据集评估模型
+### 7.2. 根据测试数据集评估模型
 
 与训练阶段不同，模型仅评估测试数据的一个周期。在以下代码单元格中，我们会遍历测试集中的每个样本，然后将模型的预测结果与实际标签进行比较。这是为了衡量模型在整个测试集中的准确率。
 
@@ -558,7 +550,7 @@ tf.stack([y,prediction],axis=1)
              [0, 0],..., dtype=int32)>
 ```
 
-## 使用经过训练的模型进行预测
+## 8. 使用经过训练的模型进行预测
 
 我们已经训练了一个模型并“证明”它是有效的，但在对鸢尾花品种进行分类方面，这还不够。现在，我们使用经过训练的模型对无标签样本（即包含特征但不包含标签的样本）进行一些预测。
 
