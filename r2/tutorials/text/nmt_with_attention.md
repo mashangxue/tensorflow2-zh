@@ -682,6 +682,6 @@ translate(u'trata de averiguarlo.')
 * 下载[不同的数据集](http://www.manythings.org/anki/)以试验翻译，例如，英语到德语，或英语到法语。
 * 尝试对更大的数据集进行训练，或使用更多的迭代周期
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md)

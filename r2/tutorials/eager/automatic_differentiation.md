@@ -117,7 +117,7 @@ assert d2y_dx2.numpy() == 6.0
 
 在本教程中，我们介绍了TensorFlow中的梯度计算。有了这个，我们就拥有了构建和训练神经网络所需的足够原语。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html)
 
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation](https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation)
 

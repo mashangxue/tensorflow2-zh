@@ -8,7 +8,7 @@ abbrlink: tensorflow/tf2-guide-keras-training_and_evaluation
 
 # 使用TensorFlow Keras进行训练和评估 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html](http://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/training_and_evaluation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/training_and_evaluation.md)
 

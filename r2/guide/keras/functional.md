@@ -8,7 +8,7 @@ abbrlink: tensorflow/tf2-guide-keras-functional
 
 # TensorFlow中的Keras函数式API (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html](http://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md)
 
@@ -811,6 +811,6 @@ _ = rnn_model(tf.zeros((1, 10, 5)))
 
 现在，您已经拥有了一套用于构建深度学习模型的强大工具。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html](http://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md)

@@ -574,6 +574,6 @@ for i, logits in enumerate(predictions):
       Example 2 prediction: Iris virginica (99.5%)
 ```
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md)

@@ -409,6 +409,6 @@ _ = plt.ylabel("Count")
 
 * 尽早停止是防止过拟合的有效技巧。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md)

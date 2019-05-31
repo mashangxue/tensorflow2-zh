@@ -381,6 +381,6 @@ abs(reloaded_result_batch - result_batch).max()
 
 这个保存的模型可以在以后加载推理，或转换为[TFLite](https://www.tensorflow.google.cn/lite/convert/) 和 [TFjs](https://github.com/tensorflow/tfjs-converter)。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md)

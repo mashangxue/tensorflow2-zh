@@ -161,6 +161,6 @@ my_seq(tf.zeros([1, 2, 3, 3]))
 
 现在，您可以返回到之前的教程，并调整线性回归示例，以使用更好的结构化层和模型。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md)

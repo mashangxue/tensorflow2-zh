@@ -8,7 +8,7 @@ abbrlink: tensorflow/tf2-tutorials-images-image_classification
 
 # 图像分类
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-image_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-image_classification.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-image_classification.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-image_classification.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/image_classification](https://tensorflow.google.cn/alpha/tutorials/images/image_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/image_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/image_classification.md)
 

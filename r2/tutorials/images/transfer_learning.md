@@ -514,6 +514,6 @@ plt.show()
 * **微调与训练的模型：** 
 为了进一步提高性能，可以通过微调将预训练模型的顶层重新调整为新数据集。在这种情况下，您调整了权重，以便模型学习特定于数据集的高级特征，当训练数据集很大并且非常类似于预训练模型训练的原始数据集时，通常建议使用此技术。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md)

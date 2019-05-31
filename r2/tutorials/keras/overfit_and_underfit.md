@@ -384,6 +384,6 @@ plot_history([('baseline', baseline_history),
 
 本指南未涉及的两个重要方法是数据增强和批量标准化。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md)

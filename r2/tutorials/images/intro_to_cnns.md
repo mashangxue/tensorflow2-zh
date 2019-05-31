@@ -144,6 +144,6 @@ print(test_acc)
 
 如你所见，我们简单的CNN已经达到了超过99%的测试精度，这几行代码还不错。另一种编写CNN的方式[here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/advanced.ipynb)（使用Keras Subclassing API和GradientTape）。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-intro_to_cnns.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/images/intro_to_cnns)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/intro_to_cnns.md)

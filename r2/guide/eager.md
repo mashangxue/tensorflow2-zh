@@ -595,6 +595,6 @@ if tf.test.is_gpu_available():
 
 虽然Eager Execution使开发和调试更具交互性，但TensorFlow 1.x样式图执行在分布式训练，性能优化和生产部署方面具有优势。为了弥补这一差距，TensorFlow 2.0通过`tf.function` API引入此功能。有关更多信息，请参阅[Autograph指南](https://tensorflow.google.cn/alpha/guide/autograph)。
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-eager.html](http://www.mashangxue123.com/tensorflow/tf2-guide-eager.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-eager.html](https://www.mashangxue123.com/tensorflow/tf2-guide-eager.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/guide/eager](https://tensorflow.google.cn/alpha/guide/eager)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/eager.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/eager.md)

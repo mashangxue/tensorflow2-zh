@@ -743,6 +743,6 @@ concat_with_padding()
 
 现在重新访问早期的教程并尝试使用 `tf.function` 加速代码！
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/tf_function](https://tensorflow.google.cn/alpha/tutorials/eager/tf_function)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md)

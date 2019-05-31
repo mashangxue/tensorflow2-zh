@@ -820,6 +820,6 @@ model.save_weights(checkpoint_prefix.format(epoch=epoch))
     Time taken for 1 epoch 14.261839628219604 sec
 ```    
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_generation.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_generation.html)
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_generation.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_generation.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/text_generation](https://tensorflow.google.cn/alpha/tutorials/text/text_generation)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_generation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_generation.md)
