@@ -10,18 +10,6 @@ abbrlink: tensorflow/tf2-tutorials-estimators-linear
 
 # 使用 Estimator 构建线性模型
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/tutorials/estimators/linear"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/estimators/linear.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/estimators/linear.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
-
 ## 1. 概述
 
 这个端到端的演练使用`tf.estimator` API训练逻辑回归模型。该模型通常用作其他更复杂算法的基准。
@@ -305,3 +293,7 @@ plt.ylim(0,)
 
 ![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_44_1.png)
 
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-estimators-linear.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-estimators-linear.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/estimators/linear](https://tensorflow.google.cn/alpha/tutorials/estimators/linear)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/estimators/linear.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/estimators/linear.md)

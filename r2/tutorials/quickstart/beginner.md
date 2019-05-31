@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-quickstart-beginner
 
 # 初学者入门 TensorFlow 2.0（tensorflow2.0官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner](https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md)
-
 安装命令：
 
 ```shell
@@ -59,7 +55,6 @@ model.evaluate(x_test, y_test)
 
 现在，图像分类器在该数据集上的准确度达到约98％。 要了解更多信息，请阅读[TensorFlow教程](https://tensorflow.google.cn/alpha/tutorials/).。
 
-
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner)
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner](https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md)

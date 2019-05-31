@@ -6,19 +6,11 @@ top: 1999
 abbrlink: tensorflow/tf2-tutorials-images-image_classification
 ---
 
-# Image classification
+# 图像分类
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/images/image_classification"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/images/image_classification.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/images/image_classification.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-image_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-image_classification.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/image_classification](https://tensorflow.google.cn/alpha/tutorials/images/image_classification)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/image_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/image_classification.md)
 
 This tutorial shows how to classify cats or dogs from images. It builds an image classifier using a `tf.keras.Sequential` model and load data using `tf.keras.preprocessing.image.ImageDataGenerator`. You will get some practical experience and develop intuition for the following concepts:
 
@@ -115,7 +107,7 @@ validation_cats_dir = os.path.join(validation_dir, 'cats')  # directory with our
 validation_dogs_dir = os.path.join(validation_dir, 'dogs')  # directory with our validation dog pictures
 ```
 
-### Understand the data
+### 0.1. Understand the data
 
 Let's look at how many cats and dogs images ware in the training and validation directory:
 
@@ -191,7 +183,7 @@ val_data_gen = validation_image_generator.flow_from_directory(batch_size=batch_s
                                                               class_mode='binary')
 ```
 
-### Visualize training images
+### 0.2. Visualize training images
 
 Visualize the training images by extracting a batch of images from the training generator—which is 32 images in this example—then plot five of them with `matplotlib`.
 
@@ -239,7 +231,7 @@ model.add(Dense(512, activation='relu'))
 model.add(Dense(1, activation='sigmoid'))
 ```
 
-### Compile the model
+### 0.3. Compile the model
 
 For this tutorial, choose the *ADAM* optimizer and *binary cross entropy* loss function. To view training and validation accuracy for each training epoch, pass the `metrics` argument.
 
@@ -251,7 +243,7 @@ model.compile(optimizer='adam',
              )
 ```
 
-### Model summary
+### 0.4. Model summary
 
 View all the layers of the network using the model's `summary` method:
 
@@ -260,7 +252,7 @@ View all the layers of the network using the model's `summary` method:
 model.summary()
 ```
 
-### Train the model
+### 0.5. Train the model
 
 Use the `fit_generator` method of the `ImageDataGenerator` class to train the network.
 
@@ -275,7 +267,7 @@ history = model.fit_generator(
 )
 ```
 
-### Visualize training results
+### 0.6. Visualize training results
 
 Now visualize the results after training the network.
 
@@ -331,11 +323,11 @@ Overfitting generally occurs when there are a small number of training examples.
 
 Implement this in `tf.keras` using the `ImageDataGenerator` class. Pass  different transformations to the dataset and it will take care of applying it during the training process.
 
-## Augment and visualize data
+## 1. Augment and visualize data
 
 Begin by applying random horizontal flip augmentation to the dataset and see how individual images look like after the transformation.
 
-### Apply horizontal flip
+### 1.1. Apply horizontal flip
 
 Pass `horizontal_flip` as an argument to the `ImageDataGenerator` class and set it to `True` to apply this augmentation.
 
@@ -368,7 +360,7 @@ augmented_images = [train_data_gen[0][0][0] for i in range(5)]
 plotImages(augmented_images)
 ```
 
-### Randomly rotate the image
+### 1.2. Randomly rotate the image
 
 Let's take a look at a different augmentation called rotation and apply 45 degrees of rotation randomly to the training examples.
 
@@ -394,7 +386,7 @@ augmented_images = [train_data_gen[0][0][0] for i in range(5)]
 plotImages(augmented_images)
 ```
 
-### Apply zoom augmentation
+### 1.3. Apply zoom augmentation
 
 Apply a zoom augmentation to the dataset to zoom images up to 50% randomly.
 
@@ -420,7 +412,7 @@ augmented_images = [train_data_gen[0][0][0] for i in range(5)]
 plotImages(augmented_images)
 ```
 
-### Put it all together
+### 1.4. Put it all together
 
 Apply all the previous augmentations. Here, you applied rescale, 45 degree rotation, width shift, height shift, horizontal flip and zoom augmentation to the training images.
 
@@ -455,7 +447,7 @@ augmented_images = [train_data_gen[0][0][0] for i in range(5)]
 plotImages(augmented_images)
 ```
 
-### Create validation data generator
+### 1.5. Create validation data generator
 
 Generally, only apply data augmentation to the training examples. In this case, only rescale the validation images and convert them into batches using `ImageDataGenerator`.
 
@@ -505,7 +497,7 @@ model.add(Dropout(0.1))
 model.add(Dense(1, activation='sigmoid'))
 ```
 
-### Compile the model
+### 1.6. Compile the model
 
 After introducing dropouts to the network, compile the model and view the layers summary.
 
@@ -519,7 +511,7 @@ model.compile(optimizer='adam',
 model.summary()
 ```
 
-### Train the model
+### 1.7. Train the model
 
 After successfully introducing data augmentations to the training examples and adding dropouts to the network, train this new network:
 
@@ -534,7 +526,7 @@ history = model.fit_generator(
 )
 ```
 
-### Visualize the model
+### 1.8. Visualize the model
 
 Visualize the new model after training and see if there are signs of overfitting:
 
@@ -563,6 +555,6 @@ plt.title('Training and Validation Loss')
 plt.show()
 ```
 
-### Evaluating the model
+### 1.9. Evaluating the model
 
 As you can see, the model's learning curves are much better than before and there is much less overfitting. The model is able to achieve an accuracy of ~*75%*.

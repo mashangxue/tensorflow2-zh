@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-save_and_restore_models
 
 # tensorflow2保存和加载模型 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md)
-
 模型进度可以在训练期间和训练后保存。这意味着模型可以在它停止的地方继续，并避免长时间的训练。保存还意味着您可以共享您的模型，其他人可以重新创建您的工作。当发布研究模型和技术时，大多数机器学习实践者共享:
 * 用于创建模型的代码
 * 以及模型的训练权重或参数

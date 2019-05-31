@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-text-word_embeddings
 
 # NLP词嵌入Word embedding实战项目 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings](https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md)
-
 本文介绍词嵌入向量 Word embedding，包含完整的代码，可以在小型数据集上从零开始训练词嵌入，并使用[Embedding Projector](http://projector.tensorflow.org) 可视化这些嵌入，如下图所示：
 
 <img src="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/text/images/embedding.jpg?raw=1" alt="Screenshot of the embedding projector" width="400"/>

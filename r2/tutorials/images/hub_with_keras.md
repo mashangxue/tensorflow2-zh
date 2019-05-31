@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-images-hub_with_keras
 
 # 基于Keras使用TensorFlow Hub实现迁移学习(tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md)
-
 [TensorFlow Hub](http://tensorflow.google.cn/hub)是一种共享预训练模型组件的方法。
 
 > TensorFlow Hub是一个用于促进机器学习模型的可重用部分的发布，探索和使用的库。特别是，它提供经过预先训练的TensorFlow模型，可以在新任务中重复使用。（可以理解为做迁移学习：可以使用较小的数据集训练模型，可以改善泛化和加快训练。）GitHub 地址：[https://github.com/tensorflow/hub](https://github.com/tensorflow/hub)

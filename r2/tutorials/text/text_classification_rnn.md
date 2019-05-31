@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-text-text_classification_rnn
 
 # 使用RNN对文本进行分类实践：电影评论 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn](https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md)
-
 本教程在[IMDB大型影评数据集](http://ai.stanford.edu/~amaas/data/sentiment/) 上训练一个循环神经网络进行情感分类。
 
 ```python

@@ -8,18 +8,12 @@ abbrlink: tensorflow/tf2-tutorials-eager-custom_training
 
 # 自定义训练：基础 (tensorflow2.0官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training)
-
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training)
-
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md)
-
 在上一个教程中，我们介绍了用于自动微分的TensorFlow API，这是机器学习的基本构建块。在本教程中，我们将使用先前教程中介绍的TensorFlow原语来进行一些简单的机器学习。
 
 TensorFlow还包括一个更高级别的神经网络API(`tf.keras`) ，它提供了有用的抽象来减少引用。我们强烈建议使用神经网络的人使用更高级别的API。
 但是，在这个简短的教程中，我们从基本原理入手开始介绍神经网络训练，以建立坚实的基础。
 
-## 设置
+## 1. 设置
 
 ```python
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -27,7 +21,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import tensorflow as tf
 ```
 
-## 变量
+## 2. 变量
 
 TensorFlow中的张量是不可变的无状态对象。然而，机器学习模型需要具有变化的状态：随着模型训练，计算预测的相同代码应该随着时间的推移而表现不同（希望具有较低的损失）。要表示需要在计算过程中进行更改的状态，您可以选择依赖Python是有状态编程语言的这一事实：
 
@@ -61,7 +55,7 @@ assert v.numpy() == 9.0
 使用变量也是一种快速让代码的读者知道这段状态是可变的方法。
 
 
-## 示例：拟合一个线性模型
+## 3. 示例：拟合一个线性模型
 
 现在让我们把我们迄今为止的几个概念：`Tensor`， `GradientTape`， `Variable`。构建并训练一个简单的模型。这通常涉及几个步骤：
 
@@ -75,7 +69,7 @@ assert v.numpy() == 9.0
 
 在本教程中，我们将介绍简单线性模型的一个简单示例： `f(x) = x * W + b`，它有两个变量，`W` 和 `b`。此外，我们将合成数据，使训练有素的模型具有`W = 3.0` 和` b =2.0` 。
 
-### 定义模型
+### 3.1. 定义模型
 
 让我们定义一个简单的类来封装变量和计算
 
@@ -95,7 +89,7 @@ model = Model()
 assert model(3.0).numpy() == 15.0
 ```
 
-### 定义损失函数
+### 3.2. 定义损失函数
 
 损失函数测量给定输入的模型输出与期望输出的匹配程度。让我们使用标准的L2损失：
 
@@ -104,7 +98,7 @@ def loss(predicted_y, desired_y):
   return tf.reduce_mean(tf.square(predicted_y - desired_y))
 ```
 
-### 获取训练数据
+### 3.3. 获取训练数据
 
 让我们用一些噪音合成训练数据：
 
@@ -131,7 +125,7 @@ print('Current loss: '),
 print(loss(model(inputs), outputs).numpy())
 ```
 
-### 定义训练循环
+### 3.4. 定义训练循环
 
 我们现在拥有我们的网络和训练数据。让我们训练它，即使用训练数据来更新模型的变量（`W` 和 `b`），以便使用梯度下降来减少损失。在`tf.train.Optimizer`实现中拥有许多梯度下降方案的变体。我们强烈建议使用这些实现，但本着从基本原理构建的精神，在这个特定的例子中，我们将自己实现基本的数学。
 
@@ -180,11 +174,16 @@ plt.show()
 ![png](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_files/output_22_1.png)
 
 
-## 下一步
+## 4. 下一步
 
 在本教程中，我们介绍了变量，并使用到目前为止讨论的TensorFlow原语构建并训练了一个简单的线性模型。
 
 从理论上讲，这几乎是您使用TensorFlow进行机器学习研究所需要的全部内容。在实践中，特别是对于神经网络，像 `tf.keras` 这样的高级API将更加方便，因为它提供了更高级别的构建块（称为“层”），用于保存和恢复状态的实用程序，一套损失函数，套件优化策略等。
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.htnl)
+
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training)
+
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md)
 
 

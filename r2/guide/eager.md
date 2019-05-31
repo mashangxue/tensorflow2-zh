@@ -8,18 +8,6 @@ abbrlink: tensorflow/tf2-guide-eager
 
 # Eager Execution 概述
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/guide/eager"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/guide/eager.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/guide/eager.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
-
 TensorFlow 的 Eager Execution 是一种命令式编程环境，可立即评估操作，无需构建图：操作会返回具体的值，而不是构建以后再运行的计算图。这样能让您轻松地开始使用 TensorFlow 和调试模型，并且还减少了样板代码。要遵循本指南，请在交互式 python 解释器中运行下面的代码示例。
 
 Eager Execution 是一个灵活的机器学习平台，用于研究和实验，可提供：
@@ -607,3 +595,6 @@ if tf.test.is_gpu_available():
 
 虽然Eager Execution使开发和调试更具交互性，但TensorFlow 1.x样式图执行在分布式训练，性能优化和生产部署方面具有优势。为了弥补这一差距，TensorFlow 2.0通过`tf.function` API引入此功能。有关更多信息，请参阅[Autograph指南](https://tensorflow.google.cn/alpha/guide/autograph)。
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-eager.html](http://www.mashangxue123.com/tensorflow/tf2-guide-eager.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/guide/eager](https://tensorflow.google.cn/alpha/guide/eager)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/eager.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/eager.md)

@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-overfit_and_underfit
 
 # 探索过拟合和欠拟合 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md)
-
 在前面的两个例子中（电影影评分类和预测燃油效率），我们看到，在训练许多周期之后，我们的模型对验证数据的准确性会到达峰值，然后开始下降。
 
 换句话说，我们的模型会过度拟合训练数据，学习如果处理过拟合很重要，尽管通常可以在训练集上实现高精度，但我们真正想要的是开发能够很好泛化测试数据（或之前未见过的数据）的模型。
@@ -387,3 +383,7 @@ plot_history([('baseline', baseline_history),
 * 添加dropout
 
 本指南未涉及的两个重要方法是数据增强和批量标准化。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md)

@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-images-transfer_learning
 
 # 使用预训练的卷积神经网络进行迁移学习 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md)
-
 在本教程中，您将学习如何使用预训练网络进行转移学习对猫与狗图像分类。主要内容：使用预训练的模型进行特征提取，微调与训练的模型。
 
 预训练模型是一个保存的网路，以前在大型数据集上训练的，通常是在大规模图像分类任务上，您可以按原样使用预训练模型，也可以使用转移学习将此模型自定义为给定的任务。

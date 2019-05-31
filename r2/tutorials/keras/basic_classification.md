@@ -10,10 +10,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-basic_classification
 
 # 训练您的第一个神经网络：基本分类Fashion MNIST(tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md)
-
 本指南会训练一个对服饰（例如运动鞋和衬衫）图像进行分类的神经网络模型。即使您不了解所有细节也没关系，本教程只是简要介绍了一个完整的 TensorFlow 程序，而且后续我们会详细介绍。
 
 本指南使用的是[tf.keras](https://tensorflow.google.cn/guide/keras)，它是一种用于在 TensorFlow 中构建和训练模型的高阶 API。

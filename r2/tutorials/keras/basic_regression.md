@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-basic_regression
 
 # 回归项目实战：预测燃油效率 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md)
-
 在*回归*问题中，我们的目标是预测连续值的输出，如价格或概率。
 将此与*分类*问题进行对比，分类的目标是从类列表中选择一个类（例如，图片包含苹果或橙色，识别图片中的哪个水果）。
 
@@ -412,3 +408,7 @@ _ = plt.ylabel("Count")
 * 如果没有太多训练数据，应选择隐藏层很少的小网络，以避免过拟合。
 
 * 尽早停止是防止过拟合的有效技巧。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md)

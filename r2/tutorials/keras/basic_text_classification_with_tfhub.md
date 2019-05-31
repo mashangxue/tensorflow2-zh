@@ -8,11 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub
 
 # 使用Keras和TensorFlow Hub对电影评论进行文本分类 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md)
-
-
 此教程本会将文本形式的影评分为“正面”或“负面”影评。这是一个二元分类（又称为两类分类）的示例，也是一种重要且广泛适用的机器学习问题。
 
 本教程演示了使用TensorFlow Hub和Keras进行迁移学习的基本应用。
@@ -41,7 +36,7 @@ print("Hub version: ", hub.__version__)
 print("GPU is", "available" if tf.test.is_gpu_available() else "NOT AVAILABLE")
 ```
 
-## 下载 IMDB 数据集
+## 1. 下载 IMDB 数据集
 
 [TensorFlow数据集](https://github.com/tensorflow/datasets)上提供了IMDB数据集。以下代码将IMDB数据集下载到您的机器：
 
@@ -55,7 +50,7 @@ train_validation_split = tfds.Split.TRAIN.subsplit([6, 4])
     as_supervised=True)
 ```
 
-## 探索数据 
+## 2. 探索数据 
 
 我们花点时间来了解一下数据的格式，每个样本表示电影评论和相应标签的句子，该句子不以任何方式进行预处理。每个标签都是整数值 0 或 1，其中 0 表示负面影评，1 表示正面影评。
 
@@ -72,7 +67,7 @@ train_examples_batch
 train_labels_batch
 ```
 
-## 构建模
+## 3. 构建模
 
 神经网络通过堆叠层创建而成，这需要做出三个架构方面的主要决策：
 
@@ -138,7 +133,7 @@ model.summary()
 
 让我们编译模型。
 
-### 损失函数和优化器
+### 3.1. 损失函数和优化器
 
 模型在训练时需要一个损失函数和一个优化器。由于这是一个二元分类问题且模型会输出一个概率（应用 S 型激活函数的单个单元层），因此我们将使用 binary_crossentropy 损失函数。
 
@@ -154,7 +149,7 @@ model.compile(optimizer='adam',
               metrics=['accuracy'])
 ```
 
-## 训练模型
+## 4. 训练模型
 
 用有 512 个样本的小批次训练模型 40 个周期。这将对 x_train 和 y_train 张量中的所有样本进行 40 次迭代。在训练期间，监控模型在验证集的 10000 个样本上的损失和准确率：
 
@@ -171,7 +166,7 @@ history = model.fit(train_data.shuffle(10000).batch(512),
             30/30 [==============================] - 4s 144ms/step - loss: 0.2027 - accuracy: 0.9264 - val_loss: 0.3079 - val_accuracy: 0.8697
 ```
 
-## 评估模型
+## 5. 评估模型
 
 我们来看看模型的表现如何。模型会返回两个值：损失（表示误差的数字，越低越好）和准确率。
 
@@ -187,7 +182,11 @@ for name, value in zip(model.metrics_names, results):
 
 使用这种相当简单的方法可实现约 87% 的准确率。如果采用更高级的方法，模型的准确率应该会接近 95%。
 
-## 进一步阅读
+## 6. 进一步阅读
 
 要了解处理字符串输入的更一般方法，以及更详细地分析训练过程中的准确性和损失，请查看 https://www.tensorflow.org/tutorials/keras/basic_text_classification
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md)
 

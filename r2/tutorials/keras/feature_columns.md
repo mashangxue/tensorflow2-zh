@@ -7,10 +7,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-feature_columns
 ---
 # 结构化数据分类实战：心脏病预测(tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns](https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md)
-
 本教程演示了如何对结构化数据进行分类（例如CSV格式的表格数据）。
 我们将使用Keras定义模型，并使用[特征列](https://tensorflow.google.cn/guide/feature_columns)作为桥梁，将CSV中的列映射到用于训练模型的特性。
 本教程包含完整的代码：
@@ -373,3 +369,7 @@ print("Accuracy", accuracy)
 ## 10. 下一步
 
 了解有关分类结构化数据的更多信息的最佳方法是亲自尝试，我们建议找到另一个可以使用的数据集，并训练模型使用类似于上面的代码对其进行分类，要提高准确性，请仔细考虑模型中包含哪些特征以及如何表示这些特征。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns](https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md)

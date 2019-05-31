@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-text-nmt_with_attention
 
 # 采用注意力机制的神经机器翻译(tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md)
-
 本教程训练一个序列到序列 (seq2seq)模型，实现西班牙语到英语的翻译。这是一个高级示例，要求您对序列到序列模型有一定的了解。
 
 训练模型后，输入一个西班牙语句子将返回对应英文翻译，例如 *"¿todavia estan en casa?"* ，返回 *"are you still at home?"*
@@ -39,7 +35,7 @@ import io
 import time
 ```
 
-## 下载并准备数据集
+## 1. 下载并准备数据集
 
 我们将使用 http://www.manythings.org/anki/  提供的语言数据集。此数据集包含以下格式的语言翻译对：
 
@@ -167,7 +163,7 @@ def load_dataset(path, num_examples=None):
     return input_tensor, target_tensor, inp_lang_tokenizer, targ_lang_tokenizer
 ```
 
-### 限制数据集的大小以更快地进行实验（可选）
+### 1.1. 限制数据集的大小以更快地进行实验（可选）
 
 对 > 100,000个句子的完整数据集进行训练需要很长时间。为了更快地训练，我们可以将数据集的大小限制为30,000个句子（当然，翻译质量会随着数据的减少而降低）：
 
@@ -233,7 +229,7 @@ convert(targ_lang, target_tensor_train[0])
     2 ----> <end>
 ```
 
-### 创建 `tf.data` 数据集
+### 1.2. 创建 `tf.data` 数据集
 
 
 ```python
@@ -260,7 +256,7 @@ example_input_batch.shape, example_target_batch.shape
 ```
 
 
-## 编写编码器和解码器模型
+## 2. 编写编码器和解码器模型
 
 我们将实现一个使用注意力机制的编码器-解码器模型，您可以在TensorFlow [神经机器翻译（seq2seq）教程](https://www.tensorflow.org/tutorials/seq2seq)中阅读。此示例使用更新的API集，实现了seq2seq教程中的注意方程式。下图显示了每个输入单词由注意机制分配权重，然后解码器使用该权重来预测句子中的下一个单词。
 
@@ -432,7 +428,7 @@ print ('Decoder output shape: (batch_size, vocab size) {}'.format(sample_decoder
     Decoder output shape: (batch_size, vocab size) (64, 4935)
 ```
 
-## 定义优化器和损失函数
+## 3. 定义优化器和损失函数
 
 
 ```python
@@ -450,7 +446,7 @@ def loss_function(real, pred):
   return tf.reduce_mean(loss_)
 ```
 
-## Checkpoints检查点（基于对象的保存）
+## 4. Checkpoints检查点（基于对象的保存）
 
 
 ```python
@@ -461,7 +457,7 @@ checkpoint = tf.train.Checkpoint(optimizer=optimizer,
                                  decoder=decoder)
 ```
 
-## 训练
+## 5. 训练
 
 1. 通过编码器传递输入，编码器返回编码器输出和编码器隐藏状态。
 2. 编码器输出，编码器隐藏状态和解码器输入（它是开始标记）被传递给解码器。
@@ -543,7 +539,7 @@ for epoch in range(EPOCHS):
 ```   
 
 
-## 翻译
+## 6. 翻译
 
 * 评估函数类似于训练循环，除了我们在这里不使用 *teacher forcing* 。解码器在每个时间步长的输入是其先前的预测，以及隐藏状态和编码器的输出。
 * 停止预测模型何时预测结束标记。
@@ -621,7 +617,7 @@ def translate(sentence):
     plot_attention(attention_plot, sentence.split(' '), result.split(' '))
 ```
 
-## 恢复最新的检查点并进行测试
+## 7. 恢复最新的检查点并进行测试
 
 ```python
 # restoring the latest checkpoint in checkpoint_dir
@@ -681,8 +677,11 @@ translate(u'trata de averiguarlo.')
 ![png](nmt_with_attention_46_1.png)
 
 
-## 下一步
+## 8. 下一步
 
 * 下载[不同的数据集](http://www.manythings.org/anki/)以试验翻译，例如，英语到德语，或英语到法语。
 * 尝试对更大的数据集进行训练，或使用更多的迭代周期
 
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md)

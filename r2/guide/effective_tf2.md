@@ -10,10 +10,6 @@ abbrlink: tensorflow/tf2-guide-effective_tf2
 
 # 高效的TensorFlow 2.0 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2](http://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/effective_tf2](https://tensorflow.google.cn/alpha/guide/effective_tf2)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/effective_tf2.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/effective_tf2.md)
-
 TensorFlow 2.0中有多处更改，以使TensorFlow用户使用更高效。TensorFlow 2.0删除[冗余 APIs](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md),使API更加一致([统一 RNNs](https://github.com/tensorflow/community/blob/master/rfcs/20180920-unify-rnn-interface.md),[统一优化器](https://github.com/tensorflow/community/blob/master/rfcs/20181016-optimizer-unification.md)),并通过[Eager execution](https://www.tensorflow.org/guide/eager)模式更好地与Python运行时集成
 
 许多[RFCs](https://github.com/tensorflow/community/pulls?utf8=%E2%9C%93&q=is%3Apr)已经解释了TensorFlow 2.0所带来的变化。本指南介绍了TensorFlow 2.0应该是什么样的开发，假设您对TensorFlow 1.x有一定的了解。
@@ -231,3 +227,7 @@ with test_summary_writer.as_default():
 ```shell
 tensorboard --logdir /tmp/summaries
 ```
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2.html](http://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/guide/effective_tf2](https://tensorflow.google.cn/alpha/guide/effective_tf2)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/effective_tf2.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/effective_tf2.md)

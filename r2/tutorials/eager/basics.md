@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-eager-basics
 
 # tensorflow2.0张量及其操作、numpy兼容、GPU加速 (tensorflow2.0官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/basics](https://tensorflow.google.cn/alpha/tutorials/eager/basics)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md)
-
 这是一个基础入门的TensorFlow教程，展示了如何：
 
 * 导入所需的包
@@ -223,3 +219,7 @@ for x in ds_file:
         tf.Tensor([b'Line 1' b'Line 2'], shape=(2,), dtype=string) 
         tf.Tensor([b'Line 3' b' '], shape=(2,), dtype=string)
 ```
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/basics](https://tensorflow.google.cn/alpha/tutorials/eager/basics)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md)

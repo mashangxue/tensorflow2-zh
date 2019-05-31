@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-text-image_captioning
 
 # 使用注意力机制给出图片标题 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/image_captioning](https://tensorflow.google.cn/alpha/tutorials/text/image_captioning)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md)
-
 给定如下图像，我们的目标是生成一个标题，例如“冲浪者骑在波浪上”。
 
 ![Man Surfing](https://tensorflow.google.cn/images/surf.jpg)
@@ -51,7 +47,7 @@ from PIL import Image
 import pickle
 ```
 
-## 下载并准备MS-COCO数据集
+## 1. 下载并准备MS-COCO数据集
 
 您将使用MS-COCO数据集来训练我们的模型。该数据集包含超过82,000个图像，每个图像至少有5个不同的标题注释。下面的代码自动下载并提取数据集。
 注意：训练集是一个13GB的文件。
@@ -74,7 +70,7 @@ else:
   PATH = os.path.abspath('.')+'/train2014/'
 ```
 
-## （可选）限制训练集的大小以加快训练速度
+## 2. （可选）限制训练集的大小以加快训练速度
 
 对于本例，我们将选择30,000个标题的子集，并使用这些标题和相应的图像来训练我们的模型。与往常一样，如果您选择使用更多的数据，标题质量将会提高。
 
@@ -116,7 +112,7 @@ len(train_captions), len(all_captions)
     (30000, 414113)
 ```
 
-## 使用InceptionV3预处理图像
+## 3. 使用InceptionV3预处理图像
 
 接下来，我们将使用InceptionV3（在Imagenet上预训练）对每个图像进行分类。我们将从最后一个卷积层中提取特征。
 
@@ -133,7 +129,7 @@ def load_image(image_path):
     return img, image_path
 ```
 
-## 初始化InceptionV3并加载预训练的Imagenet权重
+## 4. 初始化InceptionV3并加载预训练的Imagenet权重
 
 现在您将创建一个 tf.keras 模型，其中输出层是 InceptionV3 体系结构中的最后一个卷积层。该层的输出形状为 `8x8x2048` 。使用最后一个卷积层是因为在这个例子中使用了注意力。您不会在训练期间执行此初始化，因为它可能会成为瓶颈。
 * 您通过网络转发每个图像并将结果向量存储在字典中(image_name --> feature_vector)
@@ -148,7 +144,7 @@ hidden_layer = image_model.layers[-1].output
 image_features_extract_model = tf.keras.Model(new_input, hidden_layer)
 ```
 
-## 缓存从InceptionV3中提取的特性
+## 5. 缓存从InceptionV3中提取的特性
 
 您将使用InceptionV3预处理每个映像并将输出缓存到磁盘。缓存RAM中的输出会更快但内存密集，每个映像需要 8 \* 8 \* 2048 个浮点数。在撰写本文时，这超出了Colab的内存限制（目前为12GB内存）。
 
@@ -186,7 +182,7 @@ for img, path in image_dataset:
     np.save(path_of_feature, bf.numpy())
 ```
 
-## 对标题进行预处理和标记
+## 6. 对标题进行预处理和标记
 
 * 首先，您将对标题进行标记（例如，通过拆分空格）。这为我们提供了数据中所有独特单词的词汇表（例如，“冲浪”，“足球”等）。
 * 接下来，您将词汇量限制为前5,000个单词（以节省内存）。您将使用令牌“UNK”（未知）替换所有其他单词。
@@ -238,7 +234,7 @@ cap_vector = tf.keras.preprocessing.sequence.pad_sequences(train_seqs, padding='
 max_length = calc_max_length(train_seqs)
 ```
 
-## 将数据分解为训练和测试
+## 7. 将数据分解为训练和测试
 
 
 ```python
@@ -259,7 +255,7 @@ len(img_name_train), len(cap_train), len(img_name_val), len(cap_val)
 ```
 
 
-## 创建用于训练的tf.data数据集
+## 8. 创建用于训练的tf.data数据集
 
 我们的图片和标题已准备就绪！接下来，让我们创建一个tf.data数据集来用于训练我们的模型。
 
@@ -300,7 +296,7 @@ dataset = dataset.shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
 dataset = dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 ```
 
-## 模型
+## 9. 模型
 
 
 有趣的事实：下面的解码器与 [注意神经机器翻译的示例](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)中的解码器相同。
@@ -425,7 +421,7 @@ def loss_function(real, pred):
   return tf.reduce_mean(loss_)
 ```
 
-## Checkpoint 检查点
+## 10. Checkpoint 检查点
 
 
 ```python
@@ -443,7 +439,7 @@ if ckpt_manager.latest_checkpoint:
   start_epoch = int(ckpt_manager.latest_checkpoint.split('-')[-1])
 ```
 
-## 训练
+## 11. 训练
 
 * 您提取各自.npy文件中存储的特性，然后通过编码器传递这些特性。
 * 编码器输出，隐藏状态（初始化为0）和解码器输入（它是开始标记）被传递给解码器。
@@ -545,7 +541,7 @@ plt.show()
 ![png](image_captioning_44_0.png)
 
 
-## 标题!
+## 12. 标题!
 
 * 评估函数类似于训练循环，只是这里不使用 teacher forcing 。解码器在每个时间步长的输入是其先前的预测，以及隐藏状态和编码器的输出。
 * 当模型预测结束令牌时停止预测。
@@ -631,7 +627,7 @@ Image.open(img_name_val[rid])
 
 
 
-## 在你自己的图片上试试
+## 13. 在你自己的图片上试试
 
 为了好玩，下面我们提供了一种方法，您可以使用我们刚刚训练过的模型为您自己的图像添加标题。请记住，它是在相对少量的数据上训练的，您的图像可能与训练数据不同（因此请为奇怪的结果做好准备！）
 
@@ -660,3 +656,7 @@ Image.open(image_path)
 # 下一步
 
 恭喜！您刚刚训练了一个注意力机制给图像取标题的模型。接下来，看一下这个[使用注意力机制的神经机器翻译示例](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)。它使用类似的架构来翻译西班牙语和英语句子。您还可以尝试在不同的数据集上训练此笔记本中的代码。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/image_captioning](https://tensorflow.google.cn/alpha/tutorials/text/image_captioning)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md)

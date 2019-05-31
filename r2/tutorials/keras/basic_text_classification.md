@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-keras-basic_text_classification
 
 # 文本分类项目实战：电影评论 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)
-
 本文会将文本形式的影评分为“正面”或“负面”影评。这是一个二元分类（又称为两类分类）的示例，也是一种重要且广泛适用的机器学习问题。
 
 我们将使用包含来自[网络电影数据库](https://www.imdb.com/)的50,000条电影评论文本的[IMDB数据集](https://tensorflow.google.cn/api_docs/python/tf/keras/datasets/imdb)，这些被分为25,000条训练评论和25,000条评估评论，训练和测试集是平衡的，这意味着它们包含相同数量的正面和负面评论。
@@ -324,3 +320,7 @@ plt.show()
 验证损失和准确率的变化情况并非如此，它们似乎在大约 20 个周期后达到峰值。这是一种过拟合现象：模型在训练数据上的表现要优于在从未见过的数据上的表现。在此之后，模型会过度优化和学习特定于训练数据的表示法，而无法泛化到测试数据。
 
 对于这种特殊情况，我们可以在大约 20 个周期后停止训练，防止出现过拟合。稍后，您将了解如何使用回调自动执行此操作。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)

@@ -8,10 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-quickstart-advanced
 
 # 专家入门TensorFlow 2.0使用流程：数据处理、自定义模型、损失、指标、梯度下降 (tensorflow2.0官方教程翻译)
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced](https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/advanced.md)
-
 初学者入门教程中，使用tf.keras.Sequential模型，只是简单的堆叠模型。
 本文是专家级入门，使用 Keras 模型子类 API 构建模型，会使用更底层一点的的函数接口，自定义模型、损失、评估指标和梯度下降控制等，流程清晰。
 
@@ -138,7 +134,6 @@ for epoch in range(EPOCHS):
 ```
 
 现在，图像分类器在该数据集上的准确度达到约98％。要了解更多信息，请阅读 [TensorFlow教程](https://tensorflow.google.cn/alpha/tutorials/keras).。
-
 
 > 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-advanced.html)
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced](https://tensorflow.google.cn/alpha/tutorials/quickstart/advanced)

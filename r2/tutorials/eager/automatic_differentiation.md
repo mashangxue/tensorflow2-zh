@@ -8,17 +8,10 @@ abbrlink: tensorflow/tf2-tutorials-eager-automatic_differentiation
 
 # 自动微分和梯度带 (tensorflow2.0官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation)
-
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation](https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation)
-
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md)
-
-
 在上一个教程中，我们介绍了张量及其操作。在本教程中，我们将介绍自动微分，这是优化机器学习模型的关键技术。
 
 
-## 导入包
+## 1. 导入包
 
 ```python
 from __future__ import absolute_import, division, print_function, unicode_literals
@@ -26,7 +19,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import tensorflow as tf
 ```
 
-## 梯度带(Gradient tapes)
+## 2. 梯度带(Gradient tapes)
 
 TensorFlow提供了 [tf.GradientTape](https://www.tensorflow.org/api_docs/python/tf/GradientTape) API 用于自动微分(计算与输入变量相关的计算梯度)。
 Tensorflow将在 `tf.GradientTape` 上下文中执行的所有操作“records(记录)”到“tape(磁带)”上。然后，TensorFlow使用该磁带和与每个记录操作相关的梯度，使用反向模式微分“记录”计算的梯度。例如：
@@ -75,7 +68,7 @@ dy_dx = t.gradient(y, x)  # 6.0
 del t  # Drop the reference to the tape
 ```
 
-### 记录控制流程
+### 2.1. 记录控制流程
 
 因为tapes(磁带)在执行时记录操作，所以Python控制流程（例如使用 `if` 和 `while`）自然会被处理：
 
@@ -101,7 +94,7 @@ assert grad(x, 4).numpy() == 4.0
 
 ```
 
-### 高阶梯度
+### 2.2. 高阶梯度
 
  `GradientTape` 上下文管理器内的操作将被记录下来，以便自动微分。如果在该上下文中计算梯度，那么梯度计算也会被记录下来。因此，同样的API也适用于高阶梯度。例如:
 
@@ -120,6 +113,12 @@ assert dy_dx.numpy() == 3.0
 assert d2y_dx2.numpy() == 6.0
 ```
 
-## 下一步
+## 3. 下一步
 
 在本教程中，我们介绍了TensorFlow中的梯度计算。有了这个，我们就拥有了构建和训练神经网络所需的足够原语。
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html)
+
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation](https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation)
+
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md)

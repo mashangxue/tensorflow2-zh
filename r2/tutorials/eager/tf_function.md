@@ -8,12 +8,6 @@ abbrlink: tensorflow/tf2-tutorials-eager-tf_function
 
 # tf.function和 AutoGraph (tensorflow2.0官方教程翻译）
 
-> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function)
-
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/tf_function](https://tensorflow.google.cn/alpha/tutorials/eager/tf_function)
-
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md)
-
 在TensorFlow 2.0中，默认情况下会打开eager execution，这为您提供了一个非常直观和灵活的用户界面（运行一次性操作更容易，更快）但这可能会牺牲性能和可部署性。
 
 为了获得最佳性能并使您的模型可以在任何地方部署，我们提供了 `tf.function` 作为您可以用来从程序中生成图的工具。多亏了AutoGraph，大量的Python代码可以与tf.function一起工作。但仍有一些陷阱需要警惕。
@@ -97,7 +91,7 @@ dense_layer(tf.ones([3, 2]), tf.ones([2, 2]), tf.ones([2]))
 ```
 
 
-## 追踪和多态性
+## 1. 追踪和多态性
 
 Python的动态类型意味着您可以使用各种参数类型调用函数，Python将在每个场景中执行不同的操作。
 另一方面，TensorFlow图需要静态dtypes和形状尺寸。`tf.function` 通过在必要时回溯函数生成正确的图来弥补这一差距。`tf.function` 使用的大多数微妙之处源于这种回溯行为。
@@ -160,11 +154,11 @@ with assert_raises(ValueError):
 
 ```
 
-## 什么时候回溯？
+## 2. 什么时候回溯？
 
 多态 `tf.function` 保持跟踪生成的具体函数的缓存。缓存键实际上是从函数args和kwargs生成的键的元组。为`tf.Tensor`参数生成的关键是它的形状和类型。为Python原语生成的密钥是它的值。对于所有其他Python类型，键基于对象`id（）`，以便为每个类的实例独立跟踪方法。将来，TensorFlow可以为Python对象添加更复杂的缓存，可以安全地转换为张量。
 
-## Python还是Tensor args？
+## 3. Python还是Tensor args？
 
 通常，Python参数用于控制超参数和图构造。例如，`num_layers = 10 `或 `training = True` 或`nonlinearity ='relu'`。因此，如果Python参数发生变化，那么您必须回溯图形是有道理的。
 
@@ -200,7 +194,7 @@ train(num_steps=tf.constant(20))
       Tracing with num_steps = Tensor("num_steps:0", shape=(), dtype=int32)
 ```
 
-## `tf.function`中的附作用
+## 4. `tf.function`中的附作用
 
 > “副作用” 指“在满足主要功能（主作用？）的同时，顺便完成了一些其他的副要功能”，也可翻译为“附作用”
 
@@ -247,7 +241,7 @@ assert external_list[0].numpy() == 1
 
 ```
 
-## 谨防Python状态
+## 5. 谨防Python状态
 
 许多Python功能（如生成器和迭代器）依赖于Python运行时来跟踪状态。通常，虽然这些构造在Eager模式下按预期工作，但由于跟踪行为，在`tf.function`中会发生许多意外情况。
 
@@ -301,7 +295,7 @@ measure_graph_size(train, tf.data.Dataset.from_generator(
 
 通过 TFRecordDataset/CsvDataset等从文件中读取数据，是最有效的数据消费方式，因为TensorFlow本身可以管理数据的异步加载和预取，而不必涉及Python。
 
-## 自动控制依赖项
+## 6. 自动控制依赖项
 
 在一般数据流图上，作为编程模型的函数，一个非常吸引人的特性是函数可以为运行时提供有关代码预期行为的更多信息。
 
@@ -329,7 +323,7 @@ f(1.0, 2.0)  # 10.0
       <tf.Tensor: id=466, shape=(), dtype=float32, numpy=10.0>
 ```
 
-## 变量
+## 7. 变量
 
 我们可以使用相同的想法来利用代码的预期执行顺序，以便在`tf.function`中非常容易地创建和使用变量。但是有一个非常重要的警告，即使用变量，可以编写在急切模式和图形模式下表现不同的代码。
 
@@ -449,7 +443,7 @@ def f(x):
 print(tf.autograph.to_code(f))
 ```
 
-## AutoGraph：条件
+## 8. AutoGraph：条件
 
 AutoGraph会将`if`语句转换为等效的`tf.cond`调用。
 如果条件是Tensor，则进行此替换。否则，在跟踪期间执行条件。
@@ -520,7 +514,7 @@ with assert_raises(ValueError):
   f()
 ```
 
-## AutoGraph和循环
+## 9. AutoGraph和循环
 
 AutoGraph有一些简单的转换循环规则。
 
@@ -745,6 +739,10 @@ concat_with_padding()
 
 ```
 
-## 下一步
+## 10. 下一步
 
 现在重新访问早期的教程并尝试使用 `tf.function` 加速代码！
+
+> 最新版本：[http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function.html](http://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-tf_function.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/tf_function](https://tensorflow.google.cn/alpha/tutorials/eager/tf_function)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/tf_function.md)
