@@ -1,7 +1,7 @@
 ---
 title: tensorflow2官方教程目录导航
 categories: tensorflow2官方教程
-tags: tensorflow2.0
+tags: tensorflow2.0教程
 top: 1900
 abbrlink: tensorflow/tensorflow2-zh-readme
 ---

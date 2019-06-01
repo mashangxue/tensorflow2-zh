@@ -1,6 +1,6 @@
 ---
 title: Eager Execution 概述
-tags: tensorflow2.0
+tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-guide-eager

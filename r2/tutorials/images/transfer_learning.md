@@ -1,6 +1,6 @@
 ---
 title: 使用预训练的卷积神经网络进行迁移学习 (tensorflow2.0官方教程翻译)
-tags: tensorflow2.0
+tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-images-transfer_learning

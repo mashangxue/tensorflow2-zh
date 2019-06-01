@@ -1,7 +1,7 @@
 ---
 title: 使用Keras和TensorFlow Hub对电影评论进行文本分类 (tensorflow2.0官方教程翻译)
 categories: tensorflow2官方教程
-tags: tensorflow2.0
+tags: tensorflow2.0教程
 top: 1918
 abbrlink: tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub
 ---

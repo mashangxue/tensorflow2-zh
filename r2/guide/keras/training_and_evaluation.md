@@ -1,6 +1,6 @@
 ---
 title: 使用 TensorFlow Keras 进行训练和评估 (tensorflow2.0官方教程翻译)
-tags: tensorflow2.0
+tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-guide-keras-training_and_evaluation

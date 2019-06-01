@@ -1,7 +1,7 @@
 ---
 title: TF梯度下降法的核心自动微分和梯度带 (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
-tags: tensorflow2.0
+tags: tensorflow2.0教程
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-eager-automatic_differentiation
 ---
