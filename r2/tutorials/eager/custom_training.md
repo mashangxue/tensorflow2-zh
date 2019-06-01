@@ -2,7 +2,7 @@
 title: 自定义训练：基础 (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
 tags: tensorflow2.0教程
-top: 1999
+top: 1954
 abbrlink: tensorflow/tf2-tutorials-eager-custom_training
 ---
 

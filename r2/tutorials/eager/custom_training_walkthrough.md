@@ -4,7 +4,7 @@ tags:
     - tensorflow2.0
 categories: 
     - tensorflow2官方教程
-top: 1999
+top: 1955
 abbrlink: tensorflow/tf2-tutorials-eager-custom_training_walkthrough
 ---
 

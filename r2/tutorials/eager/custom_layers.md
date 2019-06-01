@@ -2,7 +2,7 @@
 title: 使用Keras自定义层 (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
 tags: tensorflow2.0教程
-top: 1999
+top: 1952
 abbrlink: tensorflow/tf2-tutorials-eager-custom_layers
 ---
 

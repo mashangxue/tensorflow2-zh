@@ -2,7 +2,7 @@
 title: 使用TensorFlow2.0实现卷积神经网络CNN对MNIST数字分类 (tensorflow2.0官方教程翻译)
 tags: tensorflow2.0教程
 categories: tensorflow2官方教程
-top: 1999
+top: 1921
 abbrlink: tensorflow/tf2-tutorials-images-intro_to_cnns
 ---
 

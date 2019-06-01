@@ -2,7 +2,7 @@
 title: tensorflow2.0张量及其操作、numpy兼容、GPU加速 (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
 tags: tensorflow2.0教程
-top: 1999
+top: 1951
 abbrlink: tensorflow/tf2-tutorials-eager-basics
 ---
 
