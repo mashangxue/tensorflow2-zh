@@ -1,15 +1,16 @@
 ---
-title: 自动微分和梯度带 (tensorflow2.0官方教程翻译）
+title: TF梯度下降法的核心自动微分和梯度带 (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
 tags: tensorflow2.0
 top: 1999
 abbrlink: tensorflow/tf2-tutorials-eager-automatic_differentiation
 ---
 
-# 自动微分和梯度带 (tensorflow2.0官方教程翻译）
+# TF梯度下降法的核心自动微分和梯度带 (tensorflow2.0官方教程翻译）
 
 在上一个教程中，我们介绍了张量及其操作。在本教程中，我们将介绍自动微分，这是优化机器学习模型的关键技术。
 
+> 备注：在此之前，机器学习社区中很少发挥这个利器，一般都是用Backpropagation(反向传播算法)进行梯度求解，然后使用SGD等进行优化更新。手动实现过backprop算法的同学应该可以体会到其中的复杂性和易错性，一个好的框架应该可以很好地将这部分难点隐藏于用户视角，而自动微分技术恰好可以优雅解决这个问题。梯度下降法（Gradient Descendent）是机器学习的核心算法之一，自动微分则是梯度下降法的核心；梯度下降是通过计算参数与损失函数的梯度并在梯度的方向不断迭代求得极值；
 
 ## 1. 导入包
 
@@ -118,7 +119,5 @@ assert d2y_dx2.numpy() == 6.0
 在本教程中，我们介绍了TensorFlow中的梯度计算。有了这个，我们就拥有了构建和训练神经网络所需的足够原语。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html)
-
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation](https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation)
-
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md)
