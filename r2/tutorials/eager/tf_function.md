@@ -6,7 +6,7 @@ top: 1956
 abbrlink: tensorflow/tf2-tutorials-eager-tf_function
 ---
 
-# tf.function和 AutoGraph (tensorflow2.0官方教程翻译）
+# tf.function和 AutoGraph 提高性能和可部署性 (tensorflow2.0官方教程翻译）
 
 在TensorFlow 2.0中，默认情况下会打开eager execution，这为您提供了一个非常直观和灵活的用户界面（运行一次性操作更容易，更快）但这可能会牺牲性能和可部署性。
 
@@ -53,11 +53,13 @@ def add(a, b):
 add(tf.ones([2, 2]), tf.ones([2, 2]))  #  [[2., 2.], [2., 2.]]
 ```
 
-```
+输出：
+
+```output
       <tf.Tensor: id=14, shape=(2, 2), dtype=float32, numpy= array([[2., 2.], [2., 2.]], dtype=float32)>
 ```
 
-
+代码
 ```python
 # Functions have gradients
 
@@ -71,11 +73,13 @@ with tf.GradientTape() as tape:
 tape.gradient(result, v)
 ```
 
-```
+输出：
+
+```output
       <tf.Tensor: id=40, shape=(), dtype=float32, numpy=1.0>
 ```
 
-
+代码
 ```python
 # You can use functions inside functions
 
@@ -86,7 +90,9 @@ def dense_layer(x, w, b):
 dense_layer(tf.ones([3, 2]), tf.ones([2, 2]), tf.ones([2]))
 ```
 
-```
+输出：
+
+```output
   <tf.Tensor: id=67, shape=(3, 2), dtype=float32, numpy= array([[3., 3.], [3., 3.], [3., 3.]], dtype=float32)>
 ```
 
@@ -115,7 +121,9 @@ print()
 
 ```
 
-```
+输出：
+
+```output
       Tracing with Tensor("a:0", shape=(), dtype=int32) tf.Tensor(2, shape=(), dtype=int32) 
       Tracing with Tensor("a:0", shape=(), dtype=float32) tf.Tensor(2.2, shape=(), dtype=float32) 
       Tracing with Tensor("a:0", shape=(), dtype=string) tf.Tensor(b'aa', shape=(), dtype=string)
@@ -176,11 +184,12 @@ def train(num_steps):
 
 train(num_steps=10)
 train(num_steps=20)
-
 ```
+
+输出：
+
+```output
       Tracing with num_steps = 10 Tracing with num_steps = 20
-```
-
 ```
 
 如果它们不影响生成的图的形状，简单的解决方法是将参数转换为Tensors。
@@ -190,13 +199,15 @@ train(num_steps=tf.constant(10))
 train(num_steps=tf.constant(20))
 ```
 
-```
+输出：
+
+```output
       Tracing with num_steps = Tensor("num_steps:0", shape=(), dtype=int32)
 ```
 
-## 4. `tf.function`中的附作用
+## 4. `tf.function`中的副作用
 
-> “副作用” 指“在满足主要功能（主作用？）的同时，顺便完成了一些其他的副要功能”，也可翻译为“附作用”
+> “副作用” 指在满足主要功能（主作用？）的同时，顺便完成了一些其他的副要功能”，也可翻译为“附作用”
 
 通常，Python附作用（如打印或变异对象）仅在跟踪期间发生。那你如何可靠地触发`tf.function`的附作用呢？
 
@@ -214,7 +225,9 @@ f(2)
 
 ```
 
-```
+输出：
+
+```output
   Traced with 1 Executed with 1 Executed with 1 
   Traced with 2 Executed with 2
 ```
@@ -290,7 +303,6 @@ measure_graph_size(train, tf.data.Dataset.from_generator(
     lambda: big_data, (tf.int32, tf.int32)))
 ```
 
-
 在数据集中包装Python / Numpy数据时，请注意 `tf.data.Dataset.from_generator` 与 `tf.data.Dataset.from_tensors`。前者将数据保存在Python中并通过 `tf.py_function` 获取，这可能会影响性能，而后者会将数据的副本捆绑为图中的一个大的 `tf.constant()` 节点，这可以有记忆含义。
 
 通过 TFRecordDataset/CsvDataset等从文件中读取数据，是最有效的数据消费方式，因为TensorFlow本身可以管理数据的异步加载和预取，而不必涉及Python。
@@ -319,7 +331,9 @@ f(1.0, 2.0)  # 10.0
 
 ```
 
-```
+输出：
+
+```output
       <tf.Tensor: id=466, shape=(), dtype=float32, numpy=10.0>
 ```
 
@@ -340,7 +354,9 @@ with assert_raises(ValueError):
   f(1.0)
 ```
 
-```
+输出：
+
+```output
       Caught expected exception <class 'ValueError'>: tf.function-decorated function tried to create variables on non-first call.
 ```
 
@@ -358,7 +374,9 @@ print(f(2.0))  # 4.0
 
 ```
 
-```
+输出：
+
+```output
       tf.Tensor(2.0, shape=(), dtype=float32) 
       tf.Tensor(4.0, shape=(), dtype=float32)
 ```
@@ -381,7 +399,9 @@ print(g(1.0))  # 2.0
 print(g(2.0))  # 4.0
 ```
 
-```
+输出：
+
+```output
       tf.Tensor(2.0, shape=(), dtype=float32) 
       tf.Tensor(4.0, shape=(), dtype=float32)
 ```
@@ -404,17 +424,18 @@ print(fn(tf.constant(3.0)))
 
 ```
 
-```
+输出：
+
+```output
       tf.Tensor(12.0, shape=(), dtype=float32) 
       tf.Tensor(36.0, shape=(), dtype=float32)
 ```
 
-# Using AutoGraph
+# 使用 AutoGraph
 
 [autograph](https://www.tensorflow.org/guide/autograph) 库与`tf.function`完全集成，它将重写依赖于Tensors的条件和循环，以便在图中动态运行。
 
 `tf.cond`和`tf.while_loop`继续使用`tf.function`，但是当以命令式方式编写时，具有控制流的代码通常更容易编写和理解。
-
 
 ```python
 # Simple loop
@@ -570,7 +591,9 @@ test_dynamically_unrolled(for_in_tfdataset)
 
 ```
 
-```
+输出：
+
+```output
       for_in_range() gets unrolled. 
       for_in_tfrange() uses tf.while_loop. 
       for_in_tfdataset() uses tf.data.Dataset.reduce.
@@ -595,7 +618,9 @@ test_dynamically_unrolled(while_py_cond)
 test_dynamically_unrolled(while_tf_cond)
 ```
 
-```
+输出：
+
+```output
       while_py_cond() gets unrolled. 
       while_tf_cond() uses tf.while_loop.
 ```
