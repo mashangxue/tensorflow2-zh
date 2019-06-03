@@ -108,7 +108,11 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)
 
-#### Classify text with a RNN
+#### Classify text with a RNN (使用RNN对文本进行分类实践：电影评论)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn](https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md)
 
 ### Estimators
 
@@ -119,12 +123,41 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 ### Customization
 
 #### Overview
-#### Tensors and operations
-#### Custom layers
-#### Automatic differentiation
-#### Custom training: basics
-#### Custom training: walkthrough
-#### TF function and AutoGraph
+#### Tensors and operations (tensorflow2.0张量及其操作、numpy兼容、GPU加速)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/basics](https://tensorflow.google.cn/alpha/tutorials/eager/basics)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md)
+
+#### Custom layers (使用Keras自定义层)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_layers.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers](https://tensorflow.google.cn/alpha/tutorials/eager/custom_layers)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_layers.md)
+
+#### Automatic differentiation (TF梯度下降法的核心自动微分和梯度带)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation](https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md)
+
+#### Custom training: basics (构建tensorflow2.0模型自定义训练的基础步骤)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.htnl)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md)
+
+#### Custom training: walkthrough (使用Keras演示TensorFlow2.0自定义训练实战)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training_walkthrough.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_walkthrough)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training_walkthrough.md)
+
+#### TF function and AutoGraph (TF梯度下降法的核心自动微分和梯度带)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-automatic_differentiation.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation](https://tensorflow.google.cn/alpha/tutorials/eager/automatic_differentiation)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/automatic_differentiation.md)
 
 ### Text and sequences
 
