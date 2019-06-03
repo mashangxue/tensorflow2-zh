@@ -1,12 +1,12 @@
 ---
-title: 自定义训练：基础 (tensorflow2.0官方教程翻译）
+title: 构建tensorflow2.0模型自定义训练的基础步骤 (tensorflow2.0官方教程翻译）
 categories: tensorflow2官方教程
 tags: tensorflow2.0教程
 top: 1954
 abbrlink: tensorflow/tf2-tutorials-eager-custom_training
 ---
 
-# 自定义训练：基础 (tensorflow2.0官方教程翻译）
+# 构建tensorflow2.0模型自定义训练的基础步骤 (tensorflow2.0官方教程翻译）
 
 在上一个教程中，我们介绍了用于自动微分的TensorFlow API，这是机器学习的基本构建块。在本教程中，我们将使用先前教程中介绍的TensorFlow原语来进行一些简单的机器学习。
 
@@ -181,9 +181,7 @@ plt.show()
 从理论上讲，这几乎是您使用TensorFlow进行机器学习研究所需要的全部内容。在实践中，特别是对于神经网络，像 `tf.keras` 这样的高级API将更加方便，因为它提供了更高级别的构建块（称为“层”），用于保存和恢复状态的实用程序，一套损失函数，套件优化策略等。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.htnl)
-
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training)
-
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md)
 
 
