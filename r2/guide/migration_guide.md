@@ -1,151 +1,118 @@
+---
+title: 将 TF1.x 代码迁移到 TensorFlow 2.0（tensorflow2.0官方教程翻译）
+categories: tensorflow2官方教程
+tags: tensorflow2.0教程
+top: 1903
+abbrlink: tensorflow/tf2-guide-migration_guide
+---
 
-##### Copyright 2018 The TensorFlow Authors.
+# 将 TF1.x 代码迁移到 TensorFlow 2.0（tensorflow2.0官方教程翻译）
 
+在TensorFlow 2.0中，仍然可以运行未经修改的1.x代码（contrib除外）：
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
-
-# Convert Your Existing Code to TensorFlow 2.0
-
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/guide/migration_guide">
-    <img src="https://www.tensorflow.org/images/tf_logo_32px.png" />
-    View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/guide/migration_guide.ipynb">
-    <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />
-    Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/guide/migration_guide.ipynb">
-    <img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />
-    View source on GitHub</a>
-  </td>
-</table>
-
-It is still possible to run 1.X code, unmodified (except for contrib), in TensorFlow 2.0:
-
-```
+```python
 import tensorflow.compat.v1 as tf
 tf.disable_v2_behavior()
 ```
 
-However, this does not let you take advantage of many of the improvements made in TensorFlow 2.0. This guide will help you upgrade your code, making it simpler, more performant, and easier to maintain.
+但是，这并不能让您利用TensorFlow2.0中的许多改进。本指南将帮助您升级代码，使其更简单、更高效、更易于维护。
 
-## Automatic conversion script
+## 自动转换脚本
 
-The first step is to try running the [upgrade script](./upgrade.md).
+第一步是尝试运行[升级脚本](https://tensorflow.google.cn/alpha/guide/upgrade).
 
-This will do an initial pass at upgrading your code to TensorFlow 2.0. But it can't make your code idiomatic to TensorFlowF 2.0. Your code may still make use of `tf.compat.v1` endpoints to access placeholders, sessions, collections, and other 1.x-style functionality.
+这将在将您的代码升级到TensorFlow 2.0时执行初始步骤。但是它不能使您的代码适合TensorFlowF 2.0。您的代码仍然可以使用`tf.compat.v1` 接口来访问占位符，会话，集合和其他1.x样式的功能。
 
-## Make the code 2.0-native
+## 使代码2.0原生化
 
 
-This guide will walk through several examples of converting TensorFlow 1.x code to TensorFlow 2.0. These changes will let your code take advantage of performance optimizations and simplified API calls.
+本指南将介绍将TensorFlow 1.x代码转换为TensorFlow 2.0的几个示例。这些更改将使您的代码利用性能优化和简化的API调用。
+在每一种情况下，模式是：
 
-In each case, the pattern is:
+### 1. 替换`tf.Session.run`调用
 
-### 1. Replace `tf.Session.run` calls
+每个`tf.Session.run`调用都应该被Python函数替换。
 
-Every `tf.Session.run` call should be replaced by a Python function.
+* `feed_dict`和`tf.placeholder'成为函数参数。
+* `fetches`成为函数的返回值。
 
-* The `feed_dict` and `tf.placeholder`s become function arguments.
-* The `fetches` become the function's return value.
+您可以使用标准Python工具（如`pdb`）逐步调试和调试函数
 
-You can step-through and debug the function using standard Python tools like `pdb`.
+如果您对它的工作感到满意，可以添加一个`tf.function`装饰器，使其在图形模式下高效运行。有关其工作原理的更多信息，请参阅[Autograph Guide](https://tensorflow.google.cn/alpha/guide/autograph)。
 
-When you're satisfied that it works, add a `tf.function` decorator to make it run efficiently in graph mode. See the [Autograph Guide](autograph.ipynb) for more on how this works.
+### 2.  使用Python对象来跟踪变量和损失
 
-### 2. Use python objects to track variables and losses
-
-Use `tf.Variable` instead of `tf.get_variable`.
-
-Every `variable_scope` can be converted to a Python object. Typically this will be one of:
+使用`tf.Variable`而不是`tf.get_variable`。
+每个`variable_scope`都可以转换为Python对象。通常这将是以下之一：
 
 * `tf.keras.layers.Layer`
 * `tf.keras.Model`
 * `tf.Module`
 
-If you need to aggregate lists of variables (like `tf.Graph.get_collection(tf.GraphKeys.VARIABLES)`), use the `.variables` and `.trainable_variables` attributes of the `Layer` and `Model` objects.
+如果需要聚合变量列表（如 `tf.Graph.get_collection(tf.GraphKeys.VARIABLES)` ），请使用`Layer`和`Model`对象的`.variables`和`.trainable_variables`属性。
 
-These `Layer` and `Model` classes implement several other properties that remove the need for global collections. Their `.losses` property can be a replacement for using the `tf.GraphKeys.LOSSES` collection.
+这些`Layer`和`Model`类实现了几个不需要全局集合的其他属性。他们的`.losses`属性可以替代使用`tf.GraphKeys.LOSSES`集合。
 
-See the [keras guides](keras.ipynb) for details.
+有关详细信息，请参阅[keras指南](https://tensorflow.google.cn/alpha/guide/keras)。
 
-Warning: Many `tf.compat.v1` symbols  use the global collections implicitly.
+警告：许多`tf.compat.v1`符号隐式使用全局集合。
 
+### 3. 升级您的训练循环
 
-### 3. Upgrade your training loops
+使用适用于您的用例的最高级API。首选`tf.keras.Model.fit`构建自己的训练循环。
 
-Use the highest level API that works for your use case.  Prefer `tf.keras.Model.fit` over building your own training loops.
+如果您编写自己的训练循环，这些高级函数可以管理很多可能容易遗漏的低级细节。例如，它们会自动收集正则化损失，并在调用模型时设置`training = True`参数。
 
-These high level functions manage a lot of the low-level details that might be easy to miss if you write your own training loop. For example, they automatically collect the regularization losses, and set the `training=True` argument when calling the model.
+### 4. 升级数据输入管道
 
-### 4. Upgrade your data input pipelines
+使用`tf.data`数据集进行数据输入。这些对象是高效的，富有表现力的，并且与张量流很好地集成。
 
-Use `tf.data` datasets for data input. Thse objects are efficient, expressive, and integrate well with tensorflow.
+它们可以直接传递给`tf.keras.Model.fit`方法。
 
-They can be passed directly to the `tf.keras.Model.fit` method.
-
-```
+```python
 model.fit(dataset, epochs=5)
 ```
 
-They can be iterated over directly standard Python:
+它们可以直接在标准Python上迭代：
 
-```
+```python
 for example_batch, label_batch in dataset:
     break
 ```
 
 
-## Converting models
+## 转换模型
 
-### Setup
+### 设置
 
 
-```
+```python
 from __future__ import absolute_import, division, print_function, unicode_literals
-!pip install tensorflow==2.0.0-alpha0
 import tensorflow as tf
-
 
 import tensorflow_datasets as tfds
 ```
 
-### Low-level variables & operator execution
+### 低阶变量和操作执行
 
-Examples of low-level API use include:
+低级API使用的示例包括：
 
-* using variable scopes to control reuse
-* creating variables with `tf.get_variable`.
-* accessing collections explicitly
-* accessing collections implicitly with methods like :
+* 使用变量范围来控制重用
+* 用`tf.get_variable`创建变量。
+* 显式访问集合
+* 使用以下方法隐式访问集合：
 
   * `tf.global_variables`
   * `tf.losses.get_regularization_loss`
 
-* using `tf.placeholder` to set up graph inputs
-* executing graphs with `session.run`
-* initializing variables manually
+* 使用`tf.placeholder`设置图输入
+* 用`session.run`执行图形
+* 手动初始化变量
 
 
-#### Before converting
+#### 转换前
 
-Here is what these patterns may look like in code using TensorFlow 1.x.
+以下是使用TensorFlow 1.x在代码中看起来像这些模式的内容：
 
 ```python
 in_a = tf.placeholder(dtype=tf.float32, shape=(2))
@@ -170,19 +137,19 @@ with tf.Session() as sess:
 
 ```
 
-#### After converting
+#### 转换后
 
-In the converted code:
+在转换后的代码中：
 
-* The variables are local Python objects.
-* The `forward` function still defines the calculation.
-* The `sess.run` call is replaced with a call to `forward`
-* The optional `tf.function` decorator can be added for performance.
-* The regularizations are calculated manually, without referring to any global collection.
-* **No sessions or placeholders.**
+* 变量是本地Python对象.
+* `forward`函数仍定义计算。
+* `sess.run`调用被替换为对'forward`的调用
+* 可以添加可选的`tf.function`装饰器以提高性能。
+* 正则化是手动计算的，不涉及任何全局集合。
+* **没有会话或占位符**
 
 
-```
+```python
 W = tf.Variable(tf.ones(shape=(2,2)), name="W")
 b = tf.Variable(tf.zeros(shape=(2)), name="b")
 
@@ -195,18 +162,19 @@ print(out_a)
 ```
 
 
-```
+```python
 out_b = forward([0,1])
 
 regularizer = tf.keras.regularizers.l2(0.04)
 reg_loss = regularizer(W)
 ```
 
-### Models based on `tf.layers`
+### 基于`tf.layers`的模型
 
-The `tf.layers` module is used to contain layer-functions that relied on `tf.variable_scope` to define and reuse variables.
+`tf.layers`模块用于包含依赖于`tf.variable_scope`来定义和重用变量的层函数。
 
-#### Before converting
+#### 转换前
+
 ```python
 def model(x, training, scope='model'):
   with tf.variable_scope(scope, reuse=tf.AUTO_REUSE):
@@ -224,25 +192,23 @@ train_out = model(train_data, training=True)
 test_out = model(test_data, training=False)
 ```
 
-#### After converting
+#### 转换后
 
-* The simple stack of layers fits neatly into `tf.keras.Sequential`. (For more complex models see [custom layers and models](keras/custom_layers_and_models.ipynb), and [the functional API](keras/functional.ipynb).)
-* The model tracks the variables, and regularization losses.
-* The conversion was one-to-one because there is a direct mapping from `tf.layers` to `tf.keras.layers`.
+* 简单的层堆栈可以整齐地放入 `tf.keras.Sequential` 中。  (对于更复杂的模型，请参见 *自定义层和模型* ，以及 *函数式API* 两个教程）
+* 模型跟踪变量和正则化损失
+* 转换是一对一的，因为有一个从`tf.layers`到`tf.keras.layers`的直接映射。
 
-Most arguments stayed the same. But notice the differences:
+大多数参数保持不变，但注意区别：
 
-* The `training` argument is passed to each layer by the model when it runs.
-* The first argument to the original `model` function (the input `x`) is gone. This is because object layers separate building the model from calling the model.
+* 训练参数在运行时由模型传递给每个层
+* 原来模型函数的第一个参数（input `x` ）消失，这是因为层将构建模型与调用模型分开了。
 
+同时也要注意：
 
-Also note that:
+* 如果你使用来自`tf.contrib`的初始化器的正则化器，它们的参数变化比其他变量更多。
+* 代码不在写入集合，因此像 `tf.losses.get_regularization_loss` 这样的函数将不再返回这些值，这可能会破坏您的训练循环。
 
-* If you were using regularizers of initializers from  `tf.contrib`, these have more argument changes than others.
-* The code no longer writes to collections, so functions like `tf.losses.get_regularization_loss` will no longer return these values, potentially breaking your training loops.
-
-
-```
+```python
 model = tf.keras.Sequential([
     tf.keras.layers.Conv2D(32, 3, activation='relu',
                            kernel_regularizer=tf.keras.regularizers.l2(0.04),
@@ -260,35 +226,34 @@ test_data = tf.ones(shape=(1, 28, 28, 1))
 ```
 
 
-```
+```python
 train_out = model(train_data, training=True)
 print(train_out)
 ```
 
 
-```
+```python
 test_out = model(test_data, training=False)
 print(test_out)
 ```
 
 
-```
-# Here are all the trainable variables.
+```python
+# 以下是所有可训练的变量。
 len(model.trainable_variables)
 ```
 
 
-```
-# Here is the regularization loss.
+```python
+# 这是正规化损失。
 model.losses
 ```
 
-### Mixed variables & tf.layers
+### 混合变量和tf.layers
 
+现存的代码通常将较低级别的TF 1.x变量和操作与较高级的 `tf.layers` 混合。
 
-Existing code often mixes lower-level TF 1.x variables and operations with higher-level `tf.layers`.
-
-#### Before converting
+#### 转换前
 ```python
 def model(x, training, scope='model'):
   with tf.variable_scope(scope, reuse=tf.AUTO_REUSE):
@@ -310,22 +275,20 @@ train_out = model(train_data, training=True)
 test_out = model(test_data, training=False)
 ```
 
-#### After converting
+#### 转换后
 
-To convert this code, follow the pattern of mapping layers to layers as in the previous example.
+要转换此代码，请遵循将图层映射到图层的模式，如上例所示。
 
-The `tf.variable_scope` is effectively a layer of its own. So rewrite it as a `tf.keras.layers.Layer`. See [the guide](keras/custom_layers_and_models.ipynb) for details.
+一般模式是：
 
-The general pattern is:
+* 在`__init__`中收集图层参数。
+* 在`build`中构建变量。
+* 在`call`中执行计算，并返回结果。
 
-* Collect layer parameters in `__init__`.
-* Build the variables in `build`.
-* Execute the calculations in `call`, and return the result.
+`tf.variable_scope`实际上是它自己的一层。所以把它重写为`tf.keras.layers.Layer`。
+有关信息请参阅 [指南](https://tensorflow.google.cn/alpha/guide/keras/custom_layers_and_models) 
 
-The `tf.variable_scope` is essentially a layer of its own. So rewrite it as a `tf.keras.layers.Layer`. See [the guide](keras/custom_layers_and_models.ipynb) for details.
-
-
-```
+```python
 # Create a custom layer for part of the model
 class CustomLayer(tf.keras.layers.Layer):
   def __init__(self, *args, **kwargs):
@@ -339,8 +302,7 @@ class CustomLayer(tf.keras.layers.Layer):
         regularizer=tf.keras.regularizers.l2(0.02),
         trainable=True)
 
-  # Call method will sometimes get used in graph mode,
-  # training will get turned into a tensor
+  # 调用方法有时会在图形模式下使用，训练会变成一个张量 
   @tf.function
   def call(self, inputs, training=None):
     if training:
@@ -350,18 +312,18 @@ class CustomLayer(tf.keras.layers.Layer):
 ```
 
 
-```
+```python
 custom_layer = CustomLayer()
 print(custom_layer([1]).numpy())
 print(custom_layer([1], training=True).numpy())
 ```
 
 
-```
+```python
 train_data = tf.ones(shape=(1, 28, 28, 1))
 test_data = tf.ones(shape=(1, 28, 28, 1))
 
-# Build the model including the custom layer
+# 构建包含自定义层的模型 
 model = tf.keras.Sequential([
     CustomLayer(input_shape=(28, 28, 1)),
     tf.keras.layers.Conv2D(32, 3, activation='relu'),
@@ -374,68 +336,71 @@ test_out = model(test_data, training=False)
 
 ```
 
-Some things to note:
+需要注意以下几点：
 
-* Subclassed Keras models & layers need to run in both v1 graphs (no automatic control dependencies) and in eager mode
-  * Wrap the `call()` in a `tf.function()` to get autograph and automatic control dependencies
+* 子类化的Keras模型和层需要在v1图(没有自动控制依赖关系)和eager模式下运行
 
-* Don't forget to accept a `training` argument to `call`.
-    * Sometimes it is a `tf.Tensor`
-    * Sometimes it is a Python boolean.
+* 将`call（）`包装在`tf.function（）`中以获取自动图和自动控制依赖关系
 
-* Create model variables in constructor or `def build()` using `self.add_weight()`.
-  * In `build` you have access to the input shape, so can create weights with matching shape.
-  * Using `tf.keras.layers.Layer.add_weight` allows Keras to track variables and regularization losses.
+* 不要忘了调用时需要一个训练参数（ `tf.Tensor` 或Python布尔值）
 
-* Don't keep `tf.Tensors` in your objects.
-  * They might get created either in a `tf.function` or in the eager context, and these tensors behave differently.
-  * Use `tf.Variable`s for state, they are always usable from both contexts
-  * `tf.Tensors` are only for intermediate values.
+* 使用`self.add_weight（）`在构造函数或`def build（）`中创建模型变量
+  * 在`build`中，您可以访问输入形状，因此可以创建具有匹配形状的权重。
+  * 使用`tf.keras.layers.Layer.add_weight`允许Keras跟踪变量和正则化损失。
 
-### A note on Slim & contrib.layers
+* 不要在对象中保留`tf.Tensors`。
+  * 它们可能在`tf.function`中或在 eager 的上下文中创建，并且这些张量的行为也不同。
+  * 使用`tf.Variable`s作为状态，它们总是可用于两种情况
+  * `tf.Tensors`仅适用于中间值。
 
-A large amount of older TensorFlow 1.x code uses the [Slim](https://ai.googleblog.com/2016/08/tf-slim-high-level-library-to-define.html) library, which was packaged with TensorFlow 1.x as `tf.contrib.layers`. As a `contrib` module, this is no longer available in TensorFlow 2.0, even in `tf.compat.v1`. Converting code using Slim to TF 2.0 is more involved than converting repositories that use `tf.layers`. In fact, it may make sense to convert your Slim code to `tf.layers` first, then convert to Keras.
+### 关于Slim＆contrib.layers的说明
 
-* Remove `arg_scopes`, all args need to be explicit
-* If you use them, split `normalizer_fn` and `activation_fn` into their own layers
-* Separable conv layers map to one or more different Keras layers (depthwise, pointwise, and separable Keras layers)
-* Slim and `tf.layers` have different arg names & default values
-* Some args have different scales
-* If you use Slim pre-trained models, try out `tf.keras.applications` or [TFHub](https://tensorflow.orb/hub)
+大量较旧的TensorFlow 1.x代码使用 [Slim](https://ai.googleblog.com/2016/08/tf-slim-high-level-library-to-define.html) 库，与TensorFlow 1.x一起打包为`tf.contrib.layers`。作为`contrib`模块，TensorFlow 2.0中不再提供此功能，即使在`tf.compat.v1`中也是如此。使用Slim转换为TF 2.0比转换使用`tf.layers`的存储库更复杂。事实上，首先将Slim代码转换为`tf.layers`然后转换为Keras可能是有意义的。
 
-Some `tf.contrib` layers might not have been moved to core TensorFlow but have instead been moved to the [TF add-ons package](https://github.com/tensorflow/addons).
+- 删除 `arg_scopes`，所有args都需要显式
 
+- 如果您使用它们，请将 `normalizer_fn `和 `activation_fn` 拆分为它们自己的图层
 
-## Training
+- 可分离的转换层映射到一个或多个不同的Keras层（深度、点和可分离的Keras层）
 
-There are many ways to feed data to a `tf.keras` model. They will accept Python generators and Numpy arrays as input.
+- Slim和 `tf.layers` 具有不同的arg名称和默认值
 
-The recomended way to feed data to a model is to use the `tf.data` package, which contains a collection of high performance classes for manipulating data.
+- 有些args有不同的尺度
 
-If you are still using `tf.queue`, these are only supported as data-structures, not as input pipelines.
+- 如果您使用Slim预训练模型，请尝试使用 `tf.keras.applications` 或 [TFHub](https://tensorflow.orb/hub)
 
-### Using Datasets
-
-The [TensorFlow Datasets](https://tensorflow.org/datasets) package (`tfds`) contains utilities for loading predefined datasets as `tf.data.Dataset` objects.
-
-For this example, load the MNISTdataset, using `tfds`:
+一些`tf.contrib`图层可能没有被移动到核心TensorFlow，而是被移动到了 [TF附加组件包](https://github.com/tensorflow/addons).
 
 
-```
+## 训练
+
+有很多方法可以将数据提供给`tf.keras`模型。他们将接受Python生成器和Numpy数组作为输入。
+
+将数据提供给模型的推荐方法是使用`tf.data`包，其中包含一组用于处理数据的高性能类。
+
+如果您仍在使用tf.queue，则仅支持这些作为数据结构，而不是数据管道。
+
+### 使用Datasets
+
+[TensorFlow数据集包](https://tensorflow.org/datasets)  (`tfds`) 包含用于将预定义数据集加载为 `tf.data.Dataset`  对象的使用程序。
+
+对于此示例，使用 `tfds` 加载MNIST数据集：
+
+```python
 datasets, info = tfds.load(name='mnist', with_info=True, as_supervised=True)
 mnist_train, mnist_test = datasets['train'], datasets['test']
 ```
 
-Then prepare the data for training:
+然后为训练准备数据：
 
-  * Re-scale each image.
-  * Shuffle the order of the examples.
-  * Collect batches of images and labels.
+  * 重新缩放每个图像
+  * 打乱样本数据的顺序
+  * 收集批量图像和标签
 
 
 
-```
-BUFFER_SIZE = 10 # Use a much larger value for real code.
+```python
+BUFFER_SIZE = 10 # 实际代码中使用更大的值 
 BATCH_SIZE = 64
 NUM_EPOCHS = 5
 
@@ -447,10 +412,9 @@ def scale(image, label):
   return image, label
 ```
 
- To keep the example short, trim the dataset to only return 5 batches:
+要使示例保持简短，请修剪数据集以仅返回5个批次：
 
-
-```
+```python
 train_data = mnist_train.map(scale).shuffle(BUFFER_SIZE).batch(BATCH_SIZE).take(5)
 test_data = mnist_test.map(scale).batch(BATCH_SIZE).take(5)
 
@@ -465,23 +429,27 @@ test_data = test_data.take(STEPS_PER_EPOCH)
 image_batch, label_batch = next(iter(train_data))
 ```
 
-### Use Keras training loops
+### 使用Keras训练循环
 
-If you don't need low level control of your training process, using Keras's built-in `fit`, `evaluate`, and `predict` methods is recomended. These methods provide a uniform interface to train the model regardless of the implementation (sequential,  functional, or sub-classed).
+如果你不需要对训练过程进行低级别的控制，建议使用Keras内置的fit、evaluate和predict方法，这些方法提供了一个统一的接口来训练模型，而不管实现是什么（sequential、functional或子类化的）。
 
-The advantages of these methods include:
+这些方法的有点包括：
 
-* They accept Numpy arrays, Python generators and, `tf.data.Datasets`
-* They apply regularization, and activation losses automatically.
-* They support `tf.distribute` [for multi-device training](distribute_strategy.ipynb).
-* They support arbitrary callables as losses and metrics.
-* They support callbacks like `tf.keras.callbacks.TensorBoard`, and custom callbacks.
-* They are performant, automatically using TensorFlow graphs.
+-   它们接受Numpy数组、Python生成器和 `tf.data.Datasets`
 
-Here is an example of training a model using a `Dataset`. (For details on how this works see [tutorials](../tutorials).)
+-   它们自动应用正则化和激活损失
 
+-   它们支持用于多设备训练的 `tf.distribute`
 
-```
+-   它们支持任意的callables作为损失和指标
+
+-   它们支持回调，如 `tf.keras.callbacks.TensorBoard` 和自定义回调
+
+-   它们具有高性能，可自动使用TensorFlow图形
+
+以下是使用数据集训练模型的示例：
+
+```python
 model = tf.keras.Sequential([
     tf.keras.layers.Conv2D(32, 3, activation='relu',
                            kernel_regularizer=tf.keras.regularizers.l2(0.02),
@@ -494,7 +462,7 @@ model = tf.keras.Sequential([
     tf.keras.layers.Dense(10, activation='softmax')
 ])
 
-# Model is the full model w/o custom layers
+# 模型是没有自定义图层的完整模型
 model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
@@ -505,24 +473,22 @@ loss, acc = model.evaluate(test_data)
 print("Loss {}, Accuracy {}".format(loss, acc))
 ```
 
-### Write your own loop
+### 编写你自己的训练循环
 
-If the Keras model's training step works for you, but you need more control outside that step, consider using the `tf.keras.model.train_on_batch` method,  in your own data-iteration loop.
+如果Keras模型的训练步骤适合您，但您需要在该步骤之外进行更多的控制，请考虑在您自己的数据迭代循环中使用  `tf.keras.model.train_on_batch` 方法。
 
-Remember: Many things can be implemented as a `tf.keras.Callback`.
+记住：许多东西可以作为 `tf.keras.Callback` 的实现。
 
-This method has many of the advantages of the methods mentioned in the previous section, but gives the user control of the outer loop.
+此方法具有上一节中提到的方法的许多优点，但允许用户控制外循环。
 
-You can also use `tf.keras.model.test_on_batch` or `tf.keras.Model.evaluate` to check performance during training.
+您还可以使用 `tf.keras.model.test_on_batch` 或 `tf.keras.Model.evaluate` 来检查训练期间的性能。
 
-Note: `train_on_batch` and `test_on_batch`, by default return the loss and metrics for the single batch. If you pass `reset_metrics=False` they return accumulated metrics and you must remember to appropriately reset the metric accumulators. Also remember that some metrics like `AUC` require `reset_metrics=False` to be calculated correctly.
+注意：`train_on_batch`和`test_on_batch`，默认返回单批的损失和指标。如果你传递`reset_metrics = False`，它们会返回累积的指标，你必须记住适当地重置指标累加器。还要记住，像 `AUC` 这样的一些指标需要正确计算 `reset_metrics = False`。
 
-To continue training the above model:
+继续训练上面的模型：
 
-
-
-```
-# Model is the full model w/o custom layers
+```python
+# 模型是没有自定义图层的完整模型 
 model.compile(optimizer='adam',
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
@@ -551,28 +517,35 @@ for epoch in range(NUM_EPOCHS):
 
 <p id="custom_loops"/>
 
-### Customize the training step
+### 自定义训练步骤
 
-If you need more flexibility and control, you can have it by implementing your own training loop. There are three steps:
+如果您需要更多的灵活性和控制，可以通过实现自己的训练循环来实现，有三个步骤：
 
-1. Iterate over a Python generator or `tf.data.Dataset` to get batches of examples.
-2. Use `tf.GradientTape` to collect gradients.
-3. Use a `tf.keras.optimizer` to apply weight updates to the model's variables.
+1. 迭代Python生成器或tf.data.Dataset以获取样本数据；
 
-Remember:
+2. 使用tf.GradientTape收集渐变；
 
-* Always include a `training` argument on the `call` method of subclassed layers and models.
-* Make sure to call the model with the `training` argument set correctly.
-* Depending on usage, model variables may not exist until the model is run on a batch of data.
-* You need to manually handle things like regularization losses for the model.
+3. 使用tf.keras.optimizer将权重更新应用于模型。
 
-Note the simplifications relative to v1:
+记住：
 
-* There is no need to run variable initializers. Variables are initialized on creation.
-* There is no need to add manual control dependencies. Even in `tf.function` operations act as in eager mode.
+-  始终在子类层和模型的调用方法中包含一个训练参数。
 
+-  确保在正确设置训练参数的情况下调用模型。
 
-```
+-  根据使用情况，在对一批数据运行模型之前，模型变量可能不存在。
+
+-  您需要手动处理模型的正则化损失等事情
+
+请注意相对于v1的简化：
+
+-  不需要运行变量初始化器，变量在创建时初始化。
+
+-  不需要添加手动控制依赖项，即使在tf.function中，操作也像在eager模式下一样。
+
+上面的模型：
+
+```python
 model = tf.keras.Sequential([
     tf.keras.layers.Conv2D(32, 3, activation='relu',
                            kernel_regularizer=tf.keras.regularizers.l2(0.02),
@@ -606,23 +579,24 @@ for epoch in range(NUM_EPOCHS):
 
 ```
 
-### New-style metrics
+### 新型指标
 
-In TensorFlow 2.0, metrics are objects. Metric objects work both eagerly and in `tf.function`s. A metric object has the following methods:
+在TensorFlow 2.0中，metrics是对象，Metrics对象在eager和tf.functions中运行，一个metrics具有以下方法：
 
-* `update_state()` — add new observations
-* `result()` —get the current result of the metric, given the observed values
-* `reset_states()` — clear all observations.
+* ` update_state()` – 添加新的观察结果
 
-The object itself is callable. Calling updates the state with new observations, as with `update_state`, and returns the new result of the metric.
+* `result()` – 给定观察值，获取metrics的当前结果
 
-You don't have to manually initialize a metric's variables, and because TensorFlow 2.0 has automatic control dependencies, you don't need to worry about those either.
+* `reset_states()` – 清除所有观察值
 
-The code below uses a metric to keep track of the mean loss observed within a custom training loop.
+对象本身是可调用的，与 `update_state` 一样，调用新观察更新状态，并返回metrics的新结果。
 
+你不需要手动初始化metrics的变量，而且因为TensorFlow 2.0具有自动控制依赖项，所以您也不需要担心这些。
 
-```
-# Create the metrics
+下面的代码使用metrics来跟踪自定义训练循环中观察到的平均损失：
+
+```python
+# 创建metrics
 loss_metric = tf.keras.metrics.Mean(name='train_loss')
 accuracy_metric = tf.keras.metrics.SparseCategoricalAccuracy(name='train_accuracy')
 
@@ -636,19 +610,19 @@ def train_step(inputs, labels):
 
   gradients = tape.gradient(total_loss, model.trainable_variables)
   optimizer.apply_gradients(zip(gradients, model.trainable_variables))
-  # Update the metrics
+  # 更新metrics
   loss_metric.update_state(total_loss)
   accuracy_metric.update_state(labels, predictions)
 
 
 for epoch in range(NUM_EPOCHS):
-  # Reset the metrics
+  # 重置metrics 
   loss_metric.reset_states()
   accuracy_metric.reset_states()
 
   for inputs, labels in train_data:
     train_step(inputs, labels)
-  # Get the metric results
+  # 获取metric结果 
   mean_loss = loss_metric.result()
   mean_accuracy = accuracy_metric.result()
 
@@ -658,48 +632,49 @@ for epoch in range(NUM_EPOCHS):
 
 ```
 
-## Saving & Loading
+## 保存和加载
 
 
-### Checkpoint compatibility
+### Checkpoint兼容性
 
-TensorFlow 2.0 uses [object-based checkpoints](checkpoints.ipynb).
+TensorFlow 2.0使用基于对象的检查点。
 
-Old-style name-based checkpoints can still be loaded, if you're careful.
-The code conversion process may result in variable name changes, but there are workarounds.
+如果小心的话，仍然可以加载旧式的基于名称的检查点，代码转换过程可能会导致变量名的更改，但是有一些变通的方法。
 
-The simplest approach it to line up the names of the new model with the names in the checkpoint:
+最简单的方法是将新模型的名称与检查点的名称对齐：
 
-* Variables still all have a `name` argument you can set.
-* Keras models also take a `name` argument as which they set as the prefix for their variables.
-* The `tf.name_scope` function can be used to set variable name prefixes. This is very different from `tf.variable_scope`. It only affects names, and  doesn't track variables & reuse.
+-   变量仍然都有你可以设置的名称参数。
 
-If that does not work for your use-case, try the `tf.compat.v1.train.init_from_checkpoint` function. It takes an `assignment_map` argument, which specifies the mapping from old names to new names.
+-   Keras模型还采用名称参数，并将其设置为变量的前缀。
 
-Note: Unlike object based checkpoints, which can [defer loading](checkpoints.ipynb#loading_mechanics), name-based checkpoints require that all variables be built when the function is called. Some models defer building variables until you call `build` or run the model on a batch of data.
+-   `tf.name_scope` 函数可用于设置变量名称前缀，这与 `tf.variable_scope` 非常不同，它只影响名称，不跟踪变量和重用。
 
-### Saved models compatibility
+如果这不适合您的用例，请尝试使用 `tf.compat.v1.train.init_from_checkpoint` 函数，它需要一个 `assignment_map` 参数，该参数指定从旧名称到新名称的映射。
 
-There are no significant compatibility concerns for saved models.
+注意：与基于对象的检查点（可以[延迟加载](https://tensorflow.google.cn/alpha/guide/checkpoints#loading_mechanics)不同，基于名称的检查点要求在调用函数时构建所有变量。某些模型推迟构建变量，直到您调用 `build` 或在一批数据上运行模型。
 
-* TensorFlow 1.x saved_models work in TensorFlow 2.0.
-* TensorFlow 2.0 saved_models even load work in TensorFlow 1.x if all the ops are supported.
+### 保存的模型兼容性
+
+对于保存的模型没有明显的兼容性问题：
+
+-   TensorFlow 1.x saved_models在TensorFlow 2.0中工作。
+
+-   如果支持所有操作，TensorFlow 2.0 saved_models甚至可以在TensorFlow
+    1.x中加载工作。
 
 ## Estimators
 
-### Training with Estimators
+### 使用Estimators进行训练
 
-Estimators are supported in TensorFlow 2.0.
+TensorFlow 2.0支持Estimators，使用Estimators时，可以使用TensorFlow
+1.x中的 `input_fn()` 、`tf.extimatro.TrainSpec` 和 `tf.estimator.EvalSpec`。
 
-When you use estimators, you can use `input_fn()`, `tf.estimator.TrainSpec`, and `tf.estimator.EvalSpec` from TensorFlow 1.x.
+以下是使用 `input_fn` 和train以及evaluate的示例：
 
-Here is an example using `input_fn` with train and evaluate specs.
+#### 创建input_fn和train/eval规范
 
-#### Creating the input_fn and train/eval specs
-
-
-```
-# Define the estimator's input_fn
+```python
+# 定义一个estimator的input_fn 
 def input_fn():
   datasets, info = tfds.load(name='mnist', with_info=True, as_supervised=True)
   mnist_train, mnist_test = datasets['train'], datasets['test']
@@ -716,7 +691,7 @@ def input_fn():
   train_data = mnist_train.map(scale).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)
   return train_data.repeat()
 
-# Define train & eval specs
+# 定义 train & eval specs
 train_spec = tf.estimator.TrainSpec(input_fn=input_fn,
                                     max_steps=STEPS_PER_EPOCH * NUM_EPOCHS)
 eval_spec = tf.estimator.EvalSpec(input_fn=input_fn,
@@ -724,14 +699,13 @@ eval_spec = tf.estimator.EvalSpec(input_fn=input_fn,
 
 ```
 
-### Using a Keras model definition
+### 使用Keras模型定义
 
-There are some differences in how to construct your estimators in TensorFlow 2.0.
+在TensorFlow2.0中如何构建estimators存在一些差异。
 
-We recommend that you define your model using Keras, then use the `tf.keras.model_to_estimator` utility to turn your model into an estimator. The code below shows how to use this utility when creating and training an estimator.
+我们建议您使用Keras定义模型，然后使用 `tf.keras.model_to_estimator` 将您的模型转换为estimator。下面的代码展示了如何在创建和训练estimator时使用这个功能。
 
-
-```
+```python
 def make_model():
   return tf.keras.Sequential([
     tf.keras.layers.Conv2D(32, 3, activation='relu',
@@ -761,28 +735,29 @@ estimator = tf.keras.estimator.model_to_estimator(
 tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
 ```
 
-### Using a custom `model_fn`
+### 使用自定义 `model_fn`
 
-If you have an existing custom estimator `model_fn` that you need to maintain, you can convert your `model_fn` to use a Keras model.
+如果您需要维护现有的自定义估算器 `model_fn`，则可以将 `model_fn` 转换为使用Keras模型。
 
-However, for compatibility reasons, a custom `model_fn` will still run in 1.x-style graph mode. This means there is no eager execution and no automatic control dependencies.
+但是出于兼容性原因，自定义 `model_fn` 仍将以1.x样式的图形模式运行，这意味着没有eager execution，也没有自动控制依赖。
 
-Using a Keras models in a custom `model_fn` is similar to using it in a custom training loop:
+在自定义 `model_fn` 中使用Keras模型类似于在自定义训练循环中使用它：
 
-* Set the `training` phase appropriately, based on the `mode` argument.
-* Explicitly pass the model's `trainable_variables` to the optimizer.
+-  根据mode参数适当设置训练阶段
 
-But there are important differences, relative to a [custom loop](#custom_loop):
+-  将模型的 `trainable_variables` 显示传递给优化器
 
-* Instead of using `model.losses`, extract the losses using `tf.keras.Model.get_losses_for`.
-* Extract the model's updates using `tf.keras.Model.get_updates_for`
+但相对于自定义循环，存在重要差异：
 
-Note: "Updates" are changes that need to be applied to a model after each batch. For example, the moving averages of the mean and variance in a `tf.keras.layers.BatchNormalization` layer.
+-  使用 `tf.keras.Model.get_losses_for` 提取损失，而不是使用 `model.losses`
 
-The following code creates an estimator from a custom `model_fn`, illustrating all of these concerns.
+-  使用 `tf.keras.Model.get_updates_for` 提取模型的更新
 
+注意：“更新”是每批后需要应用于模型的更改。例如，`tf.keras.layers.BatchNormalization`层中均值和方差的移动平均值。
 
-```
+以下代码从自定义`model_fn`创建一个估算器，说明所有这些问题。
+
+```python
 def my_model_fn(features, labels, mode):
   model = make_model()
 
@@ -819,38 +794,35 @@ tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
 
 ## TensorShape
 
-This class was simplified to hold `int`s, instead of `tf.compat.v1.Dimension` objects. So there is no need to call `.value()` to get an `int`.
+这个类被简化为保存`int`s，而不是`tf.compat.v1.Dimension`对象。所以不需要调用`.value（）`来获得`int`。
 
-Individual `tf.compat.v1.Dimension` objects are still accessible from `tf.TensorShape.dims`.
+仍然可以从`tf.TensorShape.dims`访问单个`tf.compat.v1.Dimension`对象。
 
-
-
-The following demonstrate the differences between TensorFlow 1.x and TensorFlow 2.0.
-
+以下演示了TensorFlow 1.x和TensorFlow 2.0之间的区别。
 
 ```
-# Create a shape and choose an index
+# 创建一个shape并选择一个索引 
 i = 0
 shape = tf.TensorShape([16, None, 256])
 shape
 ```
 
-If you had this in TF 1.x:
+TF 1.x 运行:
 
 ```python
 value = shape[i].value
 ```
 
-Then do this in TF 2.0:
+TF 2.0 运行::
 
 
 
-```
+```python
 value = shape[i]
 value
 ```
 
-If you had this in TF 1.x:
+ TF 1.x 运行::
 
 ```python
 for dim in shape:
@@ -858,25 +830,25 @@ for dim in shape:
     print(value)
 ```
 
-Then do this in TF 2.0:
+TF 2.0 运行::
 
 
-```
+```python
 for value in shape:
   print(value)
 ```
 
-If you had this in TF 1.x (Or used any other dimension method):
+在TF 1.x（或使用任何其他维度方法）中运行：
 
 ```python
 dim = shape[i]
 dim.assert_is_compatible_with(other_dim)
 ```
 
-Then do this in TF 2.0:
+TF 2.0运行：
 
 
-```
+```python
 other_dim = 16
 Dimension = tf.compat.v1.Dimension
 
@@ -888,7 +860,7 @@ dim.is_compatible_with(other_dim) # or any other dimension method
 ```
 
 
-```
+```python
 shape = tf.TensorShape(None)
 
 if shape:
@@ -896,54 +868,53 @@ if shape:
   dim.is_compatible_with(other_dim) # or any other dimension method
 ```
 
-The boolean value of a `tf.TensorShape` is `True` if the rank is known, `False` otherwise.
+如果等级已知，则 `tf.TensorShape` 的布尔值为“True”，否则为“False”。
 
-
-```
-print(bool(tf.TensorShape([])))      # Scalar
-print(bool(tf.TensorShape([0])))     # 0-length vector
-print(bool(tf.TensorShape([1])))     # 1-length vector
-print(bool(tf.TensorShape([None])))  # Unknown-length vector
+```python
+print(bool(tf.TensorShape([])))      # 标量 Scalar 
+print(bool(tf.TensorShape([0])))     # 0长度的向量 vector
+print(bool(tf.TensorShape([1])))     # 1长度的向量 vector
+print(bool(tf.TensorShape([None])))  # 未知长度的向量 
 print(bool(tf.TensorShape([1, 10, 100])))       # 3D tensor
 print(bool(tf.TensorShape([None, None, None]))) # 3D tensor with no known dimensions
 print()
-print(bool(tf.TensorShape(None)))  # A tensor with unknown rank.
+print(bool(tf.TensorShape(None)))  # 未知等级的张量 
 ```
 
-## Other behavioral changes
+## 其他行为改变
 
-There are a few other behavioral changes in TensorFlow 2.0 that you may run into.
+您可能会遇到TensorFlow 2.0中的一些其他行为变化。
 
 
 ### ResourceVariables
 
-TensorFlow 2.0 creates `ResourceVariables` by default, not `RefVariables`.
+TensorFlow 2.0默认创建`ResourceVariables`，而不是`RefVariables`。
 
-`ResourceVariables` are locked for writing, and so provide more intuitive consistency guarantees.
+`ResourceVariables`被锁定用于写入，因此提供更直观的一致性保证。
 
-* This may change behavior in edge cases.
-* This may occasionally create extra copies, can have higher memory usage
-* This can be disabled by passing `use_resource=False` to the `tf.Variable` constructor.
+* 这可能会改变边缘情况下的行为
+* 这可能偶尔会创建额外的副本，可能会有更高的内存使用量
+* 可以通过将`use_resource = False`传递给`tf.Variable`构造函数来禁用它。
 
 ### Control Flow
 
-The control flow op implementation has been simplified, and so produces different graphs in TensorFlow 2.0
+控制流op实现得到了简化，因此在TensorFlow 2.0中生成了不同的图。
 
-## Conclusions
+## 结论
 
-The overall process is:
+回顾一下本节内容:
 
-1. Run the upgrade script.
-2. Remove contrib symbols.
-3. Switch your models to an object oriented style (Keras).
-4. Use `tf.keras` or `tf.estimator` training and evaluation loops where you can.
-5. Otherwise, use custom loops, but be sure to avoid sessions & collections.
+1. 运行更新脚本
+2. 删除contrib符号
+3. 将模型切换为面向对象的样式（Keras）
+4. 尽可能使用`tf.keras`或`tf.estimator`培训和评估循环。
+5. 否则，请使用自定义循环，但请务必避免会话和集合。
 
+将代码转换为TensorFlow 2.0需要一些工作，但会有以下改变：
+-   更少的代码行
+-   提高清晰度和简洁性
+-   调试更简单
 
-It takes a little work to convert code to idiomatic TensorFlow 2.0, but every change results in:
-
-* Fewer lines of code.
-* Increased clarity and simplicity.
-* Easier debugging.
-
-
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-migration_guide.html](https://www.mashangxue123.com/tensorflow/tf2-guide-migration_guide.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/guide/migration_guide](https://tensorflow.google.cn/alpha/guide/migration_guide)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/migration_guide.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/migration_guide.md)
