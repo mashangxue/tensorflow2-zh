@@ -1,5 +1,5 @@
 ---
-title: The Keras Functional API in TensorFlow(tensorflow2.0官方教程翻译)
+title: TensorFlow中的Keras函数式API (tensorflow2.0官方教程翻译)
 tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999
