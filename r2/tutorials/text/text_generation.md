@@ -624,8 +624,6 @@ print(generate_text(model, start_string=u"ROMEO: "))
 
 所以现在您已经了解了如何手动运行模型，让我们解压缩训练循环，并自己实现。例如，如果要实施课程学习以帮助稳定模型的开环输出，这就是一个起点。
 
-We will use `tf.GradientTape` to track the gradiends. You can learn more about this approach by reading the [eager execution guide](https://www.tensorflow.org/guide/eager).
-
 我们将使用 `tf.GradientTape` 来跟踪梯度。您可以通过阅读[eager execution guide](https://www.tensorflow.org/guide/eager)来了解有关此方法的更多信息。
 
 该程序的工作原理如下：
