@@ -161,8 +161,18 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 
 ### Text and sequences
 
-#### Generate text with an RNN
-#### Neural Machine Translation with Attention
+#### Generate text with an RNN(使用RNN生成文本实战：莎士比亚风格诗句)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_generation.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_generation.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/text_generation](https://tensorflow.google.cn/alpha/tutorials/text/text_generation)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_generation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_generation.md)
+
+#### Neural Machine Translation with Attention(采用注意力机制的神经机器翻译)
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-nmt_with_attention.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md
+
 #### Image captioning
 #### Transformer model for language understanding
 
