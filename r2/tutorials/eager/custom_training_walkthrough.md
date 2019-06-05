@@ -60,7 +60,7 @@ print("Eager execution: {}".format(tf.executing_eagerly()))
       TensorFlow version: 2.0.0-alpha0 Eager execution: True
 ```
 
-## 3. 鸢尾花分类问题 The Iris classification problem
+## 3. 鸢尾花分类问题
 
 想象一下，您是一名植物学家，正在寻找一种能够对所发现的每株鸢尾花进行自动归类的方法。机器学习可提供多种从统计学上分类花卉的算法。例如，一个复杂的机器学习程序可以根据照片对花卉进行分类。我们的要求并不高，我们将根据鸢尾花花萼和花瓣的长度和宽度对其进行分类。
 
