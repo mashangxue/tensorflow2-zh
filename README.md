@@ -6,6 +6,8 @@ top: 1900
 abbrlink: tensorflow/tensorflow2-zh-readme
 ---
 
+> 最全TensorFlow2.0学习路线 [www.mashangxue123.com](https://www.mashangxue123.com)
+
 # tensorflow2官方教程目录导航
 
 #### Get started with TensorFlow 2.0
