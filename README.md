@@ -175,7 +175,12 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/nmt_with_attention.md
 
-#### Image captioning
+#### Image captioning （使用注意力机制给图片取标题）
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/image_captioning](https://tensorflow.google.cn/alpha/tutorials/text/image_captioning)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md)
+
 #### Transformer model for language understanding
 
 ### Image Generation
