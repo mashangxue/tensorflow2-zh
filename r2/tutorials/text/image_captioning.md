@@ -615,8 +615,10 @@ Image.open(img_name_val[rid])
 ```
 
 ```
-    Real Caption: <start> a man gets ready to hit a ball with a bat <end>
+    Real Caption: <start> a man gets ready to hit a ball with a bat  <end>
     Prediction Caption: a baseball player begins to bat <end>
+    真实的标题：一个人准备用球棒击球
+    预测标题:   棒球运动员开始击球
 ```
 
 
@@ -646,6 +648,7 @@ Image.open(image_path)
 
 ```
     Prediction Caption: a man riding a surf board in the water <end>
+    预测标题：一名男子在水中骑冲浪板
 ```
 
 ![png](image_captioning_50_1.png)
