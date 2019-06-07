@@ -8,18 +8,6 @@ abbrlink: tensorflow/tf2-guide-keras-overview
 
 # Keras：概述
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/alpha/guide/keras/overview"><img src="https://www.tensorflow.org/images/tf_logo_32px.png" />View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/guide/keras/overview.ipynb"><img src="https://www.tensorflow.org/images/colab_logo_32px.png" />Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/guide/keras/overview.ipynb"><img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />View source on GitHub</a>
-  </td>
-</table>
-
 Keras 是一个用于构建和训练深度学习模型的高阶API。它可用于快速设计原型、高级研究和生产，具有以下三个主要优势：
 
 * 方便用户使用
@@ -655,3 +643,8 @@ model.fit(dataset, epochs=1)
 ```
 
 有关更多信息，请参阅[TensorFlow中的分布式训练完整指南](https://tensorflow.google.cn/alpha/guide/distribute_strategy)。
+
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-overview.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-overview.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/overview](https://tensorflow.google.cn/alpha/guide/keras/overview)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md)
