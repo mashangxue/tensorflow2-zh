@@ -1,12 +1,12 @@
 ---
-title: Keras：概述
+title: Keras概述：构建模型，输入数据，训练，评估，回调，保存，分布(tensorflow2.0官方教程翻译）
 tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-guide-keras-overview
 ---
 
-# Keras：概述
+# Keras概述：构建模型，输入数据，训练，评估，回调，保存，分布(tensorflow2.0官方教程翻译）
 
 Keras 是一个用于构建和训练深度学习模型的高阶API。它可用于快速设计原型、高级研究和生产，具有以下三个主要优势：
 
