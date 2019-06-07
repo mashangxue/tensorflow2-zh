@@ -207,12 +207,10 @@ dataset = dataset.batch(32)
 model.fit(dataset, epochs=10, steps_per_epoch=30)
 ```
 
+输出：
 ```
       Epoch 1/10
       30/30 [==============================] - 0s 7ms/step - loss: 11.4902 - categorical_accuracy: 0.1094
-      在上方代码中，fit 方法使用了 steps_per_epoch 参数（表示模型在进入下一个周期之前运行的训练步数）。由于 Dataset 会生成批次数据，因此该代码段不需要 batch_size。
-
-数据集也可用于验证：...
 ```
 
 在上方代码中，`fit` 方法使用了 `steps_per_epoch` 参数（表示模型在进入下一个周期之前运行的训练步数）。由于 `Dataset` 会生成批次数据，因此该代码段不需要 `batch_size`。
@@ -576,8 +574,7 @@ model = tf.keras.models.load_model('my_model.h5')
       Epoch 5/5 1000/1000 [==============================] - 0s 76us/sample - loss: 11.4913 - accuracy: 0.0990
 ```
 
-Learn more about saving and serialization for Keras models in the [Guide to saving and Serializing Models](./saving_and_serializing.ipynb).
-
+ 
 在[保存和序列化模型指南](https://tensorflow.google.cn/alpha/guide/keras/saving_and_serializing)中，了解有关Keras模型的保存和序列化的更多信息。
 
 ## 7. Eager execution
