@@ -1,18 +1,14 @@
 ---
-title: TensorFlow中的Keras函数式API (tensorflow2.0官方教程翻译)
+title: 不用Sequential模型，TensorFlow中的Keras函数式API (tensorflow2.0官方教程翻译)
 tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999
 abbrlink: tensorflow/tf2-guide-keras-functional
 ---
 
-# TensorFlow中的Keras函数式API (tensorflow2.0官方教程翻译)
+# 不用Sequential模型，TensorFlow中的Keras函数式API (tensorflow2.0官方教程翻译)
 
-> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
-> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md)
-
-## 设置
+## 1. 设置
 
 安装
 
@@ -30,8 +26,7 @@ import tensorflow as tf
 tf.keras.backend.clear_session()  # For easy reset of notebook state.
 ```
 
-
-## 介绍
+## 2. 介绍
 
 您已经熟悉使用 `keras.Sequential()` 来创建模型。函数式 API是一种创建比 `Sequential` 更灵活的模型的方法：它可以处理具有非线性拓扑的模型，具有共享层的模型以及具有多个输入或输出的模型。
 
@@ -163,7 +158,7 @@ keras.utils.plot_model(model, 'my_first_model_with_shape_info.png', show_shapes=
  "graph of layers" 是深度学习模型的非常直观的心理图像，而函数API是一种创建模型的方法，可以很好地反映这种心理图像。
 
 
-## 训练、评估和推理
+## 3. 训练、评估和推理
 
 对于使用函数API构建的模型和顺序模型，评估和推理的工作方式完全相同。
 
@@ -199,7 +194,7 @@ print('Test accuracy:', test_scores[1])
 
 有关模型训练和评估的完整指南，请参阅[训练和评估指南](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)。
 
-## 保存和序列化
+## 4. 保存和序列化
 
 对于使用函数API构建的模型和顺序模型，保存和序列化的工作方式完全相同。
 
@@ -221,7 +216,7 @@ model = keras.models.load_model('path_to_my_model.h5')
 
 有关模型保存的完整指南，请参阅[保存和序列化模型指南](https://tensorflow.google.cn/alpha/guide/keras/saving_and_serializing)。
 
-## 使用相同的层图来定义多个模型
+## 5. 使用相同的层图来定义多个模型
 
 在函数API中，通过在层图中指定它们的输入和输出来创建模型。这意味着一个图层图可以用来生成多个模型。
 
@@ -252,7 +247,7 @@ autoencoder.summary()
 
 请注意，我们使解码架构与编码架构严格对称，因此我们得到的输出形状与输入形状`（28,28,1）`相同。`Conv2D` 层的反面是 `Conv2DTranspose` 层`MaxPooling2D` 层的反面是 `UpSampling2D` 层。
 
-## 所有模型都可以调用，就像层一样
+## 6. 所有模型都可以调用，就像层一样
 
 您可以将任何模型视为一个图层，方法是在输入或另一个图层的输出上调用它。请注意，通过调用模型，您不仅可以重用模型的体系结构，还可以重用其权重。
 
@@ -310,10 +305,10 @@ outputs = layers.average([y1, y2, y3])
 ensemble_model = keras.Model(inputs=inputs, outputs=outputs)
 ```
 
-## 操纵复杂的图形拓扑
+## 7. 操纵复杂的图形拓扑
 
 
-### 具有多个输入和输出的模型
+### 7.1. 具有多个输入和输出的模型
 
 
 functional API使操作多个输入和输出变得容易。使用Sequential API无法处理此问题。
@@ -422,7 +417,7 @@ model.fit({'title': title_data, 'body': body_data, 'tags': tags_data},
 有关更详细的说明，请参阅完整的[训练和评估指南](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)。
 
 
-### 一个玩具resnet模型
+### 7.2. 一个玩具resnet模型
 
 除了具有多个输入和输出的模型之外，Functional API还可以轻松地操作非线性连接拓扑，也就是说，层不按顺序连接的模型。这也无法使用Sequential API处理（如名称所示）。
 
@@ -487,7 +482,7 @@ model.fit(x_train, y_train,
     40000/40000 [==============================] - 318s 8ms/sample - loss: 1.9034 - acc: 0.2767 - val_loss: 1.6173 - val_acc: 0.3870
 ```
 
-## 共享图层
+## 8. 共享图层
 
 函数式API的另一个好用途是使用共享层的模型。共享图层是在同一模型中多次重复使用的图层实例：它们学习与层图中的多个路径对应的特征。
 
@@ -510,7 +505,7 @@ encoded_input_a = shared_embedding(text_input_a)
 encoded_input_b = shared_embedding(text_input_b)
 ```
 
-## 提取和重用图层中的节点
+## 9. 提取和重用图层中的节点
 
 因为您在Functional API中操作的层图是静态数据结构，所以可以访问和检查它。这就是我们如何将功能模型绘制为图像的方式。
 
@@ -541,7 +536,7 @@ extracted_features = feat_extraction_model(img)
 
 除了其他方面，这在[实现神经风格迁移](https://medium.com/tensorflow/neural-style-transfer-creating-art-with-deep-learning-using-tf-keras-and-eager-execution-7d541ac31398)时派上用场。
 
-## 通过编写自定义图层来扩展API
+## 10. 通过编写自定义图层来扩展API
 
 tf.keras拥有广泛的内置层。这里有一些例子：
 
@@ -625,7 +620,7 @@ def from_config(cls, config):
   return cls(**config)
 ```
 
-## 何时使用函数API
+## 11. 何时使用函数API
 
 如何决定是使用Functional API创建新模型，还是直接将`Model`类继承？
 
@@ -633,11 +628,11 @@ def from_config(cls, config):
 
 但是，在创建不易表达为层的有向非循环图的模型时，模型子类化为您提供了更大的灵活性（例如，您无法使用Functional API实现Tree-RNN，您必须直接将`Model`子类化）。
 
-### 以下是Functional API的优势：
+### 11.1. 以下是Functional API的优势：
 
 下面列出的属性对于Sequential模型也是如此（它们也是数据结构），但对于子类模型（Python字节码，而不是数据结构）则不然。
 
-#### 它不那么冗长。
+#### 11.1.1. 它不那么冗长。
 
 No `super(MyClass, self).__init__(...)`, no `def call(self, ...):`, etc.
 
@@ -672,13 +667,13 @@ _ = mlp(tf.zeros((1, 32)))
 ```
 
 
-#### 它在您定义模型时验证您的模型。
+#### 11.1.2. 它在您定义模型时验证您的模型。
 
 在Functional API中，您的输入规范（shape和dtype）是事先创建的（通过`Input`），每次调用一个图层时，图层都会检查传递给它的规范是否符合其假设，并且它会引发一个如果没有帮助错误消息。
 
 这可以保证您可以运行使用Functional API构建的任何模型。所有调试（与收敛相关的调试除外）将在模型构建期间静态发生，而不是在执行时发生。这类似于编译器中的类型检查。
 
-#### 您的 Functional 模型是可绘图和可检查的。
+#### 11.1.3. 您的 Functional 模型是可绘图和可检查的。
 
 您可以将模型绘制为图形，并且可以轻松访问此图中的中间节点 - 例如，提取和重用中间层的激活，如前面的示例中所示：
 
@@ -688,18 +683,18 @@ feat_extraction_model = keras.Model(inputs=vgg19.input, outputs=features_list)
 ```
 
 
-#### 您的 Functional 模型可以序列化或克隆。
+#### 11.1.4. 您的 Functional 模型可以序列化或克隆。
 
 因为 Functional 模型是一种数据结构而不是一段代码，所以它可以安全地序列化，并且可以保存为单个文件，允许您重新创建完全相同的模型，而无需访问任何原始代码。有关详细信息，请参阅我们的保存和序列化指南。
 
-### 以下是Functional API的弱点:
+### 11.2. 以下是Functional API的弱点:
 
 
-#### 它不支持动态架构。
+#### 11.2.1. 它不支持动态架构。
 
 Functional API将模型视为图层的DAG。对于大多数深度学习体系结构都是如此，但并非全部：例如，递归网络或树RNN不遵循此假设，并且无法在Functional API中实现。
 
-#### 有时，您只需要从头开始编写所有内容。
+#### 11.2.2. 有时，您只需要从头开始编写所有内容。
 
 在编写高级架构时，您可能希望执行“定义层的DAG”范围之外的事情：例如，您可能希望在模型实例上公开多个自定义训练和推理方法。这需要子类化。
 
@@ -707,7 +702,7 @@ Functional API将模型视为图层的DAG。对于大多数深度学习体系结
 
 为了更深入地了解Functional API和Model子类之间的差异，您可以阅读 [What are Symbolic and Imperative APIs in TensorFlow 2.0?](https://medium.com/tensorflow/what-are-symbolic-and-imperative-apis-in-tensorflow-2-0-dfccecb01021).
 
-## 混合和匹配不同的API样式
+## 12. 混合和匹配不同的API样式
 
 重要的是，在Functional API或Model子类化之间进行选择并不是一个二元决策，它将您限制为一类模型。tf.keras API中的所有模型都可以与每个模型进行交互，无论它们是顺序模型，功能模型还是从头开始编写的子类模型/层。
 
