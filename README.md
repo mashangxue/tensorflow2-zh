@@ -214,7 +214,12 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 ### AutoGraph
 
 ### Keras
-#### Keras overview
+#### Keras overview  （Keras概述：构建模型，输入数据，训练，评估，回调，保存，分布）
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-overview.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-overview.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/overview](https://tensorflow.google.cn/alpha/guide/keras/overview)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md)
+
 #### Keras functional API
 #### Train and evaluate
 #### Write layers and models from scratch
