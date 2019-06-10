@@ -220,7 +220,12 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/overview](https://tensorflow.google.cn/alpha/guide/keras/overview)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md)
 
-#### Keras functional API
+#### Keras functional API （不用Sequential模型，TensorFlow中的Keras函数式API ）
+
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html)
+> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md)
+
 #### Train and evaluate
 #### Write layers and models from scratch
 #### Save and serialize models
