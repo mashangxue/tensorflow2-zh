@@ -226,7 +226,12 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md)
 
-#### Train and evaluate
+#### Train and evaluate （使用TensorFlow Keras进行训练和评估）
+
+最新版本：https://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html 
+英文版本：https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation 
+翻译建议PR：https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/training_and_evaluation.md
+
 #### Write layers and models from scratch
 #### Save and serialize models
 #### Write custom callbacks
