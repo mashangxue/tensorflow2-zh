@@ -1,5 +1,5 @@
 ---
-title: 探索过拟合和欠拟合 (tensorflow2.0官方教程翻译)
+title: 探索过拟合和欠拟合
 categories: tensorflow2官方教程
 tags: tensorflow2.0教程
 top: 1915

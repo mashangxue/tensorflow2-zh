@@ -1,5 +1,5 @@
 ---
-title: 使用 TensorFlow Keras 进行训练和评估 (tensorflow2.0官方教程翻译)
+title: 使用 TensorFlow Keras 进行训练和评估
 tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999

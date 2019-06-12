@@ -1,5 +1,5 @@
 ---
-title: 高效的TensorFlow 2.0 (tensorflow2.0官方教程翻译)
+title: 高效的TensorFlow 2.0
 tags: 
     - tensorflow2.0
 categories: 

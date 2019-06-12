@@ -1,5 +1,5 @@
 ---
-title: 训练您的第一个神经网络：基本分类Fashion MNIST(tensorflow2.0官方教程翻译)
+title: 训练您的第一个神经网络：基本分类Fashion MNIST
 categories: 
     - tensorflow2官方教程
 tags: 
