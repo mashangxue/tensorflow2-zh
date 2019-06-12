@@ -19,7 +19,7 @@ tf.disable_v2_behavior()
 
 ## 自动转换脚本
 
-第一步是尝试运行[升级脚本](https://tensorflow.google.cn/alpha/guide/upgrade).
+第一步是尝试运行[升级脚本](https://tensorflow.google.cn/beta/guide/upgrade).
 
 这将在将您的代码升级到TensorFlow 2.0时执行初始步骤。但是它不能使您的代码适合TensorFlowF 2.0。您的代码仍然可以使用`tf.compat.v1` 接口来访问占位符，会话，集合和其他1.x样式的功能。
 
@@ -38,7 +38,7 @@ tf.disable_v2_behavior()
 
 您可以使用标准Python工具（如`pdb`）逐步调试和调试函数
 
-如果您对它的工作感到满意，可以添加一个`tf.function`装饰器，使其在图形模式下高效运行。有关其工作原理的更多信息，请参阅[Autograph Guide](https://tensorflow.google.cn/alpha/guide/autograph)。
+如果您对它的工作感到满意，可以添加一个`tf.function`装饰器，使其在图形模式下高效运行。有关其工作原理的更多信息，请参阅[Autograph Guide](https://tensorflow.google.cn/beta/guide/autograph)。
 
 ### 2.  使用Python对象来跟踪变量和损失
 
@@ -53,7 +53,7 @@ tf.disable_v2_behavior()
 
 这些`Layer`和`Model`类实现了几个不需要全局集合的其他属性。他们的`.losses`属性可以替代使用`tf.GraphKeys.LOSSES`集合。
 
-有关详细信息，请参阅[keras指南](https://tensorflow.google.cn/alpha/guide/keras)。
+有关详细信息，请参阅[keras指南](https://tensorflow.google.cn/beta/guide/keras)。
 
 警告：许多`tf.compat.v1`符号隐式使用全局集合。
 
@@ -286,7 +286,7 @@ test_out = model(test_data, training=False)
 * 在`call`中执行计算，并返回结果。
 
 `tf.variable_scope`实际上是它自己的一层。所以把它重写为`tf.keras.layers.Layer`。
-有关信息请参阅 [指南](https://tensorflow.google.cn/alpha/guide/keras/custom_layers_and_models) 
+有关信息请参阅 [指南](https://tensorflow.google.cn/beta/guide/keras/custom_layers_and_models) 
 
 ```python
 # Create a custom layer for part of the model
@@ -651,7 +651,7 @@ TensorFlow 2.0使用基于对象的检查点。
 
 如果这不适合您的用例，请尝试使用 `tf.compat.v1.train.init_from_checkpoint` 函数，它需要一个 `assignment_map` 参数，该参数指定从旧名称到新名称的映射。
 
-注意：与基于对象的检查点（可以[延迟加载](https://tensorflow.google.cn/alpha/guide/checkpoints#loading_mechanics)不同，基于名称的检查点要求在调用函数时构建所有变量。某些模型推迟构建变量，直到您调用 `build` 或在一批数据上运行模型。
+注意：与基于对象的检查点（可以[延迟加载](https://tensorflow.google.cn/beta/guide/checkpoints#loading_mechanics)不同，基于名称的检查点要求在调用函数时构建所有变量。某些模型推迟构建变量，直到您调用 `build` 或在一批数据上运行模型。
 
 ### 保存的模型兼容性
 
@@ -916,5 +916,5 @@ TensorFlow 2.0默认创建`ResourceVariables`，而不是`RefVariables`。
 -   调试更简单
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-migration_guide.html](https://www.mashangxue123.com/tensorflow/tf2-guide-migration_guide.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/migration_guide](https://tensorflow.google.cn/alpha/guide/migration_guide)
+> 英文版本：[https://tensorflow.google.cn/beta/guide/migration_guide](https://tensorflow.google.cn/beta/guide/migration_guide)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/migration_guide.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/migration_guide.md)

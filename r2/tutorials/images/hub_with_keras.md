@@ -98,7 +98,7 @@ plt.axis('off')
 predicted_class_name = imagenet_labels[predicted_class]
 _ = plt.title("Prediction: " + predicted_class_name.title())
 ```
-![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_20_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/hub_with_keras_files/output_20_0.png)
 
 ## 3. 简单的迁移学习
 
@@ -175,7 +175,7 @@ for n in range(30):
 _ = plt.suptitle("ImageNet predictions")
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_34_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/hub_with_keras_files/output_34_0.png)
 
 有关图像属性，请参阅`LICENSE.txt`文件。
 
@@ -299,7 +299,7 @@ plt.ylim([0,2])
 plt.plot(batch_stats_callback.batch_losses)
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_53_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/hub_with_keras_files/output_53_1.png)
 
 ```python
 plt.figure()
@@ -308,7 +308,7 @@ plt.xlabel("Training Steps")
 plt.ylim([0,1])
 plt.plot(batch_stats_callback.batch_acc)
 ```
-![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_54_1.png?dcb_=0.5728569869098554)
+![png](https://tensorflow.google.cn/beta/tutorials/images/hub_with_keras_files/output_54_1.png?dcb_=0.5728569869098554)
 
 ### 3.6. 检查预测
 
@@ -348,7 +348,7 @@ for n in range(30):
 _ = plt.suptitle("Model predictions (green: correct, red: incorrect)")
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras_files/output_61_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/hub_with_keras_files/output_61_0.png)
 
 ## 4. 导出你的模型
 
@@ -382,5 +382,5 @@ abs(reloaded_result_batch - result_batch).max()
 这个保存的模型可以在以后加载推理，或转换为[TFLite](https://www.tensorflow.google.cn/lite/convert/) 和 [TFjs](https://github.com/tensorflow/tfjs-converter)。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-hub_with_keras.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras](https://tensorflow.google.cn/alpha/tutorials/images/hub_with_keras)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/images/hub_with_keras](https://tensorflow.google.cn/beta/tutorials/images/hub_with_keras)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/hub_with_keras.md)

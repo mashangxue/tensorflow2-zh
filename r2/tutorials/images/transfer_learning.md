@@ -48,7 +48,7 @@ keras = tf.keras
 
 ### 1.1. 下载数据
 
-使用 [TensorFlow Datasets](http://tensorflow.google.cn/datasets)加载猫狗数据集。`tfds` 包是加载预定义数据的最简单方法，如果您有自己的数据，并且有兴趣使用TensorFlow进行导入，请参阅[加载图像数据](https://tensorflow.google.cn/alpha/tutorials/load_data/images)。
+使用 [TensorFlow Datasets](http://tensorflow.google.cn/datasets)加载猫狗数据集。`tfds` 包是加载预定义数据的最简单方法，如果您有自己的数据，并且有兴趣使用TensorFlow进行导入，请参阅[加载图像数据](https://tensorflow.google.cn/beta/tutorials/load_data/images)。
 
 
 ```python
@@ -94,9 +94,9 @@ for image, label in raw_train.take(2):
 ```
 
 
-![png](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning_files/output_14_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/transfer_learning_files/output_14_0.png)
 
-![png](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning_files/output_14_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/transfer_learning_files/output_14_1.png)
 
 
 ### 1.2. 格式化数据
@@ -372,7 +372,7 @@ plt.show()
 ```
 
 
-![png](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning_files/output_50_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/transfer_learning_files/output_50_0.png)
 
 
 *注意：如果您想知道为什么验证指标明显优于训练指标，主要因素是因为像`tf.keras.layers.BatchNormalization`和`tf.keras.layers.Dropout`这样的层会影响训练期间的准确性。在计算验证损失时，它们会被关闭。*
@@ -503,7 +503,7 @@ plt.xlabel('epoch')
 plt.show()
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning_files/output_67_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/images/transfer_learning_files/output_67_0.png)
 
 
 ## 5. 小结:
@@ -515,5 +515,5 @@ plt.show()
 为了进一步提高性能，可以通过微调将预训练模型的顶层重新调整为新数据集。在这种情况下，您调整了权重，以便模型学习特定于数据集的高级特征，当训练数据集很大并且非常类似于预训练模型训练的原始数据集时，通常建议使用此技术。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-transfer_learning.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning](https://tensorflow.google.cn/alpha/tutorials/images/transfer_learning)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/images/transfer_learning](https://tensorflow.google.cn/beta/tutorials/images/transfer_learning)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/transfer_learning.md)

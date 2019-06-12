@@ -311,7 +311,7 @@ plt.legend()
 plt.show()
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_files/output_40_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_text_classification_files/output_40_0.png)
 
 在该图中，点表示训练损失和准确度，实线表示验证损失和准确度。
 
@@ -322,5 +322,5 @@ plt.show()
 对于这种特殊情况，我们可以在大约 20 个周期后停止训练，防止出现过拟合。稍后，您将了解如何使用回调自动执行此操作。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/basic_text_classification](https://tensorflow.google.cn/beta/tutorials/keras/basic_text_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification.md)

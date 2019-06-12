@@ -316,5 +316,5 @@ else:
 * 要了解有关文本分类的更多信息（包括整体工作流程，如果您对何时使用嵌入与one-hot编码感到好奇），我们推荐[Google的实战课程-文本分类指南](https://developers.google.cn/machine-learning/guides/text-classification/step-2-5)。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-word_embeddings.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings](https://tensorflow.google.cn/alpha/tutorials/text/word_embeddings)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/text/word_embeddings](https://tensorflow.google.cn/beta/tutorials/text/word_embeddings)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/word_embeddings.md)

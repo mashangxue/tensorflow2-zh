@@ -136,7 +136,7 @@ test_dataset = dataset.drop(train_dataset.index)
 sns.pairplot(train_dataset[["MPG", "Cylinders", "Displacement", "Weight"]], diag_kind="kde")
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_20_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression_files/output_20_1.png)
 
 另外查看整体统计数据：
 
@@ -326,9 +326,9 @@ def plot_history(history):
 plot_history(history)
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_42_0.png?dcb_=0.7319815786783315)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression_files/output_42_0.png?dcb_=0.7319815786783315)
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_42_1.png?dcb_=0.09774210050560783)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression_files/output_42_1.png?dcb_=0.09774210050560783)
 
 该图表显示在约100个周期之后，验证误差几乎没有改进，甚至降低。让我们更新`model.fit`调用，以便在验证分数没有提高时自动停止训练。我们将使用`EarlyStopping`回调来测试每个周期的训练状态。如果经过一定数量的周期而没有显示出改进，则自动停止训练。
 
@@ -346,9 +346,9 @@ history = model.fit(normed_train_data, train_labels, epochs=EPOCHS,
 plot_history(history)
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_44_1.png?dcb_=0.8643233947217597)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression_files/output_44_1.png?dcb_=0.8643233947217597)
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_44_2.png?dcb_=0.8788778722328034)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression_files/output_44_2.png?dcb_=0.8788778722328034)
 
 上图显示在验证集上平均误差通常约为+/-2MPG，这个好吗？我们会把这个决定留给你。
 
@@ -380,7 +380,7 @@ _ = plt.plot([-100, 100], [-100, 100])
 
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_48_0.png?dcb_=0.5259404035812005)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression_files/output_48_0.png?dcb_=0.5259404035812005)
 
 看起来我们的模型预测得相当好，我们来看看错误分布：
 
@@ -391,7 +391,7 @@ plt.xlabel("Prediction Error [MPG]")
 _ = plt.ylabel("Count")
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression_files/output_50_0.png?dcb_=0.042220469967213514)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression_files/output_50_0.png?dcb_=0.042220469967213514)
 
 上图看起来不是很高斯（正态分布），很可能是因为样本数据非常少。
 
@@ -410,5 +410,5 @@ _ = plt.ylabel("Count")
 * 尽早停止是防止过拟合的有效技巧。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_regression.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression](https://tensorflow.google.cn/alpha/tutorials/keras/basic_regression)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/basic_regression](https://tensorflow.google.cn/beta/tutorials/keras/basic_regression)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_regression.md)

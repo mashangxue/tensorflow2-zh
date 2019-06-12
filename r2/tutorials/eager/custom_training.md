@@ -171,7 +171,7 @@ plt.show()
       Epoch 9: W=3.22 b=1.74, loss=1.14022
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training_files/output_22_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/eager/custom_training_files/output_22_1.png)
 
 
 ## 4. 下一步
@@ -181,7 +181,7 @@ plt.show()
 从理论上讲，这几乎是您使用TensorFlow进行机器学习研究所需要的全部内容。在实践中，特别是对于神经网络，像 `tf.keras` 这样的高级API将更加方便，因为它提供了更高级别的构建块（称为“层”），用于保存和恢复状态的实用程序，一套损失函数，套件优化策略等。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-custom_training.htnl)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/custom_training](https://tensorflow.google.cn/alpha/tutorials/eager/custom_training)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/eager/custom_training](https://tensorflow.google.cn/beta/tutorials/eager/custom_training)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/custom_training.md)
 
 

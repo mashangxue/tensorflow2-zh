@@ -192,7 +192,7 @@ print('Test accuracy:', test_scores[1])
     Test accuracy: 0.9696
 ```
 
-有关模型训练和评估的完整指南，请参阅[训练和评估指南](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)。
+有关模型训练和评估的完整指南，请参阅[训练和评估指南](https://tensorflow.google.cn/beta/guide/keras/training_and_evaluation)。
 
 ## 4. 保存和序列化
 
@@ -214,7 +214,7 @@ del model
 model = keras.models.load_model('path_to_my_model.h5')
 ```
 
-有关模型保存的完整指南，请参阅[保存和序列化模型指南](https://tensorflow.google.cn/alpha/guide/keras/saving_and_serializing)。
+有关模型保存的完整指南，请参阅[保存和序列化模型指南](https://tensorflow.google.cn/beta/guide/keras/saving_and_serializing)。
 
 ## 5. 使用相同的层图来定义多个模型
 
@@ -414,7 +414,7 @@ model.fit({'title': title_data, 'body': body_data, 'tags': tags_data},
 
 当使用`Dataset`对象调用fit时，它应该产生一个列表元组，如 `([title_data, body_data, tags_data], [priority_targets, dept_targets])` 或者一个字典的元组 `({'title': title_data, 'body': body_data, 'tags': tags_data}, {'priority': priority_targets, 'department': dept_targets})`。
 
-有关更详细的说明，请参阅完整的[训练和评估指南](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)。
+有关更详细的说明，请参阅完整的[训练和评估指南](https://tensorflow.google.cn/beta/guide/keras/training_and_evaluation)。
 
 
 ### 7.2. 一个玩具resnet模型
@@ -551,7 +551,7 @@ tf.keras拥有广泛的内置层。这里有一些例子：
 - 一个 `call` 方法，指定由层完成的计算。
 - 一个`build`方法，它创建了图层的权重（请注意，这只是一种样式约定;您也可以在 `__init__` 中创建权重）。
 
-要了解有关从头开始创建图层的更多信息，请查看该指南 [Guide to writing layers and models from scratch](https://tensorflow.google.cn/alpha/guide/keras/custom_layers_and_models).
+要了解有关从头开始创建图层的更多信息，请查看该指南 [Guide to writing layers and models from scratch](https://tensorflow.google.cn/beta/guide/keras/custom_layers_and_models).
 
 这是一个`Dense`层的简单实现：
 
@@ -807,5 +807,5 @@ _ = rnn_model(tf.zeros((1, 10, 5)))
 现在，您已经拥有了一套用于构建深度学习模型的强大工具。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-functional.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
+> 英文版本：[https://tensorflow.google.cn/beta/guide/keras/functional](https://tensorflow.google.cn/beta/guide/keras/functional)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/functional.md)

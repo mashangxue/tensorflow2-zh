@@ -409,5 +409,5 @@ print("Restored model, accuracy: {:5.2f}%".format(100*acc))
 * [保存和还原指南](https://tensorflow.google.cn/guide/saved_model)包含有关TensorFlow保存的低阶详细信息。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-save_and_restore_models.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models](https://tensorflow.google.cn/alpha/tutorials/keras/save_and_restore_models)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/save_and_restore_models](https://tensorflow.google.cn/beta/tutorials/keras/save_and_restore_models)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/save_and_restore_models.md)

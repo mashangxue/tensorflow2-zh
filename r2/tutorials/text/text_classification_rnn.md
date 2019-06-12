@@ -207,14 +207,14 @@ print (predictions)
 plot_graphs(history, 'accuracy')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_29_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_29_0.png)
 
 
 ```python
 plot_graphs(history, 'loss')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_30_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_30_0.png)
 
 ## 4. 堆叠两个或更多LSTM层
 
@@ -293,7 +293,7 @@ print (predictions)
 plot_graphs(history, 'accuracy')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_38_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_38_0.png)
 
 
 
@@ -301,10 +301,10 @@ plot_graphs(history, 'accuracy')
 plot_graphs(history, 'loss')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/sequences/text_classification_rnn_files/output_39_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_39_0.png)
 
 查看其它现有的递归层，例如[GRU层](https://tensorflow.google.cn/api_docs/python/tf/keras/layers/GRU)。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-text_classification_rnn.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn](https://tensorflow.google.cn/alpha/tutorials/text/text_classification_rnn)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/text/text_classification_rnn](https://tensorflow.google.cn/beta/tutorials/text/text_classification_rnn)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/text_classification_rnn.md)

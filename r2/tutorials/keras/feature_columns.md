@@ -371,5 +371,5 @@ print("Accuracy", accuracy)
 了解有关分类结构化数据的更多信息的最佳方法是亲自尝试，我们建议找到另一个可以使用的数据集，并训练模型使用类似于上面的代码对其进行分类，要提高准确性，请仔细考虑模型中包含哪些特征以及如何表示这些特征。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-feature_columns.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns](https://tensorflow.google.cn/alpha/tutorials/keras/feature_columns)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/feature_columns](https://tensorflow.google.cn/beta/tutorials/keras/feature_columns)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/feature_columns.md)

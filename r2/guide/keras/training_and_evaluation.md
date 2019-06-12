@@ -9,7 +9,7 @@ abbrlink: tensorflow/tf2-guide-keras-training_and_evaluation
 # 使用TensorFlow Keras进行训练和评估 (tensorflow2.0官方教程翻译)
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-training_and_evaluation.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)
+> 英文版本：[https://tensorflow.google.cn/beta/guide/keras/training_and_evaluation](https://tensorflow.google.cn/beta/guide/keras/training_and_evaluation)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/training_and_evaluation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/training_and_evaluation.md)
 
 本指南涵盖了TensorFlow 2.0在两种主要情况下的训练、评估和预测(推理)模型:
@@ -294,7 +294,7 @@ model.fit(x_train, y_train,
 
 
 
-在 [Functional API](https://tensorflow.google.cn/alpha/guide/keras/functional) 中，您还可以调用 `model.add_loss(loss_tensor)`, 或 `model.add_metric(metric_tensor, name, aggregation)`。
+在 [Functional API](https://tensorflow.google.cn/beta/guide/keras/functional) 中，您还可以调用 `model.add_loss(loss_tensor)`, 或 `model.add_metric(metric_tensor, name, aggregation)`。
 
 这是一个简单的例子：
 
@@ -785,7 +785,7 @@ model.fit(x_train, y_train,
 
 您也可以编写自己的回调来保存和恢复模型。
 
-有关序列化和保存的完整指南，请参见[保存和序列化模型指南](https://tensorflow.google.cn/alpha/guide/keras/saving_and_serializing)。
+有关序列化和保存的完整指南，请参见[保存和序列化模型指南](https://tensorflow.google.cn/beta/guide/keras/saving_and_serializing)。
 
 ### 使用学习率计划
 

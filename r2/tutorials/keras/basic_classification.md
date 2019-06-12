@@ -177,7 +177,7 @@ plt.grid(False)
 plt.show()
 ```
 
-![](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_21_0.png)
+![](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification_files/output_21_0.png)
 
 我们将这些值缩小到 0 到 1 之间，然后将其馈送到神经网络模型。为此，将图像组件的数据类型从整数转换为浮点数，然后除以 255。以下是预处理图像的函数：
 
@@ -203,7 +203,7 @@ for i in range(25):
 plt.show()
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_25_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification_files/output_25_0.png)
 
 ## 4. 构建模型
 
@@ -369,7 +369,7 @@ plot_value_array(i, predictions,  test_labels)
 plt.show()
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_48_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification_files/output_48_0.png)
 
 ```python
 i = 12
@@ -381,7 +381,7 @@ plot_value_array(i, predictions,  test_labels)
 plt.show()
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_49_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification_files/output_49_0.png)
 
 我们用它们的预测绘制几张图像。正确的预测标签为蓝色，错误的预测标签为红色。数字表示预测标签的百分比（总计为 100）。请注意，即使置信度非常高，也有可能预测错误。
 
@@ -400,7 +400,7 @@ for i in range(num_images):
 plt.show()
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_51_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification_files/output_51_0.png)
 
 最后，使用训练的模型对单个图像进行预测。
 
@@ -435,7 +435,7 @@ plot_value_array(0, predictions_single, test_labels)
 _ = plt.xticks(range(10), class_names, rotation=45)
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification_files/output_58_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification_files/output_58_0.png)
 
 `model.predict`返回一组列表，每个列表对应批次数据中的每张图像。（仅）获取批次数据中相应图像的预测结果：
 
@@ -448,5 +448,5 @@ np.argmax(predictions_single[0])
 和前面的一样，模型预测标签为9。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_classification.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification](https://tensorflow.google.cn/alpha/tutorials/keras/basic_classification)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/basic_classification](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md)

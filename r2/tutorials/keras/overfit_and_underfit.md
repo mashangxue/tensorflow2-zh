@@ -61,7 +61,7 @@ test_data = multi_hot_sequences(test_data, dimension=NUM_WORDS)
 plt.plot(train_data[0])
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_7_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/overfit_and_underfit_files/output_7_1.png)
 
 ## 2. 演示过度拟合
 
@@ -267,7 +267,7 @@ plot_history([('baseline', baseline_history),
               ('bigger', bigger_history)])
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_23_0.png?dcb_=0.12370822350480548)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/overfit_and_underfit_files/output_23_0.png?dcb_=0.12370822350480548)
 
 请注意，较大的网络在仅仅一个周期之后几乎立即开始过度拟合，并且更严重。网络容量越大，能够越快地对训练数据进行建模（导致训练损失低），但过拟合的可能性越大（导致训练和验证损失之间的差异很大）。
 
@@ -325,7 +325,7 @@ plot_history([('baseline', baseline_history),
               ('l2', l2_model_history)])
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_30_0.png?dcb_=0.8386779368853696)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/overfit_and_underfit_files/output_30_0.png?dcb_=0.8386779368853696)
 
 正如你所看到的，L2正则化模型比基线模型更能抵抗过拟合，即使两个模型具有相同数量的参数。
 
@@ -372,7 +372,7 @@ plot_history([('baseline', baseline_history),
               ('dropout', dpt_model_history)])
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit_files/output_34_0.png?dcb_=0.9304692927609572)
+![png](https://tensorflow.google.cn/beta/tutorials/keras/overfit_and_underfit_files/output_34_0.png?dcb_=0.9304692927609572)
 
 从上图可以看出，添加dropout时对基线模型的明显改进。
 
@@ -385,5 +385,5 @@ plot_history([('baseline', baseline_history),
 本指南未涉及的两个重要方法是数据增强和批量标准化。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-overfit_and_underfit.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/alpha/tutorials/keras/overfit_and_underfit)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/overfit_and_underfit](https://tensorflow.google.cn/beta/tutorials/keras/overfit_and_underfit)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/overfit_and_underfit.md)

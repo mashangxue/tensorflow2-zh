@@ -19,7 +19,7 @@ TensorFlow 2.0中有多处更改，以使TensorFlow用户使用更高效。Tenso
 ### 1.1. API清理
 
 许多API在tensorflow 2.0中[消失或移动](https://github.com/tensorflow/community/blob/master/rfcs/20180827-api-names.md)。一些主要的变化包括删除`tf.app`、`tf.flags`和`tf.logging` ，转而支持现在开源的[absl-py](https://github.com/abseil/abseil-py)，重新安置`tf.contrib`中的项目，并清理主要的 `tf.*`命名空间，将不常用的函数移动到像 `tf.math`这样的子包中。一些API已被2.0版本等效替换，如`tf.summary`, `tf.keras.metrics`和`tf.keras.optimizers`。
-自动应用这些重命名的最简单方法是使用[v2升级脚本](https://tensorflow.google.cn/alpha/guide/upgrade)。
+自动应用这些重命名的最简单方法是使用[v2升级脚本](https://tensorflow.google.cn/beta/guide/upgrade)。
 
 ### 1.2. Eager execution
 
@@ -52,7 +52,7 @@ outputs = session.run(f(placeholder), feed_dict={placeholder: input})
 outputs = f(input)
 ```
 
-凭借能够自由穿插Python和TensorFlow代码，我们希望用户能够充分利用Python的表现力。但是可移植的TensorFlow在没有Python解释器的情况下执行-移动端、C++和JS，帮助用户避免在添加 `@tf.function`时重写代码，[AutoGraph](https://tensorflow.google.cn/alpha/guide/autograph)将把Python构造的一个子集转换成它们等效的TensorFlow：
+凭借能够自由穿插Python和TensorFlow代码，我们希望用户能够充分利用Python的表现力。但是可移植的TensorFlow在没有Python解释器的情况下执行-移动端、C++和JS，帮助用户避免在添加 `@tf.function`时重写代码，[AutoGraph](https://tensorflow.google.cn/beta/guide/autograph)将把Python构造的一个子集转换成它们等效的TensorFlow：
 
 * `for`/`while` -> `tf.while_loop` (支持`break` 和 `continue`)
 * `if` -> `tf.cond`
@@ -183,7 +183,7 @@ class DynamicRNN(tf.keras.Model):
     return tf.transpose(outputs.stack(), [1, 0, 2]), state
 ```
 
-有关AutoGraph功能的更详细概述，请参阅[指南](https://tensorflow.google.cn/alpha/guide/autograph).。
+有关AutoGraph功能的更详细概述，请参阅[指南](https://tensorflow.google.cn/beta/guide/autograph).。
 
 ### 2.5. 使用tf.metrics聚合数据和tf.summary来记录它
 
@@ -229,5 +229,5 @@ tensorboard --logdir /tmp/summaries
 ```
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2.html](https://www.mashangxue123.com/tensorflow/tf2-guide-effective_tf2.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/effective_tf2](https://tensorflow.google.cn/alpha/guide/effective_tf2)
+> 英文版本：[https://tensorflow.google.cn/beta/guide/effective_tf2](https://tensorflow.google.cn/beta/guide/effective_tf2)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/effective_tf2.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/effective_tf2.md)

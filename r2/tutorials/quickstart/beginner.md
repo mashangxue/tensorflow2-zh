@@ -53,8 +53,8 @@ model.fit(x_train, y_train, epochs=5)
 model.evaluate(x_test, y_test)
 ```
 
-现在，图像分类器在该数据集上的准确度达到约98％。 要了解更多信息，请阅读[TensorFlow教程](https://tensorflow.google.cn/alpha/tutorials/).。
+现在，图像分类器在该数据集上的准确度达到约98％。 要了解更多信息，请阅读[TensorFlow教程](https://tensorflow.google.cn/beta/tutorials/).。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-quickstart-beginner.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner](https://tensorflow.google.cn/alpha/tutorials/quickstart/beginner)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/quickstart/beginner](https://tensorflow.google.cn/beta/tutorials/quickstart/beginner)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/quickstart/beginner.md)

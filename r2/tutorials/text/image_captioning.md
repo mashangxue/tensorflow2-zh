@@ -299,7 +299,7 @@ dataset = dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 ## 9. 模型
 
 
-有趣的事实：下面的解码器与 [注意神经机器翻译的示例](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)中的解码器相同。
+有趣的事实：下面的解码器与 [注意神经机器翻译的示例](https://tensorflow.google.cn/beta/tutorials/text/nmt_with_attention)中的解码器相同。
 
 模型架构的灵感来自论文 [Show, Attend and Tell](https://arxiv.org/pdf/1502.03044.pdf) 。
 
@@ -658,8 +658,8 @@ Image.open(image_path)
 
 # 下一步
 
-恭喜！您刚刚训练了一个注意力机制给图像取标题的模型。接下来，看一下这个[使用注意力机制的神经机器翻译示例](https://tensorflow.google.cn/alpha/tutorials/text/nmt_with_attention)。它使用类似的架构来翻译西班牙语和英语句子。您还可以尝试在不同的数据集上训练此笔记本中的代码。
+恭喜！您刚刚训练了一个注意力机制给图像取标题的模型。接下来，看一下这个[使用注意力机制的神经机器翻译示例](https://tensorflow.google.cn/beta/tutorials/text/nmt_with_attention)。它使用类似的架构来翻译西班牙语和英语句子。您还可以尝试在不同的数据集上训练此笔记本中的代码。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-text-image_captioning.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/text/image_captioning](https://tensorflow.google.cn/alpha/tutorials/text/image_captioning)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/text/image_captioning](https://tensorflow.google.cn/beta/tutorials/text/image_captioning)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/text/image_captioning.md)

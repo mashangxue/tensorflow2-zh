@@ -373,7 +373,7 @@ if tf.test.is_gpu_available():
 
 ### 基于对象的保存
 
-本节是[训练检查点指南](https://tensorflow.google.cn/alpha/guide/checkpoints)的简短版本。
+本节是[训练检查点指南](https://tensorflow.google.cn/beta/guide/checkpoints)的简短版本。
 
 `tf.train.Checkpoint` 可以将 `tf.Variable` 保存到检查点并从中恢复：
 
@@ -419,7 +419,7 @@ root.save(checkpoint_prefix)
 root.restore(tf.train.latest_checkpoint(checkpoint_dir))
 ```
 
-注意：在许多训练循环中，在调用`tf.train.Checkpoint.restore`之后创建变量。这些变量将在创建后立即恢复，并且可以使用断言来确保检查点已完全加载。有关详细信息，请参阅[训练检查点指南](https://tensorflow.google.cn/alpha/guide/checkpoints)。
+注意：在许多训练循环中，在调用`tf.train.Checkpoint.restore`之后创建变量。这些变量将在创建后立即恢复，并且可以使用断言来确保检查点已完全加载。有关详细信息，请参阅[训练检查点指南](https://tensorflow.google.cn/beta/guide/checkpoints)。
 
 ### 面向对象的指标
 
@@ -593,8 +593,8 @@ if tf.test.is_gpu_available():
 
 ## 使用`tf.function`
 
-虽然Eager Execution使开发和调试更具交互性，但TensorFlow 1.x样式图执行在分布式训练，性能优化和生产部署方面具有优势。为了弥补这一差距，TensorFlow 2.0通过`tf.function` API引入此功能。有关更多信息，请参阅[Autograph指南](https://tensorflow.google.cn/alpha/guide/autograph)。
+虽然Eager Execution使开发和调试更具交互性，但TensorFlow 1.x样式图执行在分布式训练，性能优化和生产部署方面具有优势。为了弥补这一差距，TensorFlow 2.0通过`tf.function` API引入此功能。有关更多信息，请参阅[Autograph指南](https://tensorflow.google.cn/beta/guide/autograph)。
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-eager.html](https://www.mashangxue123.com/tensorflow/tf2-guide-eager.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/eager](https://tensorflow.google.cn/alpha/guide/eager)
+> 英文版本：[https://tensorflow.google.cn/beta/guide/eager](https://tensorflow.google.cn/beta/guide/eager)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/eager.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/eager.md)

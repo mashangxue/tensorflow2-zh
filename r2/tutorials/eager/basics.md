@@ -221,5 +221,5 @@ for x in ds_file:
 ```
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-eager-basics.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/eager/basics](https://tensorflow.google.cn/alpha/tutorials/eager/basics)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/eager/basics](https://tensorflow.google.cn/beta/tutorials/eager/basics)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/eager/basics.md)

@@ -97,7 +97,7 @@ dftrain.shape[0], dfeval.shape[0]
 dftrain.age.hist(bins=20)
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_15_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/estimators/linear_files/output_15_1.png)
 
 
 机上的男性乘客大约是女性乘客的两倍。
@@ -106,7 +106,7 @@ dftrain.age.hist(bins=20)
 dftrain.sex.value_counts().plot(kind='barh')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_17_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/estimators/linear_files/output_17_1.png)
 
 
 大多数乘客都在“第三”阶级：
@@ -115,7 +115,7 @@ dftrain.sex.value_counts().plot(kind='barh')
 dftrain['class'].value_counts().plot(kind='barh')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_19_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/estimators/linear_files/output_19_1.png)
 
 
 与男性相比，女性的生存机会要高得多，这显然是该模型的预测特征：
@@ -124,7 +124,7 @@ dftrain['class'].value_counts().plot(kind='barh')
 pd.concat([dftrain, y_train], axis=1).groupby('sex').survived.mean().plot(kind='barh').set_xlabel('% survive')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_21_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/estimators/linear_files/output_21_1.png)
 
 
 ## 5. 模型的特征工程
@@ -272,7 +272,7 @@ probs = pd.Series([pred['probabilities'][1] for pred in pred_dicts])
 probs.plot(kind='hist', bins=20, title='predicted probabilities')
 ```
 
-![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_42_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/estimators/linear_files/output_42_1.png)
 
 最后，查看结果的接收器操作特性（即ROC），这将使我们更好地了解真阳性率和假阳性率之间的权衡。
 
@@ -291,9 +291,9 @@ plt.ylim(0,)
 
 `(0, 1.05)`
 
-![png](https://tensorflow.google.cn/alpha/tutorials/estimators/linear_files/output_44_1.png)
+![png](https://tensorflow.google.cn/beta/tutorials/estimators/linear_files/output_44_1.png)
 
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-estimators-linear.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-estimators-linear.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/estimators/linear](https://tensorflow.google.cn/alpha/tutorials/estimators/linear)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/estimators/linear](https://tensorflow.google.cn/beta/tutorials/estimators/linear)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/estimators/linear.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/estimators/linear.md)

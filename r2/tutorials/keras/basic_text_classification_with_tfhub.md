@@ -187,6 +187,6 @@ for name, value in zip(model.metrics_names, results):
 要了解处理字符串输入的更一般方法，以及更详细地分析训练过程中的准确性和损失，请查看 https://www.tensorflow.org/tutorials/keras/basic_text_classification
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/alpha/tutorials/keras/basic_text_classification_with_tfhub)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/beta/tutorials/keras/basic_text_classification_with_tfhub)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_text_classification_with_tfhub.md)
 

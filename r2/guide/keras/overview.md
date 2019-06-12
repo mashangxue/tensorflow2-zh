@@ -65,8 +65,8 @@ model.add(layers.Dense(10, activation='softmax'))
 您可以找到有关如何使用Sequential模型的完整简短示例 [here](https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/quickstart/beginner.ipynb).
 
 要了解如何构建比Sequential模型更高级的模型，请参阅:
-- [Guide to the Keras Functional](https://tensorflow.google.cn/alpha/guide/keras/functional)
-- [Guide to writing layers and models from scratch with subclassing](https://tensorflow.google.cn/alpha/guide/keras/custom_layers_and_models)
+- [Guide to the Keras Functional](https://tensorflow.google.cn/beta/guide/keras/functional)
+- [Guide to writing layers and models from scratch with subclassing](https://tensorflow.google.cn/beta/guide/keras/custom_layers_and_models)
 
 ### 2.2. 配置层
 
@@ -269,13 +269,13 @@ print(result.shape)
       (1000, 10)
 ```
 
-有关训练和评估的完整指南，包括如何从头开始编写自定义训练循环，请参阅[训练和评估指南](https://tensorflow.google.cn/alpha/guide/keras/training_and_evaluation)。
+有关训练和评估的完整指南，包括如何从头开始编写自定义训练循环，请参阅[训练和评估指南](https://tensorflow.google.cn/beta/guide/keras/training_and_evaluation)。
 
 ## 4. 构建高级模型
 
 ### 4.1. 函数式 API
 
-`tf.keras.Sequential` 模型是层的简单堆叠，无法表示任意模型。使用 [Keras 函数式 API](https://tensorflow.google.cn/alpha/guide/keras/functional) 可以构建复杂的模型拓扑，例如：
+`tf.keras.Sequential` 模型是层的简单堆叠，无法表示任意模型。使用 [Keras 函数式 API](https://tensorflow.google.cn/beta/guide/keras/functional) 可以构建复杂的模型拓扑，例如：
 
 * 多输入模型，
 * 多输出模型，
@@ -325,7 +325,7 @@ model.fit(data, labels, batch_size=32, epochs=5)
 
 通过对 `tf.keras.Model`进行子类化，并定义您自己的前向传播来构建完全可自定义的模型。在` __init__` 方法中创建层并将它们设置为类实例的属性。在 `call`方法中定义前向传播。
 
-在启用 [eager execution](https://tensorflow.google.cn/alpha/guide/eager) 时，模型子类化特别有用，因为可以强制写入前向传播。
+在启用 [eager execution](https://tensorflow.google.cn/beta/guide/eager) 时，模型子类化特别有用，因为可以强制写入前向传播。
 
 *注意：为了确保正向传递总是强制运行，你必须在调用超级构造函数时设置`dynamic = True`*
 
@@ -426,7 +426,7 @@ model.compile(optimizer=tf.keras.optimizers.RMSprop(0.001),
 model.fit(data, labels, batch_size=32, epochs=5)
 ```
 
-了解有关从头开始创建新层和模型的更多信息，在[从头开始编写层和模型指南](https://tensorflow.google.cn/alpha/guide/keras/custom_layers_and_models)。
+了解有关从头开始创建新层和模型的更多信息，在[从头开始编写层和模型指南](https://tensorflow.google.cn/beta/guide/keras/custom_layers_and_models)。
 
 ## 5. 回调
 
@@ -486,7 +486,7 @@ model.save_weights('./weights/my_model')
 model.load_weights('./weights/my_model')
 ```
 
-默认情况下，会以 [TensorFlow 检查点](https://tensorflow.google.cn/alpha/guide/checkpoints)文件格式保存模型的权重。权重也可以另存为 Keras HDF5 格式（Keras 多后端实现的默认格式）：
+默认情况下，会以 [TensorFlow 检查点](https://tensorflow.google.cn/beta/guide/checkpoints)文件格式保存模型的权重。权重也可以另存为 Keras HDF5 格式（Keras 多后端实现的默认格式）：
 
 ```
 # 将权重保存到HDF5文件
@@ -522,7 +522,7 @@ pprint.pprint(json.loads(json_string))
       {'backend': 'tensorflow', 'class_name': 'Sequential', 'config': {'layers': [{'class_name': 'Dense', 'config': {'activation': 'relu', 'activity_regularizer': None, '......'keras_version': '2.2.4-tf'}
 ```
 
-更多运行的输出内容请看英文版https://tensorflow.google.cn/alpha/guide/keras/overview
+更多运行的输出内容请看英文版https://tensorflow.google.cn/beta/guide/keras/overview
 
 从 json 重新创建模型（刚刚初始化）。
 
@@ -575,7 +575,7 @@ model = tf.keras.models.load_model('my_model.h5')
 ```
 
  
-在[保存和序列化模型指南](https://tensorflow.google.cn/alpha/guide/keras/saving_and_serializing)中，了解有关Keras模型的保存和序列化的更多信息。
+在[保存和序列化模型指南](https://tensorflow.google.cn/beta/guide/keras/saving_and_serializing)中，了解有关Keras模型的保存和序列化的更多信息。
 
 ## 7. Eager execution
 
@@ -640,9 +640,9 @@ model.fit(dataset, epochs=1)
 32/32 [==============================] - 3s 82ms/step - loss: 0.7005 <tensorflow.python.keras.callbacks.History at 0x7fdfa057fb00>
 ```
 
-有关更多信息，请参阅[TensorFlow中的分布式训练完整指南](https://tensorflow.google.cn/alpha/guide/distribute_strategy)。
+有关更多信息，请参阅[TensorFlow中的分布式训练完整指南](https://tensorflow.google.cn/beta/guide/distribute_strategy)。
 
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-guide-keras-overview.html](https://www.mashangxue123.com/tensorflow/tf2-guide-keras-overview.html)
-> 英文版本：[https://tensorflow.google.cn/alpha/guide/keras/overview](https://tensorflow.google.cn/alpha/guide/keras/overview)
+> 英文版本：[https://tensorflow.google.cn/beta/guide/keras/overview](https://tensorflow.google.cn/beta/guide/keras/overview)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/guide/keras/overview.md)
