@@ -1,5 +1,5 @@
 ---
-title: 使用Keras演示TensorFlow2.0自定义训练实战 (tensorflow2.0官方教程翻译）
+title: 使用Keras演示TensorFlow2.0自定义训练实战
 tags: 
     - tensorflow2.0
 categories: 

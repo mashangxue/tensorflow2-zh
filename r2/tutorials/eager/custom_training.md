@@ -1,5 +1,5 @@
 ---
-title: 构建tensorflow2.0模型自定义训练的基础步骤 (tensorflow2.0官方教程翻译）
+title: 构建tensorflow2.0模型自定义训练的基础步骤
 categories: tensorflow2官方教程
 tags: tensorflow2.0教程
 top: 1954

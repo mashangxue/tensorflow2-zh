@@ -1,5 +1,5 @@
 ---
-title: 不用Sequential模型，TensorFlow中的Keras函数式API
+title: 不用Sequential模型,TensorFlow中的Keras函数式API
 tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999

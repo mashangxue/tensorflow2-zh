@@ -1,5 +1,5 @@
 ---
-title: Keras概述：构建模型，输入数据，训练，评估，回调，保存，分布(tensorflow2.0官方教程翻译）
+title: Keras概述：构建模型，输入数据，训练，评估，回调
 tags: tensorflow2.0教程
 categories: tensorflow2官方教程
 top: 1999
