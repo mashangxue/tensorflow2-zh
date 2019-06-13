@@ -207,14 +207,14 @@ print (predictions)
 plot_graphs(history, 'accuracy')
 ```
 
-![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_29_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/text/text_classification_rnn_files/output_29_0.png)
 
 
 ```python
 plot_graphs(history, 'loss')
 ```
 
-![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_30_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/text/text_classification_rnn_files/output_30_0.png)
 
 ## 4. 堆叠两个或更多LSTM层
 
