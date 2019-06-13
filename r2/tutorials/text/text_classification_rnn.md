@@ -293,15 +293,14 @@ print (predictions)
 plot_graphs(history, 'accuracy')
 ```
 
-![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_38_0.png)
-
+![png](https://tensorflow.google.cn/beta/tutorials/text/text_classification_rnn_files/output_38_0.png)
 
 
 ```python
 plot_graphs(history, 'loss')
 ```
 
-![png](https://tensorflow.google.cn/beta/tutorials/sequences/text_classification_rnn_files/output_39_0.png)
+![png](https://tensorflow.google.cn/beta/tutorials/text/text_classification_rnn_files/output_39_0.png)
 
 查看其它现有的递归层，例如[GRU层](https://tensorflow.google.cn/api_docs/python/tf/keras/layers/GRU)。
 
