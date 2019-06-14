@@ -47,7 +47,7 @@ abbrlink: tensorflow/tensorflow2-zh-readme
 > 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/basic_classification](https://tensorflow.google.cn/beta/tutorials/keras/basic_classification)
 > 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/keras/basic_classification.md)
 
-#### Classify text 使用Keras和TensorFlow Hub对电影评论进行文本分类 (tensorflow2.0官方教程翻译)
+#### Classify text 使用Keras和TensorFlow Hub对电影评论进行文本分类 
 
 > 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-keras-basic_text_classification_with_tfhub.html)
 > 英文版本：[https://tensorflow.google.cn/beta/tutorials/keras/basic_text_classification_with_tfhub](https://tensorflow.google.cn/beta/tutorials/keras/basic_text_classification_with_tfhub)
