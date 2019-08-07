@@ -139,18 +139,17 @@ display([sample_image, sample_mask])
 ```
 
 ## 定义模型
-The model being used here is a modified U-Net. A U-Net consists of an encoder (downsampler) and decoder (upsampler). In-order to learn robust features, and reduce the number of trainable parameters, a pretrained model can be used as the encoder. Thus, the encoder for this task will be a pretrained MobileNetV2 model, whose intermediate outputs will be used, and the decoder will be the upsample block already implemented in TensorFlow Examples in the [Pix2pix tutorial](https://github.com/tensorflow/examples/blob/master/tensorflow_examples/models/pix2pix/pix2pix.py). 
-这里使用的模型是一个改进的U-Net。U-Net由编码器（下采样器）和解码器（上采样器）组成。为了学习鲁棒特征并减少可训练参数的数量，可以使用预训练模型作为编码器。因此，该任务的编码器将是预训练的MobileNetV2模型，其中间输出将被使用，并且解码器是已经在Pix2pix教程示例中实现的上采样块。
 
-The reason to output three channels is because there are three possible labels for each pixel. Think of this as multi-classification where each pixel is being classified into three classes.
+这里使用的模型是一个改进的U-Net。U-Net由编码器（下采样器）和解码器（上采样器）组成。为了学习鲁棒特征并减少可训练参数的数量，可以使用预训练模型作为编码器。因此，该任务的编码器将是预训练的MobileNetV2模型，其中间输出将被使用，并且解码器是已经在[Pix2pix tutorial](https://github.com/tensorflow/examples/blob/master/tensorflow_examples/models/pix2pix/pix2pix.py)教程示例中实现的上采样块。
 
+输出三个通道的原因是因为每个像素有三种可能的标签。可以将其视为多分类，其中每个像素被分为三类。
 
 ```
 OUTPUT_CHANNELS = 3
 ```
 
-As mentioned, the encoder will be a pretrained MobileNetV2 model which is prepared and ready to use in [tf.keras.applications](https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/keras/applications). The encoder consists of specific outputs from intermediate layers in the model. Note that the encoder will not be trained during the training process.
-
+如上所述，编码器将是一个预训练的MobileNetV2模型，它已经准备好并可以在[tf.keras.applications](https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/keras/applications)中使用。编码器由模型中间层的特定输出组成。
+请注意，在训练过程中不会训练编码器。
 
 ```
 base_model = tf.keras.applications.MobileNetV2(input_shape=[128, 128, 3], include_top=False)
@@ -171,8 +170,7 @@ down_stack = tf.keras.Model(inputs=base_model.input, outputs=layers)
 down_stack.trainable = False
 ```
 
-The decoder/upsampler is simply a series of upsample blocks implemented in TensorFlow examples.
-
+解码器/上采样器只是在TensorFlow示例中实现的一系列上采样块。
 
 ```
 up_stack = [
@@ -187,7 +185,7 @@ up_stack = [
 ```
 def unet_model(output_channels):
 
-  # This is the last layer of the model
+  # 这是模型的最后一层
   last = tf.keras.layers.Conv2DTranspose(
       output_channels, 3, strides=2,
       padding='same', activation='softmax')  #64x64 -> 128x128
@@ -195,7 +193,7 @@ def unet_model(output_channels):
   inputs = tf.keras.layers.Input(shape=[128, 128, 3])
   x = inputs
 
-  # Downsampling through the model
+  # 通过该模型进行下采样
   skips = down_stack(x)
   x = skips[-1]
   skips = reversed(skips[:-1])
@@ -211,9 +209,9 @@ def unet_model(output_channels):
   return tf.keras.Model(inputs=inputs, outputs=x)
 ```
 
-## Train the model
-Now, all that is left to do is to compile and train the model. The loss being used here is losses.sparse_categorical_crossentropy. The reason to use this loss function is because the network is trying to assign each pixel a label, just like multi-class prediction. In the true segmentation mask, each pixel has either a {0,1,2}. The network here is outputting three channels. Essentially, each channel is trying to learn to predict a class, and losses.sparse_categorical_crossentropy is the recommended loss for such a scenario. Using the output of the network, the label assigned to the pixel is the channel with the highest value. This is what the create_mask function is doing.
+## 训练模型
 
+现在，剩下要做的就是编译和训练模型。这里使用的损失是`loss.sparse_categorical_crossentropy`。使用此丢失函数的原因是因为网络正在尝试为每个像素分配标签，就像多类预测一样。在真正的分割掩码中，每个像素都有{0,1,2}。这里的网络输出三个通道。基本上，每个频道都试图学习预测一个类，而 `loss.sparse_categorical_crossentropy` 是这种情况的推荐损失。使用网络输出，分配给像素的标签是具有最高值的通道。这就是create_mask函数正在做的事情。
 
 ```
 model = unet_model(OUTPUT_CHANNELS)
@@ -221,8 +219,7 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
 ```
 
-Let's try out the model to see what it predicts before training.
-
+让我们试试模型，看看它在训练前预测了什么。
 
 ```
 def create_mask(pred_mask):
@@ -247,9 +244,7 @@ def show_predictions(dataset=None, num=1):
 ```
 show_predictions()
 ```
-
-Let's observe how the model improves while it is training. To accomplish this task, a callback function is defined below. 
-
+让我们观察模型在训练时如何改进。要完成此任务，下面定义了回调函数。
 
 ```
 class DisplayCallback(tf.keras.callbacks.Callback):
@@ -290,16 +285,18 @@ plt.legend()
 plt.show()
 ```
 
-## Make predictions
+!(output_P_mu0SAbt40Q_0)[https://tensorflow.google.cn/beta/tutorials/images/segmentation_files/output_P_mu0SAbt40Q_0.png]
 
-Let's make some predictions. In the interest of saving time, the number of epochs was kept small, but you may set this higher to achieve more accurate results.
+## 作出预测
 
+让我们做一些预测。为了节省时间，周期的数量很小，但您可以将其设置得更高以获得更准确的结果。
 
 ```
 show_predictions(test_dataset, 3)
 ```
 
-## Next steps
-Now that you have an understanding of what image segmentation is and how it works, you can try this tutorial out with different intermediate layer outputs, or even different pretrained model. You may also challenge yourself by trying out the [Carvana](https://www.kaggle.com/c/carvana-image-masking-challenge/overview) image masking challenge hosted on Kaggle.
+## 下一步
 
-You may also want to see the [Tensorflow Object Detection API](https://github.com/tensorflow/models/tree/master/research/object_detection) for another model you can retrain on your own data.
+现在您已经了解了图像分割是什么，以及它是如何工作的，您可以尝试使用不同的中间层输出，甚至是不同的预训练模型。您也可以通过尝试在Kaggle上托管的[Carvana](https://www.kaggle.com/c/carvana-image-masking-challenge/overview)图像掩蔽比赛来挑战自己。
+
+您可能还希望查看[Tensorflow Object Detection API]（https://github.com/tensorflow/models/tree/master/research/object_detection），以获取您可以重新训练自己数据的其他模型。
