@@ -1,56 +1,29 @@
+---
+title: 图像分割
+tags: tensorflow2.0教程
+categories: tensorflow2官方教程
+top: 1924
+abbrlink: tensorflow/tf2-tutorials-images-intro_to_cnns
+---
 
-##### Copyright 2019 The TensorFlow Authors.
+# 图像分割 (tensorflow2.0官方教程翻译)
 
-Licensed under the Apache License, Version 2.0 (the "License");
+> 最新版本：[https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-segmentation.html](https://www.mashangxue123.com/tensorflow/tf2-tutorials-images-segmentation.html)
+> 英文版本：[https://tensorflow.google.cn/beta/tutorials/images/segmentation](https://tensorflow.google.cn/beta/tutorials/images/segmentation)
+> 翻译建议PR：[https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/segmentation.md](https://github.com/mashangxue/tensorflow2-zh/edit/master/r2/tutorials/images/segmentation.md)
 
 
-```
-#@title Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-# https://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-```
+本教程重点介绍使用修改后的[U-Net](https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/)进行图像分割的任务。
 
-# Image segmentation
+## 什么是图像分割？
 
-<table class="tfo-notebook-buttons" align="left">
-  <td>
-    <a target="_blank" href="https://www.tensorflow.org/beta/tutorials/images/segmentation">
-    <img src="https://www.tensorflow.org/images/tf_logo_32px.png" />
-    View on TensorFlow.org</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://colab.research.google.com/github/tensorflow/docs/blob/master/site/en/r2/tutorials/images/segmentation.ipynb">
-    <img src="https://www.tensorflow.org/images/colab_logo_32px.png" />
-    Run in Google Colab</a>
-  </td>
-  <td>
-    <a target="_blank" href="https://github.com/tensorflow/docs/blob/master/site/en/r2/tutorials/images/segmentation.ipynb">
-    <img src="https://www.tensorflow.org/images/GitHub-Mark-32px.png" />
-    View source on GitHub</a>
-  </td>
-  <td>
-    <a href="https://storage.googleapis.com/tensorflow_docs/docs/site/en/r2/tutorials/images/segmentation.ipynb"><img src="https://www.tensorflow.org/images/download_logo_32px.png" />Download notebook</a>
-  </td>
-</table>
+前面的章节我们学习了图像分类，网络算法的任务是为输入图像输出对应的标签或类。但是，假设您想知道对象在图像中的位置，该对象的形状，哪个像素属于哪个对象等。在这种情况下，您将要分割图像，即图像的每个像素都是给了一个标签。
+因此，图像分割的任务是训练神经网络以输出图像的逐像素掩模。这有助于以更低的水平（即像素级别）理解图像。图像分割在医学成像，自动驾驶汽车和卫星成像等方面具有许多应用。
 
-This tutorial focuses on the task of image segmentation, using a modified [U-Net](https://lmb.informatik.uni-freiburg.de/people/ronneber/u-net/).
-
-## What is image segmentation?
-So far you have seen image classification, where the task of the network is to assign a label or class to an input image. However, suppose you want to know where an object is located in the image, the shape of that object, which pixel belongs to which object, etc. In this case you will want to segment the image, i.e., each pixel of the image is given a label. Thus, the task of image segmentation is to train a neural network to output a pixel-wise mask of the image. This helps in understanding the image at a much lower level, i.e., the pixel level. Image segmentation has many applications in medical imaging, self-driving cars and satellite imaging to name a few.
-
-The dataset that will be used for this tutorial is the [Oxford-IIIT Pet Dataset](https://www.robots.ox.ac.uk/~vgg/data/pets/), created by Parkhi *et al*. The dataset consists of images, their corresponding labels, and pixel-wise masks. The masks are basically labels for each pixel. Each pixel is given one of three categories :
-
-*   Class 1 : Pixel belonging to the pet.
-*   Class 2 : Pixel bordering the pet.
-*   Class 3 : None of the above/ Surrounding pixel.
+将用于本教程的数据集是由Parkhi等人创建的[Oxford-IIIT Pet Dataset](https://www.robots.ox.ac.uk/~vgg/data/pets/)。数据集由图像、其对应的标签和像素方式的掩码组成。掩模基本上是每个像素的标签。每个像素分为三类：
+*   第1类：属于宠物的像素。
+*   第2类：与宠物接壤的像素。
+*   第3类：以上都没有/周围像素。
 
 
 ```
@@ -76,17 +49,15 @@ from IPython.display import clear_output
 import matplotlib.pyplot as plt
 ```
 
-## Download the Oxford-IIIT Pets dataset
+## 下载Oxford-IIIT Pets数据集
 
-The dataset is already included in TensorFlow datasets, all that is needed to do is download it. The segmentation masks are included in version 3.0.0, which is why this particular version is used.
-
+数据集已包含在TensorFlow数据集中，只需下载即可。分段掩码包含在3.0.0版中，这就是使用此特定版本的原因。
 
 ```
 dataset, info = tfds.load('oxford_iiit_pet:3.0.0', with_info=True)
 ```
 
-The following code performs a simple augmentation of flipping an image. In addition,  image is normalized to [0,1]. Finally, as mentioned above the pixels in the segmentation mask are labeled either {1, 2, 3}. For the sake of convinience, let's subtract 1 from the segmentation mask, resulting in labels that are : {0, 1, 2}.
-
+以下代码执行翻转图像的简单扩充。另外，图像归一化为[0,1]。最后，如上所述，分割掩模中的像素标记为{1,2,3}。为了方便起见，让我们从分割掩码中减去1，得到标签：{0,1,2}。
 
 ```
 def normalize(input_image, input_mask):
@@ -122,8 +93,7 @@ def load_image_test(datapoint):
   return input_image, input_mask
 ```
 
-The dataset already contains the required splits of test and train and so let's continue to use the same split.
-
+数据集已包含测试和训练所需的分割，因此让我们继续使用相同的分割。
 
 ```
 TRAIN_LENGTH = info.splits['train'].num_examples
@@ -145,8 +115,7 @@ train_dataset = train_dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE
 test_dataset = test.batch(BATCH_SIZE)
 ```
 
-Let's take a look at an image example and it's correponding mask from the dataset.
-
+让我们看一下图像示例，它是数据集的相应掩模。
 
 ```
 def display(display_list):
@@ -169,8 +138,9 @@ for image, mask in train.take(1):
 display([sample_image, sample_mask])
 ```
 
-## Define the model
+## 定义模型
 The model being used here is a modified U-Net. A U-Net consists of an encoder (downsampler) and decoder (upsampler). In-order to learn robust features, and reduce the number of trainable parameters, a pretrained model can be used as the encoder. Thus, the encoder for this task will be a pretrained MobileNetV2 model, whose intermediate outputs will be used, and the decoder will be the upsample block already implemented in TensorFlow Examples in the [Pix2pix tutorial](https://github.com/tensorflow/examples/blob/master/tensorflow_examples/models/pix2pix/pix2pix.py). 
+这里使用的模型是一个改进的U-Net。U-Net由编码器（下采样器）和解码器（上采样器）组成。为了学习鲁棒特征并减少可训练参数的数量，可以使用预训练模型作为编码器。因此，该任务的编码器将是预训练的MobileNetV2模型，其中间输出将被使用，并且解码器是已经在Pix2pix教程示例中实现的上采样块。
 
 The reason to output three channels is because there are three possible labels for each pixel. Think of this as multi-classification where each pixel is being classified into three classes.
 
