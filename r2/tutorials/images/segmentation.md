@@ -110,7 +110,7 @@ test_dataset = test.batch(BATCH_SIZE)
 
 让我们看一下图像示例，它是数据集的相应掩模。
 
-```
+```python
 def display(display_list):
   plt.figure(figsize=(15, 15))
 
@@ -137,14 +137,14 @@ display([sample_image, sample_mask])
 
 输出三个通道的原因是因为每个像素有三种可能的标签。可以将其视为多分类，其中每个像素被分为三类。
 
-```
+```python
 OUTPUT_CHANNELS = 3
 ```
 
 如上所述，编码器将是一个预训练的MobileNetV2模型，它已经准备好并可以在[tf.keras.applications](https://www.tensorflow.org/versions/r2.0/api_docs/python/tf/keras/applications)中使用。编码器由模型中间层的特定输出组成。
 请注意，在训练过程中不会训练编码器。
 
-```
+```python
 base_model = tf.keras.applications.MobileNetV2(input_shape=[128, 128, 3], include_top=False)
 
 # Use the activations of these layers
@@ -165,7 +165,7 @@ down_stack.trainable = False
 
 解码器/上采样器只是在TensorFlow示例中实现的一系列上采样块。
 
-```
+```python
 up_stack = [
     pix2pix.upsample(512, 3),  # 4x4 -> 8x8
     pix2pix.upsample(256, 3),  # 8x8 -> 16x16
@@ -204,7 +204,7 @@ def unet_model(output_channels):
 
 现在，剩下要做的就是编译和训练模型。这里使用的损失是`loss.sparse_categorical_crossentropy`。使用此丢失函数的原因是因为网络正在尝试为每个像素分配标签，就像多类预测一样。在真正的分割掩码中，每个像素都有{0,1,2}。这里的网络输出三个通道。基本上，每个频道都试图学习预测一个类，而 `loss.sparse_categorical_crossentropy` 是这种情况的推荐损失。使用网络输出，分配给像素的标签是具有最高值的通道。这就是create_mask函数正在做的事情。
 
-```
+```python
 model = unet_model(OUTPUT_CHANNELS)
 model.compile(optimizer='adam', loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
@@ -212,7 +212,7 @@ model.compile(optimizer='adam', loss='sparse_categorical_crossentropy',
 
 让我们试试模型，看看它在训练前预测了什么。
 
-```
+```python
 def create_mask(pred_mask):
   pred_mask = tf.argmax(pred_mask, axis=-1)
   pred_mask = pred_mask[..., tf.newaxis]
@@ -236,7 +236,7 @@ show_predictions()
 
 让我们观察模型在训练时如何改进。要完成此任务，下面定义了回调函数。
 
-```
+```python
 class DisplayCallback(tf.keras.callbacks.Callback):
   def on_epoch_end(self, epoch, logs=None):
     clear_output(wait=True)
@@ -259,7 +259,7 @@ model_history = model.fit(train_dataset, epochs=EPOCHS,
 
 
 我们查看损失变化情况
-```
+```python
 loss = model_history.history['loss']
 val_loss = model_history.history['val_loss']
 
@@ -283,7 +283,7 @@ plt.show()
 
 让我们做一些预测。为了节省时间，周期的数量很小，但您可以将其设置得更高以获得更准确的结果。
 
-```
+```python
 show_predictions(test_dataset, 1)
 ```
 
