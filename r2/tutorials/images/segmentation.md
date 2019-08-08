@@ -18,6 +18,7 @@ abbrlink: tensorflow/tf2-tutorials-images-intro_to_cnns
 ## 什么是图像分割？
 
 前面的章节我们学习了图像分类，网络算法的任务是为输入图像输出对应的标签或类。但是，假设您想知道对象在图像中的位置，该对象的形状，哪个像素属于哪个对象等。在这种情况下，您将要分割图像，即图像的每个像素都是给了一个标签。
+
 因此，图像分割的任务是训练神经网络以输出图像的逐像素掩模。这有助于以更低的水平（即像素级别）理解图像。图像分割在医学成像，自动驾驶汽车和卫星成像等方面具有许多应用。
 
 将用于本教程的数据集是由Parkhi等人创建的[Oxford-IIIT Pet Dataset](https://www.robots.ox.ac.uk/~vgg/data/pets/)。数据集由图像、其对应的标签和像素方式的掩码组成。掩模基本上是每个像素的标签。每个像素分为三类：
@@ -25,19 +26,22 @@ abbrlink: tensorflow/tf2-tutorials-images-intro_to_cnns
 *   第2类：与宠物接壤的像素。
 *   第3类：以上都没有/周围像素。
 
+下载依赖项目  https://github.com/tensorflow/examples，
+把文件夹tensorflow_examples放到项目下，下面会导入pix2pix
 
-```
-!pip install git+https://github.com/tensorflow/examples.git
-```
+安装tensorflow：
 
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple tensorflow-gpu==2.0.0-beta1
 
-```
-!pip install tensorflow-gpu==2.0.0-beta1
+安装tensorflow_datasets：
+
+pip install -i https://pypi.tuna.tsinghua.edu.cn/simple tensorflow_datasets
+
+## 导入各种依赖包
+
+```python
 import tensorflow as tf
-```
 
-
-```
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 from tensorflow_examples.models.pix2pix import pix2pix
@@ -53,21 +57,19 @@ import matplotlib.pyplot as plt
 
 数据集已包含在TensorFlow数据集中，只需下载即可。分段掩码包含在3.0.0版中，这就是使用此特定版本的原因。
 
-```
+```python
 dataset, info = tfds.load('oxford_iiit_pet:3.0.0', with_info=True)
 ```
 
-以下代码执行翻转图像的简单扩充。另外，图像归一化为[0,1]。最后，如上所述，分割掩模中的像素标记为{1,2,3}。为了方便起见，让我们从分割掩码中减去1，得到标签：{0,1,2}。
+以下代码执行翻转图像的简单扩充。另外，图像归一化为[0,1]。
+最后，如上所述，分割掩模中的像素标记为{1,2,3}。为了方便起见，让我们从分割掩码中减去1，得到标签：{0,1,2}。
 
-```
+```python
 def normalize(input_image, input_mask):
   input_image = tf.cast(input_image, tf.float32)/128.0 - 1
   input_mask -= 1
   return input_image, input_mask
-```
 
-
-```
 @tf.function
 def load_image_train(datapoint):
   input_image = tf.image.resize(datapoint['image'], (128, 128))
@@ -80,10 +82,7 @@ def load_image_train(datapoint):
   input_image, input_mask = normalize(input_image, input_mask)
 
   return input_image, input_mask
-```
 
-
-```
 def load_image_test(datapoint):
   input_image = tf.image.resize(datapoint['image'], (128, 128))
   input_mask = tf.image.resize(datapoint['segmentation_mask'], (128, 128))
@@ -95,21 +94,15 @@ def load_image_test(datapoint):
 
 数据集已包含测试和训练所需的分割，因此让我们继续使用相同的分割。
 
-```
+```python
 TRAIN_LENGTH = info.splits['train'].num_examples
 BATCH_SIZE = 64
 BUFFER_SIZE = 1000
 STEPS_PER_EPOCH = TRAIN_LENGTH // BATCH_SIZE
-```
 
-
-```
 train = dataset['train'].map(load_image_train, num_parallel_calls=tf.data.experimental.AUTOTUNE)
 test = dataset['test'].map(load_image_test)
-```
 
-
-```
 train_dataset = train.cache().shuffle(BUFFER_SIZE).batch(BATCH_SIZE).repeat()
 train_dataset = train_dataset.prefetch(buffer_size=tf.data.experimental.AUTOTUNE)
 test_dataset = test.batch(BATCH_SIZE)
@@ -129,14 +122,14 @@ def display(display_list):
     plt.imshow(tf.keras.preprocessing.image.array_to_img(display_list[i]))
     plt.axis('off')
   plt.show()
-```
 
-
-```
 for image, mask in train.take(1):
   sample_image, sample_mask = image, mask
 display([sample_image, sample_mask])
 ```
+
+![](https://www.tensorflow.org/beta/tutorials/images/segmentation_files/output_a6u_Rblkteqb_0.png)
+
 
 ## 定义模型
 
@@ -164,7 +157,7 @@ layer_names = [
 ]
 layers = [base_model.get_layer(name).output for name in layer_names]
 
-# Create the feature extraction model
+# 创建特征提取模型
 down_stack = tf.keras.Model(inputs=base_model.input, outputs=layers)
 
 down_stack.trainable = False
@@ -179,10 +172,8 @@ up_stack = [
     pix2pix.upsample(128, 3),  # 16x16 -> 32x32
     pix2pix.upsample(64, 3),   # 32x32 -> 64x64
 ]
-```
 
 
-```
 def unet_model(output_channels):
 
   # 这是模型的最后一层
@@ -226,10 +217,7 @@ def create_mask(pred_mask):
   pred_mask = tf.argmax(pred_mask, axis=-1)
   pred_mask = pred_mask[..., tf.newaxis]
   return pred_mask[0]
-```
 
-
-```
 def show_predictions(dataset=None, num=1):
   if dataset:
     for image, mask in dataset.take(num):
@@ -238,12 +226,14 @@ def show_predictions(dataset=None, num=1):
   else:
     display([sample_image, sample_mask,
              create_mask(model.predict(sample_image[tf.newaxis, ...]))])
-```
 
 
-```
 show_predictions()
 ```
+
+![](https://www.tensorflow.org/beta/tutorials/images/segmentation_files/output_X_1CC0T4dho3_0.png)
+
+
 让我们观察模型在训练时如何改进。要完成此任务，下面定义了回调函数。
 
 ```
@@ -252,10 +242,8 @@ class DisplayCallback(tf.keras.callbacks.Callback):
     clear_output(wait=True)
     show_predictions()
     print ('\nSample Prediction after epoch {}\n'.format(epoch+1))
-```
 
 
-```
 EPOCHS = 20
 VAL_SUBSPLITS = 5
 VALIDATION_STEPS = info.splits['test'].num_examples//BATCH_SIZE//VAL_SUBSPLITS
@@ -267,7 +255,10 @@ model_history = model.fit(train_dataset, epochs=EPOCHS,
                           callbacks=[DisplayCallback()])
 ```
 
+![](https://www.tensorflow.org/beta/tutorials/images/segmentation_files/output_StKDH_B9t4SD_0.png)
 
+
+我们查看损失变化情况
 ```
 loss = model_history.history['loss']
 val_loss = model_history.history['val_loss']
@@ -285,15 +276,20 @@ plt.legend()
 plt.show()
 ```
 
-!(output_P_mu0SAbt40Q_0)[https://tensorflow.google.cn/beta/tutorials/images/segmentation_files/output_P_mu0SAbt40Q_0.png]
+![](https://www.tensorflow.org/beta/tutorials/images/segmentation_files/output_P_mu0SAbt40Q_0.png)
+
 
 ## 作出预测
 
 让我们做一些预测。为了节省时间，周期的数量很小，但您可以将其设置得更高以获得更准确的结果。
 
 ```
-show_predictions(test_dataset, 3)
+show_predictions(test_dataset, 1)
 ```
+
+预测效果：
+![](https://www.tensorflow.org/beta/tutorials/images/segmentation_files/output_ikrzoG24qwf5_0.png)
+
 
 ## 下一步
 
